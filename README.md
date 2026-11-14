@@ -1,5 +1,8 @@
 # 数证 DataProof
 
+[![CI](https://github.com/qiaopengjun5162/dataproof/actions/workflows/ci.yml/badge.svg)](https://github.com/qiaopengjun5162/dataproof/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 给政府开放数据集做体检：**每个数字都带可机器复核的证明。**
 
 - 采集浙江开放平台 24,322 个数据集的元数据、字段定义、样例与更新时间

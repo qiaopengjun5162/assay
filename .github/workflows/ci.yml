@@ -70,9 +70,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 不用 gitleaks-action：它按 push 事件算 bb83aac^..HEAD，而 bb83aac 是根提交，
+      # 没有父提交 → "ambiguous argument" → 报 exit 1（明明没扫到任何东西）。
+      # 直接调 CLI，扫全部分支历史。
+      - name: 扫描历史
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz | tar -xz gitleaks
+          ./gitleaks detect --source . --redact -v --exit-code=1 --log-opts="--all"
 
   scripts:
     name: python 脚本语法

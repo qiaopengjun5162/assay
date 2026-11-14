@@ -37,15 +37,16 @@ audit threads="8":
 report:
     python3 scripts/aggregate.py --items out-full/items.jsonl --catalog out-full/catalog_snapshot.json --out out-full
 
-# 榜单前 N 名生成 Lean 并校验
-prove top="20":
-    python3 scripts/proof_top.py --items out-full/items.jsonl --out out-full --top {{top}}
-    ./scripts/check_proofs.sh out-full/TopProofs.lean
-
 # 证据包：落盘接口原始响应并算哈希（确定性，不经模型）
-evidence top="20":
+evidence top="100":
     python3 scripts/evidence.py --items out-full/items.jsonl --out out-full --top {{top}}
     cp -R out-full/evidence web/evidence
+
+# 榜单前 N 名生成 Lean 并校验（优先读存证快照）
+prove top="100":
+    python3 scripts/proof_top.py --items out-full/items.jsonl --out out-full --top {{top}} --evidence out-full/evidence.json
+    ./scripts/check_proofs.sh out-full/TopProofs.lean
+    cp out-full/TopProofs.lean web/TopProofs.lean
 
 # 导出前端数据
 web:

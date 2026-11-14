@@ -1,6 +1,9 @@
 # 唯一入口：本地与 CI 跑同一套命令
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
+# 产物目录。换一个就有干净的独立跑批：just out=out-smoke audit 8 200
+out := "out-full"
+
 default:
     @just --list
 
@@ -29,28 +32,41 @@ check: fmt-check clippy test proofs
     python3 -m py_compile scripts/*.py
     echo "全部通过"
 
-# 全量体检（真实网络，约 12 分钟）
-audit threads="8":
-    cd rust-core && cargo run --release --bin full_audit -- --threads {{threads}} --out ../out-full
+# 1) 全量体检（真实网络，约 12 分钟；limit=0 表示全部）
+audit threads="8" limit="0":
+    cd rust-core && cargo run --release --bin full_audit -- --threads {{threads}} --limit {{limit}} --out ../{{out}}
 
-# 聚合榜单
+# 2) 聚合榜单（产出 summary.json / leaderboard.md / leaderboard_dept.md）
 report:
-    python3 scripts/aggregate.py --items out-full/items.jsonl --catalog out-full/catalog_snapshot.json --out out-full
+    python3 scripts/aggregate.py --items {{out}}/items.jsonl --catalog {{out}}/catalog_snapshot.json --out {{out}}
 
-# 证据包：落盘接口原始响应并算哈希（确定性，不经模型）
+# 3) 证据包：落盘接口原始响应并算哈希（确定性，不经模型）
 evidence top="100":
-    python3 scripts/evidence.py --items out-full/items.jsonl --out out-full --top {{top}}
-    cp -R out-full/evidence web/evidence
+    python3 scripts/evidence.py --items {{out}}/items.jsonl --out {{out}} --top {{top}}
 
-# 榜单前 N 名生成 Lean 并校验（优先读存证快照）
+# 4) 榜单前 N 名生成 Lean 并校验（优先读存证快照）
 prove top="100":
-    python3 scripts/proof_top.py --items out-full/items.jsonl --out out-full --top {{top}} --evidence out-full/evidence.json
-    ./scripts/check_proofs.sh out-full/TopProofs.lean
-    cp out-full/TopProofs.lean web/TopProofs.lean
+    python3 scripts/proof_top.py --items {{out}}/items.jsonl --out {{out}} --top {{top}} --evidence {{out}}/evidence.json
+    ./scripts/check_proofs.sh {{out}}/TopProofs.lean
 
-# 导出前端数据
+# 5) 发布到静态站（数据 + 证明 + 证据一次到位）
 web:
-    python3 scripts/export_web.py --items out-full/items.jsonl --summary out-full/summary.json --proofs out-full/proofs.json --catalog out-full/catalog_snapshot.json --evidence out-full/evidence.json --out web/data.json --limit 500
+    cp {{out}}/TopProofs.lean web/TopProofs.lean
+    rm -rf web/evidence
+    cp -R {{out}}/evidence web/evidence
+    python3 scripts/export_web.py --items {{out}}/items.jsonl --summary {{out}}/summary.json --proofs {{out}}/proofs.json --catalog {{out}}/catalog_snapshot.json --evidence {{out}}/evidence.json --out web/data.json --limit 500
+
+# 全流水线：体检 → 榜单 → 证据 → 证明 → 静态站
+all: audit report evidence prove web
+    echo "完成：just serve 预览"
+
+# 小样本端到端自检（200 条，不覆盖正式产物）
+smoke:
+    just out=out-smoke audit 8 200
+    just out=out-smoke report
+    just out=out-smoke evidence 5
+    just out=out-smoke prove 5
+    echo "smoke 通过：out-smoke/ 下有 summary、证据、证明"
 
 # 篡改演示：改一位数字，让内核当场拒绝
 tamper file="out-full/TopProofs.lean":

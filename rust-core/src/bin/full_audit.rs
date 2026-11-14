@@ -125,6 +125,18 @@ fn main() {
         .and_then(|i| args.get(i + 1))
         .and_then(|s| s.parse().ok())
         .unwrap_or(0);
+
+    // 目录快照落盘：report 阶段靠 updateTime 算滞后天数，
+    // 缺了它 aggregate 只能算出空值/字段一致性，时效性整块是空的。
+    let snap_path = format!("{}/catalog_snapshot.json", out_dir);
+    match serde_json::to_string(&recs_vec) {
+        Ok(s) => {
+            fs::write(&snap_path, s).ok();
+            println!("目录快照: {}（{} 条）", snap_path, recs_vec.len());
+        }
+        Err(e) => eprintln!("目录快照写入失败: {}", e),
+    }
+
     let records: Arc<Vec<Value>> = Arc::new(if limit > 0 {
         recs_vec.into_iter().take(limit).collect()
     } else {

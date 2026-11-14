@@ -145,10 +145,10 @@ dataproof/
 - [x] 可行性核验：接口、字段、样例、官方是否已做
 - [x] 单次体检链路（Rust）+ Lean 端到端
 - [x] 全量 24,322 条跑通，出榜单
-- [ ] **M1 工程骨架**：Justfile / CI / fixtures / 单测（本次）
+- [x] **M1 工程骨架**：Justfile / CI / fixtures / 单测
 - [x] **M2 前端三页**：榜单 / 详情 / 证明（静态站，`just serve` 预览）
-- [ ] 用 DeepSeek `read_url` 做存证原型（可选）
-- [ ] 5 分钟讲稿 + 3 分钟 demo 脚本
+- [x] 存证方案：`read_url` 实测失败（0 字节文档 + 模型编数字），改为确定性抓取原始响应 + SHA-256
+- [x] 6 分钟讲稿 + 篡改 demo（docs/PITCH.md / `just tamper`）
 
 ### 现场（12/04 – 12/08）
 
@@ -200,3 +200,10 @@ dataproof/
 证明：TopProofs.lean + VERIFY.txt + proofs.md
 文章素材：notes/tech/ai/2026-11-14-dataproof-build-log.md（全过程留痕）
 ```
+
+## 完成状态（2026-11-14）
+
+- 全流水线：`just audit` → `just report` → `just evidence` → `just prove` → `just web`
+- 端到端自检：`just smoke`（200 条，约 40 秒，产物独立在 out-smoke/）
+- 数字冻结在 2026-11-14 的快照；`just all` 会刷新快照，**路演前别重跑**，否则文章与榜单的对不上
+- CI 四关：fmt/clippy/test、黄金文件、Lean 内核、密钥扫描

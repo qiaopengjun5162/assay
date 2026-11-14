@@ -29,21 +29,27 @@
 ## 快速开始
 
 ```bash
-just check                 # 本地完整检查（格式、clippy、测试、证明）
-just audit                 # 全量体检，约 12 分钟，产物在 out-full/
-just report                # 聚合榜单
-just prove                 # 给榜单前 100 名生成 Lean 并校验内核（读存证快照）
-just evidence              # 落盘前 100 名的接口原始响应 + SHA-256
-just web                   # 导出前端数据
-just serve                 # 本地预览 http://localhost:8080
+just check     # 本地完整检查：fmt / clippy 零容忍 / 单测 / 黄金文件 / 证明门禁
+just smoke     # 200 条端到端自检，约 40 秒，产物在 out-smoke/（不覆盖正式产物）
+just all       # 全流水线：体检 → 榜单 → 证据 → 证明 → 静态站，约 13 分钟
+just serve     # 本地预览 http://localhost:8080
 ```
 
-只跑一小批，避免全量：
+拆开跑（`all` 就是这五步）：
 
 ```bash
-cd rust-core
-cargo run --release --bin dataproof-core -- --limit 8 --out ../out
+just audit 8 0     # 1) 全量体检；参数 = 线程数、条数上限（0 = 全部）。约 12 分钟
+just report        # 2) 聚合榜单 -> summary.json / leaderboard.md
+just evidence 100  # 3) 落盘前 100 名的接口原始响应 + SHA-256
+just prove 100     # 4) 生成 2,355 条定理并跑 Lean 内核（读存证快照）
+just web           # 5) 数据 + 证明 + 证据发布到 web/
 ```
+
+`out-full/` 不入库（`.gitignore` 里排除，全量明细 8.7MB）。换目录跑批用变量覆盖：
+`just out=out-smoke audit 8 200`。
+
+> **快照已冻结**：仓库里的榜单、证明、证据都对应 2026-11-14 这次抓取。
+> `just all` 会用当天数据重跑，数字会漂移；路演/引用前不要执行，除非确实要刷新时点。
 
 ## 结构
 

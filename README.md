@@ -74,6 +74,12 @@ docs/             计划、决策、路演稿、项目说明
 - [项目说明（一页版）](docs/SUBMISSION.md) · [架构图](docs/architecture.svg)
 - [6 分钟路演脚本](docs/PITCH.md) · [里程碑](docs/PLAN.md) · [决策记录](docs/DECISIONS.md)
 
+## 结果快照（不用重跑也能看）
+
+`data/` 下是 2026-11-14 全量跑批的聚合结果：`summary.json`（含全部部门分布）、
+`leaderboard.md`（问题 Top 50）、`leaderboard_dept.md`（部门视角）。
+逐条明细 `out-full/items.jsonl`（8.7MB）未入库，跑 `just audit` 可重建。
+
 ## 数据来源
 
 浙江省公共数据开放平台 `data.zjzwfw.gov.cn`：

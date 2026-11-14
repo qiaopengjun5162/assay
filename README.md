@@ -61,8 +61,18 @@ rust-core/        Rust：采集、规则、Lean 生成、内核校验
   fixtures/       脱敏样例快照 + expected.lean
 scripts/          Python：聚合、榜单、证明生成、前端导出、全过程留痕
 web/              静态站（读 data.json，无后端）
-docs/             计划与决策记录
+docs/             计划、决策、路演稿、项目说明
+  PLAN.md           里程碑与完成状态
+  DECISIONS.md      D1–D10 取舍记录
+  PITCH.md          6 分钟路演脚本 + 五问应答
+  SUBMISSION.md     一页版项目说明（提交/评审用）
+  architecture.svg  架构图
 ```
+
+## 文档
+
+- [项目说明（一页版）](docs/SUBMISSION.md) · [架构图](docs/architecture.svg)
+- [6 分钟路演脚本](docs/PITCH.md) · [里程碑](docs/PLAN.md) · [决策记录](docs/DECISIONS.md)
 
 ## 数据来源
 

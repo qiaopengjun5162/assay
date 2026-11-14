@@ -1,0 +1,21 @@
+# Rust
+target/
+**/*.rs.bk
+
+# 运行产物（体积大，不入库；需要时用 just audit 重新生成）
+out/
+out-smoke/
+out-full/
+*.jsonl
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 本地环境
+.env
+.env.local
+.DS_Store
+.idea/
+.vscode/

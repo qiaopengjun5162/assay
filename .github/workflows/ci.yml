@@ -1,0 +1,88 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    name: rust · fmt / clippy / test / build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rust-core
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust-core
+
+      - name: Format
+        run: cargo fmt --all -- --check
+
+      - name: Clippy（零容忍，抄 moonpub）
+        run: cargo clippy --all-targets --all-features --tests --benches -- -D warnings
+
+      - name: Test（含黄金文件测试）
+        run: cargo test --all-features
+
+      - name: Build release
+        run: cargo build --release --locked
+
+  lean:
+    name: lean · 证明内核校验
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 缓存 elan 工具链
+        uses: actions/cache@v4
+        with:
+          path: ~/.elan
+          key: elan-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}
+
+      - name: 安装 elan（工具链由 lean-toolchain 指定）
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: 内核校验（拒绝 sorry / admit）
+        run: ./scripts/check_proofs.sh rust-core/fixtures/expected.lean
+
+  secret-scan:
+    name: 密钥扫描
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  scripts:
+    name: python 脚本语法
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 编译检查
+        run: python3 -m py_compile scripts/*.py
+      - name: 黄金分类一致性（Rust 与 Python 同口径）
+        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v

@@ -194,6 +194,26 @@ async function initDetail() {
   $("#issues").innerHTML = issue.length ? `<ul>${issue.map((x) => `<li>${x}</li>`).join("")}</ul>`
     : `<p class="hint">未发现字段层面的不一致。</p>`;
 
+  /* 证据块 */
+  if (d.evidence) {
+    const files = (d.evidence.files || []).map((f) =>
+      `<a class="btn" href="${esc(f)}" download>${esc(f.split("/").pop())}</a>`).join(" ");
+    $("#evidence").innerHTML = `
+      <h2>证据包</h2>
+      <p class="hint">平台两个接口的原始响应，逐字节保存后哈希。全程确定性抓取，不经过任何模型。</p>
+      <table class="kv">
+        <tr><th>抓取时间</th><td>${esc((d.evidence.fetchedAt || "").replace("T", " ").slice(0, 19))}</td></tr>
+        <tr><th>SHA-256</th><td>${esc(d.evidence.sha256)}</td></tr>
+        <tr><th>响应大小</th><td>detail ${d.evidence.detailBytes} 字节 / preview ${d.evidence.previewBytes} 字节</td></tr>
+      </table>
+      <p>${files || '<span class="hint">原始响应未随站点分发</span>'}</p>
+      <p class="hint">为什么不直接抓网页：实测平台详情页返回空文档，模型仍会「抄」出并不存在的数字。存证只能走确定性抓取。</p>`;
+  } else {
+    $("#evidence").innerHTML = `
+      <h2>证据包</h2>
+      <p class="hint">当前只为问题最多的前 20 个数据集保存了原始响应快照。</p>`;
+  }
+
   /* 证明块 */
   if (d.proof) {
     $("#proof").innerHTML = `

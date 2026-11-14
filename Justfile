@@ -42,9 +42,14 @@ prove top="20":
     python3 scripts/proof_top.py --items out-full/items.jsonl --out out-full --top {{top}}
     ./scripts/check_proofs.sh out-full/TopProofs.lean
 
+# 证据包：落盘接口原始响应并算哈希（确定性，不经模型）
+evidence top="20":
+    python3 scripts/evidence.py --items out-full/items.jsonl --out out-full --top {{top}}
+    cp -R out-full/evidence web/evidence
+
 # 导出前端数据
 web:
-    python3 scripts/export_web.py --items out-full/items.jsonl --summary out-full/summary.json --proofs out-full/proofs.json --out web/data.json --limit 500
+    python3 scripts/export_web.py --items out-full/items.jsonl --summary out-full/summary.json --proofs out-full/proofs.json --catalog out-full/catalog_snapshot.json --evidence out-full/evidence.json --out web/data.json --limit 500
 
 # 本地预览静态站
 serve:

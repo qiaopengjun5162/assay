@@ -15,6 +15,7 @@ ap.add_argument("--items", required=True)
 ap.add_argument("--summary", required=True)
 ap.add_argument("--proofs", default="")
 ap.add_argument("--catalog", default="", help="目录快照，用来补 updateTime 与滞后天数")
+ap.add_argument("--evidence", default="", help="证据包索引 evidence.json")
 ap.add_argument("--out", required=True)
 ap.add_argument("--limit", type=int, default=300)
 a = ap.parse_args()
@@ -33,6 +34,16 @@ with open(a.items, encoding="utf-8") as f:
 summary = json.load(open(a.summary, encoding="utf-8"))
 proofs = json.load(open(a.proofs, encoding="utf-8")) if a.proofs and os.path.exists(a.proofs) else []
 proof_by_id = {p.get("id"): p for p in proofs if "sha256" in p}
+
+evidence = {}
+if a.evidence and os.path.exists(a.evidence):
+    for e in json.load(open(a.evidence, encoding="utf-8")).get("items", []):
+        if e.get("sha256"):
+            evidence[e["id"]] = {
+                "sha256": e["sha256"], "fetchedAt": e.get("fetchedAt"),
+                "detailBytes": e.get("detailBytes"), "previewBytes": e.get("previewBytes"),
+                "files": e.get("files", []),
+            }
 
 catalog = {}
 if a.catalog and os.path.exists(a.catalog):
@@ -79,6 +90,7 @@ for i in items:
         "hasPreview": i.get("hasPreview"),
         "score": score(i),
         "proof": proof_by_id.get(i.get("id")),
+        "evidence": evidence.get(i.get("id")),
     })
 
 rows.sort(key=lambda r: r["score"], reverse=True)

@@ -52,6 +52,10 @@ prove top="100":
 web:
     python3 scripts/export_web.py --items out-full/items.jsonl --summary out-full/summary.json --proofs out-full/proofs.json --catalog out-full/catalog_snapshot.json --evidence out-full/evidence.json --out web/data.json --limit 500
 
+# 篡改演示：改一位数字，让内核当场拒绝
+tamper file="out-full/TopProofs.lean":
+    ./scripts/tamper_demo.sh {{file}}
+
 # 本地预览静态站
 serve:
     python3 -m http.server -d web 8080

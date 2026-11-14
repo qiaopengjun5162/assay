@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>证明详情 · 数证 DataProof</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="wordmark">数证 <span>DataProof</span></div>
+    <div class="top-meta">机器可复核的证明</div>
+    <nav class="top-nav"><a href="javascript:history.back()">← 返回</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="body">
+  <div class="crumbs">数据集详情 / 证明</div>
+  <h1 class="detail-title" id="name">正在加载…</h1>
+
+  <div class="proof-head">
+    <div class="pass-stamp">PASS</div>
+    <div>
+      <div style="font-weight:700;font-size:17px">Lean 4 内核已复核</div>
+      <div class="hint">报告的每个计数都由定理证明器独立校验；改一个数字，内核立即报错。</div>
+    </div>
+  </div>
+
+  <section class="panel">
+    <h2>证明对象</h2>
+    <table class="kv">
+      <tr><th>样例规模</th><td id="shape">—</td></tr>
+      <tr><th>定理数量</th><td id="count">—</td></tr>
+      <tr><th>快照 SHA-256</th><td id="sha">—</td></tr>
+      <tr><th>校验命令</th><td id="cmd">—</td></tr>
+      <tr><th>证明文件</th><td><a class="btn" href="TopProofs.lean" download>下载 TopProofs.lean</a></td></tr>
+    </table>
+  </section>
+
+  <section class="panel">
+    <h2>定理长什么样</h2>
+    <div class="mono-block" id="theorem"></div>
+    <p class="hint" style="margin-top:10px">
+      每一行是一个真实的样例记录，<code>1</code> 表示该单元格为空。定理断言「第 N 列恰好有 K 条空值」，
+      由 <code>by decide</code> 交给内核穷举验证。
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>能证什么，不能证什么</h2>
+    <ul>
+      <li><strong>能证</strong>：从这份快照推出的计数、比率、阈值判断全部正确</li>
+      <li><strong>不能证</strong>：平台原始数据本身是否真实 —— 信任边界在数据源</li>
+      <li><strong>不能证</strong>：全量 2.26 亿条 —— 证明跑在 5 行样例上，快照哈希钉住时点</li>
+    </ul>
+    <p class="hint" style="margin-top:10px">
+      证明门禁：拒绝含 <code>sorry</code> / <code>admit</code> 的文件；只有内核退出码为 0 才写 PASS。
+    </p>
+  </section>
+
+  <footer class="site">数证 DataProof · 赛道 02 AI 基础设施与可信数据</footer>
+</main>
+
+<script src="app.js"></script>
+<script>initProof().catch((e) => { document.getElementById("body").innerHTML = `<div class="panel"><h2>出错了</h2><p class="hint">${e.message}</p></div>`; });</script>
+</body>
+</html>

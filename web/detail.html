@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>数据集详情 · 数证 DataProof</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="wordmark">数证 <span>DataProof</span></div>
+    <div class="top-meta">单数据集体检报告</div>
+    <nav class="top-nav"><a href="index.html">← 回到榜单</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="body">
+  <div class="crumbs"><a href="index.html">榜单</a> / 数据集详情</div>
+  <h1 class="detail-title" id="title">正在加载…</h1>
+  <div class="meta-chips" id="meta-chips"></div>
+
+  <div class="verdict" id="verdict"></div>
+
+  <h2 style="font-size:16px;margin:0 0 10px">GB/T 36344 六维体检（准确性不评价）</h2>
+  <section class="dims" id="dims"></section>
+
+  <section class="panel">
+    <h2>字段一致性明细</h2>
+    <div id="issues"></div>
+  </section>
+
+  <section class="panel" id="proof"></section>
+
+  <footer class="site">
+    口径：GB/T 36344-2018 · 完整性为样例级（表头 + 5 行）· 准确性不评价
+    <br>数据来源：浙江省公共数据开放平台，抓取于 2026-11-14
+  </footer>
+</main>
+
+<script src="app.js"></script>
+<script>initDetail().catch((e) => { document.getElementById("body").innerHTML = `<div class="panel"><h2>出错了</h2><p class="hint">${e.message}</p></div>`; });</script>
+</body>
+</html>

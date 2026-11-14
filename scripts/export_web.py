@@ -5,29 +5,21 @@
         --proofs ../out-full/proofs.json --out ../web/data.json --limit 300
 """
 import argparse, json, os
-from scoring import score
+from datetime import datetime
+from scoring import score, classify
+
+NOW = datetime(2026, 11, 14)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--items", required=True)
 ap.add_argument("--summary", required=True)
 ap.add_argument("--proofs", default="")
+ap.add_argument("--catalog", default="", help="目录快照，用来补 updateTime 与滞后天数")
 ap.add_argument("--out", required=True)
 ap.add_argument("--limit", type=int, default=300)
 a = ap.parse_args()
 
 STOPPED = {"-1", "999", "不更新"}
-
-
-def score(i):
-    s = 0.0
-    if i.get("missingFields"): s += 3
-    if i.get("extraFields"): s += 2
-    if i.get("allEmptyCols", 0) > 0: s += 2
-    s += min(3, (i.get("emptyRate") or 0) * 6)
-    if str(i.get("updateCycle")) in STOPPED: s += 1
-    if i.get("descLen", 0) < 10: s += 1
-    if not i.get("hasPreview"): s += 1
-    return round(s, 2)
 
 
 items = []
@@ -42,8 +34,29 @@ summary = json.load(open(a.summary, encoding="utf-8"))
 proofs = json.load(open(a.proofs, encoding="utf-8")) if a.proofs and os.path.exists(a.proofs) else []
 proof_by_id = {p.get("id"): p for p in proofs if "sha256" in p}
 
+catalog = {}
+if a.catalog and os.path.exists(a.catalog):
+    for r in json.load(open(a.catalog, encoding="utf-8")):
+        catalog[r["id"]] = r
+
+BAD_CYCLE = {"1": 7, "7": 10, "30": 45, "365": 400, "每年": 400}
+
+def lag_of(item):
+    ut = (catalog.get(item.get("id")) or {}).get("updateTime") or ""
+    if len(ut) < 19:
+        return None, None
+    try:
+        d = (NOW - datetime.strptime(ut[:19], "%Y-%m-%d %H:%M:%S")).days
+    except ValueError:
+        return None, ut
+    cyc = str(item.get("updateCycle"))
+    overdue = cyc in BAD_CYCLE and d > BAD_CYCLE[cyc]
+    return max(0, d), ut
+
 rows = []
 for i in items:
+    lag, ut = lag_of(i)
+    cyc = str(i.get("updateCycle"))
     rows.append({
         "id": i.get("id"),
         "name": i.get("name"),
@@ -51,6 +64,9 @@ for i in items:
         "openType": i.get("openType"),
         "updateCycle": i.get("updateCycle"),
         "updateDetail": i.get("updateCycleDetail"),
+        "updateTime": ut,
+        "lagDays": lag,
+        "overdue": bool(cyc in BAD_CYCLE and lag is not None and lag > BAD_CYCLE[cyc]),
         "declaredCols": i.get("declaredCols"),
         "sampleCols": i.get("sampleCols"),
         "sampleRows": i.get("sampleRows"),
@@ -58,6 +74,7 @@ for i in items:
         "allEmptyCols": i.get("allEmptyCols"),
         "missingFields": i.get("missingFields") or [],
         "extraFields": i.get("extraFields") or [],
+        "schemaKind": classify(i),
         "descLen": i.get("descLen"),
         "hasPreview": i.get("hasPreview"),
         "score": score(i),

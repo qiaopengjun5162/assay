@@ -16,7 +16,7 @@
 |---|---|
 | 数据接口核验 | 完成：24,322 个数据集 77 秒全量枚举，免登录 |
 | 全量体检 | 完成：11.7 分钟，0 条详情失败 |
-| Lean 证明 | 完成：榜单前 20 名 689 条定理，内核 PASS |
+| Lean 证明 | 完成：榜单前 100 名 2,355 条定理，内核 PASS，全部基于已存证快照 |
 | 静态前端 | 完成：榜单 / 详情 / 证明三页，无后端，断网可演示 |
 | CI/CD | 本次落地：fmt / clippy / test / 证明校验 / 密钥扫描 |
 
@@ -26,7 +26,8 @@
 just check                 # 本地完整检查（格式、clippy、测试、证明）
 just audit                 # 全量体检，约 12 分钟，产物在 out-full/
 just report                # 聚合榜单
-just prove                 # 给榜单前 20 名生成 Lean 并校验内核
+just prove                 # 给榜单前 100 名生成 Lean 并校验内核（读存证快照）
+just evidence              # 落盘前 100 名的接口原始响应 + SHA-256
 just web                   # 导出前端数据
 just serve                 # 本地预览 http://localhost:8080
 ```

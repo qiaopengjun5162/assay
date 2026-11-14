@@ -98,7 +98,7 @@ out = {
     "generatedAt": "2026-11-14",
     "source": "浙江省公共数据开放平台（data.zjzwfw.gov.cn）",
     "api": "/dopServer/dataCatalog/{dataQueryPage,catalogDetail,catalogDataPreview}",
-    "summary": summary,
+    "summary": dict(summary, proofCount=len(proof_by_id), evidenceCount=len(evidence)),
     "datasets": rows[: a.limit],
     "total": len(rows),
 }

@@ -31,6 +31,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--items", required=True)
 ap.add_argument("--out", required=True)
 ap.add_argument("--top", type=int, default=20)
+ap.add_argument("--evidence", default="", help="evidence.json：优先用已存证的原始响应生成证明")
 a = ap.parse_args()
 
 items = [json.loads(l) for l in open(a.items, encoding="utf-8") if l.strip()]
@@ -38,10 +39,28 @@ items = [i for i in items if i.get("hasPreview") == 1]
 items.sort(key=score, reverse=True)
 picked = items[:a.top]
 
+ev = {}
+if a.evidence and os.path.exists(a.evidence):
+    for e in json.load(open(a.evidence, encoding="utf-8")).get("items", []):
+        if e.get("sha256") and e.get("files"):
+            ev[e["id"]] = e
+base_dir = os.path.dirname(os.path.abspath(a.evidence)) if a.evidence else ""
+
+
+def load_preview(it):
+    """优先读已存证的原始响应；没有才现场抓。保证「证的就是存下来的那份」。"""
+    e = ev.get(it["id"])
+    if e:
+        path = os.path.join(base_dir, e["files"][1])
+        if os.path.exists(path):
+            return json.load(open(path, encoding="utf-8")), "snapshot"
+    return post("/dataCatalog/catalogDataPreview/" + enc(it["id"]), {"current": 1, "size": 10}), "live"
+
+
 blocks, theorems, meta = [], [], []
 for k, it in enumerate(picked):
     try:
-        pv = post("/dataCatalog/catalogDataPreview/" + enc(it["id"]), {"current": 1, "size": 10})
+        pv, src = load_preview(it)
         rows = pv["result"]["data"]
     except Exception as e:
         meta.append({"name": it.get("name"), "status": f"抓取失败: {e}"})
@@ -67,7 +86,7 @@ for k, it in enumerate(picked):
     meta.append({"index": k, "name": it.get("name"), "id": it["id"], "dept": it.get("dept"),
                  "rows": len(body), "cols": ncols, "emptyRate": it.get("emptyRate"),
                  "allEmptyCols": it.get("allEmptyCols"),
-                 "missingFields": it.get("missingFields"), "sha256": h})
+                 "missingFields": it.get("missingFields"), "sha256": h, "source": src})
 
 head = ("/-\n  自动生成 by proof_top.py\n  平台: 浙江省公共数据开放平台\n"
         "  说明: 1 = 空值；每行对应一条真实样例记录。改动任何数字，内核报错。\n-/\n\n"

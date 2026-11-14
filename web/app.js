@@ -211,7 +211,7 @@ async function initDetail() {
   } else {
     $("#evidence").innerHTML = `
       <h2>证据包</h2>
-      <p class="hint">当前只为问题最多的前 20 个数据集保存了原始响应快照。</p>`;
+      <p class="hint">当前只为问题最多的前 ${data.summary.evidenceCount} 个数据集保存了原始响应快照。</p>`;
   }
 
   /* 证明块 */
@@ -232,7 +232,7 @@ async function initDetail() {
   } else {
     $("#proof").innerHTML = `
       <h2>证明</h2>
-      <p class="hint">这份数据集的证明尚未生成。当前只为问题最多的前 20 个数据集生成了证明，用于演示证明链路；扩到全量只需改一个参数。</p>
+      <p class="hint">这份数据集的证明尚未生成。当前为问题最多的前 ${data.summary.proofCount} 个数据集生成了证明；扩到全量只需改一个参数。</p>
       <p class="hint">说明：证明覆盖的是「从样例快照推出的计数与比率」，不包括平台数据本身的真伪。</p>`;
   }
 }

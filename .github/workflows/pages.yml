@@ -2,8 +2,13 @@ name: pages
 
 on:
   push:
-    branches: [main]
-    paths: ["web/**", ".github/workflows/pages.yml"]
+    branches: [main, refactor/rust]
+    paths:
+      - "crates/web/**"
+      - "web/data.json"
+      - "web/evidence/**"
+      - "web/TopProofs.lean"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -16,17 +21,46 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # 分支上只构建、不部署：产物可下载，用来验证 workflow 本身是对的。
+  build:
+    name: 构建 WASM 站点
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: pages
+
+      - name: Install trunk
+        run: |
+          curl -sSL https://github.com/trunk-rs/trunk/releases/download/v0.22.1/trunk-x86_64-unknown-linux-musl.tar.gz \
+            | tar -xz
+          sudo mv trunk /usr/local/bin/
+
+      - name: Build
+        working-directory: crates/web
+        run: trunk build --release
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: crates/web/dist
+
   deploy:
+    name: 部署到 GitHub Pages
+    # 只有 main 才部署；分支只跑 build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      # 只发布 web/：静态站读同目录的 data.json，无后端
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: web
       - id: deployment
         uses: actions/deploy-pages@v4

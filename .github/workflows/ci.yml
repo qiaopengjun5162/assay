@@ -2,7 +2,7 @@ name: ci
 
 on:
   push:
-    branches: [main]
+    branches: [main, refactor/rust]
   pull_request:
   workflow_dispatch:
 
@@ -14,11 +14,8 @@ env:
 
 jobs:
   rust:
-    name: rust · fmt / clippy / test / build
+    name: rust · fmt / clippy / test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: rust-core
     steps:
       - uses: actions/checkout@v4
 
@@ -27,20 +24,55 @@ jobs:
           components: rustfmt, clippy
 
       - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: rust-core
 
       - name: Format
         run: cargo fmt --all -- --check
 
-      - name: Clippy（零容忍，抄 moonpub）
-        run: cargo clippy --all-targets --all-features --tests --benches -- -D warnings
+      - name: Clippy（零容忍）
+        run: cargo clippy -p dataproof-core -p dataproof --all-targets -- -D warnings
 
-      - name: Test（含黄金文件测试）
-        run: cargo test --all-features
+      - name: Test
+        run: cargo test -p dataproof-core -p dataproof
 
       - name: Build release
-        run: cargo build --release --locked
+        run: cargo build --release --locked -p dataproof
+
+  wasm:
+    name: wasm · Leptos 前端构建
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+          components: clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: wasm
+
+      # 用预编译包：cargo install trunk 在 CI 里要编译几分钟
+      - name: Install trunk
+        run: |
+          curl -sSL https://github.com/trunk-rs/trunk/releases/download/v0.22.1/trunk-x86_64-unknown-linux-musl.tar.gz \
+            | tar -xz
+          sudo mv trunk /usr/local/bin/
+          trunk --version
+
+      - name: Clippy（wasm 目标，零容忍）
+        run: cargo clippy -p dataproof-web --target wasm32-unknown-unknown -- -D warnings
+
+      - name: Build dist
+        working-directory: crates/web
+        run: trunk build --release
+
+      - name: 产物自检
+        run: |
+          test -f crates/web/dist/index.html
+          test -f crates/web/dist/data.json
+          test -f crates/web/dist/TopProofs.lean
+          ls -lh crates/web/dist | head
 
   lean:
     name: lean · 证明内核校验
@@ -61,7 +93,7 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
 
       - name: 内核校验（拒绝 sorry / admit）
-        run: ./scripts/check_proofs.sh rust-core/fixtures/expected.lean
+        run: ./ci/check_proofs.sh fixtures/expected.lean
 
   secret-scan:
     name: 密钥扫描
@@ -77,16 +109,3 @@ jobs:
         run: |
           curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz | tar -xz gitleaks
           ./gitleaks detect --source . --redact -v --exit-code=1 --log-opts="--all"
-
-  scripts:
-    name: python 脚本语法
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: 编译检查
-        run: python3 -m py_compile scripts/*.py
-      - name: 黄金分类一致性（Rust 与 Python 同口径）
-        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v

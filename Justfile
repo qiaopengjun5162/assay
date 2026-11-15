@@ -7,76 +7,84 @@ out := "out-full"
 default:
     @just --list
 
+# 编译（core + cli）
+build:
+    cargo build --release -p dataproof-core -p dataproof
+
 # 格式化
 fmt:
-    cd rust-core && cargo fmt --all
+    cargo fmt --all
 
-# 格式检查（CI 用）
+# 格式检查
 fmt-check:
-    cd rust-core && cargo fmt --all -- --check
+    cargo fmt --all -- --check
 
-# 静态分析（零容忍）
+# 静态分析（core/cli，零容忍）
 clippy:
-    cd rust-core && cargo clippy --all-targets --all-features --tests --benches -- -D warnings
+    cargo clippy -p dataproof-core -p dataproof --all-targets -- -D warnings
 
-# 单元 + 黄金文件测试
+# 前端静态分析（wasm 目标）
+clippy-wasm:
+    cd crates/web && cargo clippy --target wasm32-unknown-unknown -- -D warnings
+
+# 单元 + 集成测试
 test:
-    cd rust-core && cargo test --all-features
+    cargo test -p dataproof-core -p dataproof
 
 # 证明门禁：拒绝 sorry，内核必须 PASS
-proofs file="rust-core/fixtures/expected.lean":
-    ./scripts/check_proofs.sh {{file}}
+proofs file="fixtures/expected.lean":
+    ./ci/check_proofs.sh {{file}}
 
 # 本地完整检查（提交前跑这个）
 check: fmt-check clippy test proofs
-    python3 -m py_compile scripts/*.py
     echo "全部通过"
 
 # 1) 全量体检（真实网络，约 12 分钟；limit=0 表示全部）
 audit threads="8" limit="0":
-    cd rust-core && cargo run --release --bin full_audit -- --threads {{threads}} --limit {{limit}} --out ../{{out}}
+    cargo run --release -p dataproof -- --out {{out}} audit --threads {{threads}} --limit {{limit}}
 
-# 2) 聚合榜单（产出 summary.json / leaderboard.md / leaderboard_dept.md）
+# 2) 聚合榜单
 report:
-    python3 scripts/aggregate.py --items {{out}}/items.jsonl --catalog {{out}}/catalog_snapshot.json --out {{out}}
+    cargo run --release -p dataproof -- --out {{out}} report
 
 # 3) 解释层：模型写人话，数字必须过护栏
-explain top="100":
-    python3 scripts/explain.py --items {{out}}/items.jsonl --catalog {{out}}/catalog_snapshot.json --out {{out}} --top {{top}}
+explain top="100" threads="4":
+    cargo run --release -p dataproof -- --out {{out}} explain --top {{top}} --threads {{threads}}
 
-# 4) 证据包：落盘接口原始响应并算哈希（确定性，不经模型）
-evidence top="100":
-    python3 scripts/evidence.py --items {{out}}/items.jsonl --out {{out}} --top {{top}}
+# 4) 证据包：落盘接口原始响应并算哈希
+evidence top="100" threads="4":
+    cargo run --release -p dataproof -- --out {{out}} evidence --top {{top}} --threads {{threads}}
 
-# 5) 榜单前 N 名生成 Lean 并校验（优先读存证快照）
+# 5) 生成 Lean 定理并跑内核
 prove top="100":
-    python3 scripts/proof_top.py --items {{out}}/items.jsonl --out {{out}} --top {{top}} --evidence {{out}}/evidence.json
-    ./scripts/check_proofs.sh {{out}}/TopProofs.lean
+    cargo run --release -p dataproof -- --out {{out}} prove --top {{top}}
 
-# 6) 发布到静态站（数据 + 证明 + 证据一次到位）
+# 6) 导出静态站数据
+export limit="500":
+    cargo run --release -p dataproof -- --out {{out}} export --limit {{limit}}
+
+# 7) 构建 WASM 前端（trunk → crates/web/dist）
 web:
-    cp {{out}}/TopProofs.lean web/TopProofs.lean
-    rm -rf web/evidence
-    cp -R {{out}}/evidence web/evidence
-    python3 scripts/export_web.py --items {{out}}/items.jsonl --summary {{out}}/summary.json --proofs {{out}}/proofs.json --catalog {{out}}/catalog_snapshot.json --evidence {{out}}/evidence.json --explanations {{out}}/explanations.json --out web/data.json --limit 500
+    cd crates/web && trunk build --release
 
-# 全流水线：体检 → 榜单 → 证据 → 证明 → 静态站
-all: audit report explain evidence prove web
+# 全流水线：体检 → 榜单 → 解释 → 证据 → 证明 → 导出 → 前端
+all: audit report explain evidence prove export web
     echo "完成：just serve 预览"
 
-# 小样本端到端自检（200 条，不覆盖正式产物）
+# 小样本端到端自检（不覆盖正式产物）
 smoke:
     just out=out-smoke audit 8 200
     just out=out-smoke report
-    just out=out-smoke explain 3
-    just out=out-smoke evidence 5
+    just out=out-smoke explain 3 2
+    just out=out-smoke evidence 5 2
     just out=out-smoke prove 5
-    echo "smoke 通过：out-smoke/ 下有 summary、证据、证明"
+    just out=out-smoke export 50 --dest out-smoke/data.json
+    echo "smoke 通过：out-smoke/ 下有榜单、解读、证据、证明、前端数据"
 
 # 篡改演示：改一位数字，让内核当场拒绝
-tamper file="out-full/TopProofs.lean":
-    ./scripts/tamper_demo.sh {{file}}
+tamper:
+    cargo run --release -p dataproof -- --out {{out}} tamper
 
-# 本地预览静态站
-serve:
-    python3 -m http.server -d web 8080
+# 本地预览（Rust 静态服务）
+serve port="8080":
+    cargo run --release -p dataproof -- serve --dir crates/web/dist --port {{port}}

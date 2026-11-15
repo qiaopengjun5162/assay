@@ -265,7 +265,13 @@ fn serve(dir: &str, port: u16) -> dataproof_core::Result<()> {
         if rel.is_empty() {
             rel = "index.html".into();
         }
-        let target = std::fs::canonicalize(root.join(&rel)).ok();
+        let mut target = std::fs::canonicalize(root.join(&rel)).ok();
+        // 目录请求回落到 index.html（GitHub Pages 也是这个行为）
+        if let Some(p) = target.clone() {
+            if p.is_dir() {
+                target = std::fs::canonicalize(p.join("index.html")).ok();
+            }
+        }
         let (status, body, mime) = match target {
             Some(p) if p.starts_with(&root) && p.is_file() => {
                 ("200 OK", std::fs::read(&p).unwrap_or_default(), mime_of(&p))

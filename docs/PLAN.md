@@ -203,7 +203,7 @@ dataproof/
 
 ## 完成状态（2026-11-14）
 
-- 全流水线：`just audit` → `just report` → `just evidence` → `just prove` → `just web`
+- 全流水线：`just audit` → `just report` → `just explain` → `just evidence` → `just prove` → `just web`
 - 端到端自检：`just smoke`（200 条，约 40 秒，产物独立在 out-smoke/）
 - 数字冻结在 2026-11-14 的快照；`just all` 会刷新快照，**路演前别重跑**，否则文章与榜单的对不上
 - CI 四关：fmt/clippy/test、黄金文件、Lean 内核、密钥扫描

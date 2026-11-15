@@ -194,6 +194,19 @@ async function initDetail() {
   $("#issues").innerHTML = issue.length ? `<ul>${issue.map((x) => `<li>${x}</li>`).join("")}</ul>`
     : `<p class="hint">未发现字段层面的不一致。</p>`;
 
+  /* AI 解读（数字护栏） */
+  if (d.explain && d.explain.text) {
+    const ok = d.explain.status === "pass";
+    $("#explain").innerHTML = `
+      <h2>AI 解读 <span class="chip ${ok ? "ok" : "warn"}">${ok ? "数字已核对" : "未通过核对"}</span></h2>
+      <p style="font-size:15px;margin:8px 0 4px">${esc(d.explain.text)}</p>
+      <p class="hint">这段文字由模型生成，只允许使用报告里的数字：输出中的每个数字都会和事实逐个比对，对不上就重写；重写仍不合格就不展示。模型不参与取数。</p>`;
+  } else {
+    $("#explain").innerHTML = `
+      <h2>AI 解读</h2>
+      <p class="hint">这份数据集还没有生成解读。当前为问题最多的前 ${data.summary.explainCount || 0} 个数据集生成了带数字护栏的解读。</p>`;
+  }
+
   /* 证据块 */
   if (d.evidence) {
     const files = (d.evidence.files || []).map((f) =>

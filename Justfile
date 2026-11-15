@@ -40,30 +40,35 @@ audit threads="8" limit="0":
 report:
     python3 scripts/aggregate.py --items {{out}}/items.jsonl --catalog {{out}}/catalog_snapshot.json --out {{out}}
 
-# 3) 证据包：落盘接口原始响应并算哈希（确定性，不经模型）
+# 3) 解释层：模型写人话，数字必须过护栏
+explain top="100":
+    python3 scripts/explain.py --items {{out}}/items.jsonl --catalog {{out}}/catalog_snapshot.json --out {{out}} --top {{top}}
+
+# 4) 证据包：落盘接口原始响应并算哈希（确定性，不经模型）
 evidence top="100":
     python3 scripts/evidence.py --items {{out}}/items.jsonl --out {{out}} --top {{top}}
 
-# 4) 榜单前 N 名生成 Lean 并校验（优先读存证快照）
+# 5) 榜单前 N 名生成 Lean 并校验（优先读存证快照）
 prove top="100":
     python3 scripts/proof_top.py --items {{out}}/items.jsonl --out {{out}} --top {{top}} --evidence {{out}}/evidence.json
     ./scripts/check_proofs.sh {{out}}/TopProofs.lean
 
-# 5) 发布到静态站（数据 + 证明 + 证据一次到位）
+# 6) 发布到静态站（数据 + 证明 + 证据一次到位）
 web:
     cp {{out}}/TopProofs.lean web/TopProofs.lean
     rm -rf web/evidence
     cp -R {{out}}/evidence web/evidence
-    python3 scripts/export_web.py --items {{out}}/items.jsonl --summary {{out}}/summary.json --proofs {{out}}/proofs.json --catalog {{out}}/catalog_snapshot.json --evidence {{out}}/evidence.json --out web/data.json --limit 500
+    python3 scripts/export_web.py --items {{out}}/items.jsonl --summary {{out}}/summary.json --proofs {{out}}/proofs.json --catalog {{out}}/catalog_snapshot.json --evidence {{out}}/evidence.json --explanations {{out}}/explanations.json --out web/data.json --limit 500
 
 # 全流水线：体检 → 榜单 → 证据 → 证明 → 静态站
-all: audit report evidence prove web
+all: audit report explain evidence prove web
     echo "完成：just serve 预览"
 
 # 小样本端到端自检（200 条，不覆盖正式产物）
 smoke:
     just out=out-smoke audit 8 200
     just out=out-smoke report
+    just out=out-smoke explain 3
     just out=out-smoke evidence 5
     just out=out-smoke prove 5
     echo "smoke 通过：out-smoke/ 下有 summary、证据、证明"

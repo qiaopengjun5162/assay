@@ -24,7 +24,8 @@
 | 全量体检 | 完成：11.7 分钟，0 条详情失败 |
 | Lean 证明 | 完成：榜单前 100 名 2,355 条定理，内核 PASS，全部基于已存证快照 |
 | 静态前端 | 完成：榜单 / 详情 / 证明三页，无后端，断网可演示 |
-| CI/CD | 本次落地：fmt / clippy / test / 证明校验 / 密钥扫描 |
+| AI 解释层 | 完成：100 条解读，数字护栏 100/100 通过（越界即重写） |
+| CI/CD | 本次落地：fmt / clippy / test / 证明校验 / 密钥扫描 / 护栏单测 |
 
 ## 快速开始
 
@@ -40,9 +41,10 @@ just serve     # 本地预览 http://localhost:8080
 ```bash
 just audit 8 0     # 1) 全量体检；参数 = 线程数、条数上限（0 = 全部）。约 12 分钟
 just report        # 2) 聚合榜单 -> summary.json / leaderboard.md
-just evidence 100  # 3) 落盘前 100 名的接口原始响应 + SHA-256
-just prove 100     # 4) 生成 2,355 条定理并跑 Lean 内核（读存证快照）
-just web           # 5) 数据 + 证明 + 证据发布到 web/
+just explain 100   # 3) 模型写解读，每个数字必须来自事实（要约 1 分钟，需 API）
+just evidence 100  # 4) 落盘前 100 名的接口原始响应 + SHA-256
+just prove 100     # 5) 生成 2,355 条定理并跑 Lean 内核（读存证快照）
+just web           # 6) 数据 + 解读 + 证明 + 证据发布到 web/
 ```
 
 `out-full/` 不入库（`.gitignore` 里排除，全量明细 8.7MB）。换目录跑批用变量覆盖：

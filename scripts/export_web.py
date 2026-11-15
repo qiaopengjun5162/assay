@@ -16,6 +16,7 @@ ap.add_argument("--summary", required=True)
 ap.add_argument("--proofs", default="")
 ap.add_argument("--catalog", default="", help="目录快照，用来补 updateTime 与滞后天数")
 ap.add_argument("--evidence", default="", help="证据包索引 evidence.json")
+ap.add_argument("--explanations", default="", help="解释层 explanations.json")
 ap.add_argument("--out", required=True)
 ap.add_argument("--limit", type=int, default=300)
 a = ap.parse_args()
@@ -64,6 +65,12 @@ def lag_of(item):
     overdue = cyc in BAD_CYCLE and d > BAD_CYCLE[cyc]
     return max(0, d), ut
 
+explanations = {}
+if a.explanations and os.path.exists(a.explanations):
+    for e in json.load(open(a.explanations, encoding="utf-8")).get("items", []):
+        if e.get("text"):
+            explanations[e["id"]] = {"text": e["text"], "status": e.get("status")}
+
 rows = []
 for i in items:
     lag, ut = lag_of(i)
@@ -91,6 +98,7 @@ for i in items:
         "score": score(i),
         "proof": proof_by_id.get(i.get("id")),
         "evidence": evidence.get(i.get("id")),
+        "explain": explanations.get(i.get("id")),
     })
 
 rows.sort(key=lambda r: r["score"], reverse=True)
@@ -98,7 +106,7 @@ out = {
     "generatedAt": "2026-11-14",
     "source": "浙江省公共数据开放平台（data.zjzwfw.gov.cn）",
     "api": "/dopServer/dataCatalog/{dataQueryPage,catalogDetail,catalogDataPreview}",
-    "summary": dict(summary, proofCount=len(proof_by_id), evidenceCount=len(evidence)),
+    "summary": dict(summary, proofCount=len(proof_by_id), evidenceCount=len(evidence), explainCount=len(explanations)),
     "datasets": rows[: a.limit],
     "total": len(rows),
 }

@@ -13,14 +13,9 @@
 
 ## 1. 当前状态（重要）
 
-| 分支 | 内容 | 状态 |
-|---|---|---|
-| `main` | Python + 原生 JS 原型（可运行、已上线） | 稳定，线上演示指向它构建的 `web/` |
-| `refactor/rust` | 全 Rust 重构：core / cli / Leptos WASM | 功能已验证，**CI/Pages 尚未切换** |
+`main` 就是全 Rust 版本，已合并并上线（2026-11-15）。没有并行的旧版分支了。
 
-**并行开发前先确认你在哪个分支。** 两个分支的文件结构完全不同。
-
-`refactor/rust` 上已经验证过的事（不要重复怀疑，除非你有新证据）：
+已经验证过的事（不要重复怀疑，除非你有新证据）：
 
 - `just check` 全绿（fmt / clippy core+cli / 23 个单测 / 证明门禁）
 - `just clippy-wasm` 全绿
@@ -29,18 +24,22 @@
 - 导出对齐：500 条、前 200 条关键字段 0 差异
 - 前端：WASM 实测榜单 500 行、搜索过滤、详情六维、AI 解读、证据包、证明页 PASS、浏览器返回正常
 
-## 2. 还没做完的事（按优先级）
+## 2. 已完成 / 待办
 
-1. **CI 切换**：`.github/workflows/ci.yml` 目前仍指向 Python 脚本与已删除的 `rust-core/`。
-   需要改成：
-   - `rust` job：`cargo fmt --check`、`cargo clippy -p dataproof-core -p dataproof --all-targets -- -D warnings`、`cargo test`
-   - `wasm` job：`rustup target add wasm32-unknown-unknown`、装 trunk（可用预编译包，0.22.x）、`cd crates/web && trunk build --release`
-   - `lean` job：elan + `./ci/check_proofs.sh fixtures/expected.lean`
-   - `secret-scan` job：保持 gitleaks（根提交不能用 `base..head`，用 `--log-opts="--all"`）
-2. **Pages 切换**：`pages.yml` 需要构建 WASM 后部署 `crates/web/dist`，而不是直接发布 `web/`。
-3. **文档同步**：`docs/DECISIONS.md` 补 D12–D15（Rust 工作区、WASM 前端、口径对齐策略、去掉 Python）。
-4. **提交与推送**：`refactor/rust` 上的改动尚未 commit/push。
-5. **可选**：`cargo vendor` 供现场离线构建；比赛现场 crates.io 可能 403。
+已完成（2026-11-15）：
+- CI 四个 job：rust（fmt/clippy/test/build）、wasm（trunk 构建 + clippy）、lean（内核校验）、密钥扫描
+- Pages 两段式：分支只构建 artifact，`main` 才部署 `crates/web/dist`
+- 线上已切到 WASM 版：500 行榜单、详情六维、AI 解读、证据下载、证明页 PASS、浏览器返回正常
+- `docs/DECISIONS.md` 已补 D12–D15
+
+待办（非阻塞）：
+1. `cargo vendor` 供现场离线构建（比赛网络可能 403）
+2. 证明从 100 扩到 500 时的 Lean 编译时间评估
+3. 若换平台：把 `api.rs` 抽成 `CatalogSource` trait
+
+一个已经踩过的坑，别再踩：
+**trunk 默认生成绝对路径**（`/dataproof-web-*.js`），项目站点在 `/dataproof/` 子路径下会 404、页面空白。
+`Trunk.toml` 里 `public_url = "./"` 不能删。
 
 ## 3. 必跑命令
 

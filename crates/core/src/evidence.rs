@@ -3,7 +3,7 @@
 //! 这里刻意不经过任何模型——2026-11-14 实测：`read_url` 读该平台详情页返回 0 字节文档，
 //! 模型仍然「抄」出了不存在的数字。存证只能确定性抓取。
 
-use crate::api::{enc, Client};
+use crate::api::CatalogSource;
 use crate::model::{Dataset, EvidenceEntry};
 use crate::util::{now_iso8601, safe_id};
 use crate::Result;
@@ -23,7 +23,7 @@ pub fn capture_top(
     items: &[Dataset],
     top: usize,
     out_dir: &str,
-    client: &Client,
+    client: &dyn CatalogSource,
     threads: usize,
 ) -> Result<EvidenceOutcome> {
     let mut picked: Vec<&Dataset> = items.iter().filter(|d| d.has_preview == 1).collect();
@@ -79,17 +79,11 @@ pub fn capture_top(
     })
 }
 
-fn capture_one(d: &Dataset, root: &Path, client: &Client) -> Result<EvidenceEntry> {
+fn capture_one(d: &Dataset, root: &Path, client: &dyn CatalogSource) -> Result<EvidenceEntry> {
     let folder = root.join(safe_id(&d.id));
     fs::create_dir_all(&folder)?;
-    let detail = client.post_raw(
-        &format!("/dataCatalog/catalogDetail/{}", enc(&d.id)),
-        &serde_json::json!({}),
-    )?;
-    let preview = client.post_raw(
-        &format!("/dataCatalog/catalogDataPreview/{}", enc(&d.id)),
-        &serde_json::json!({"current": 1, "size": 10}),
-    )?;
+    let detail = client.detail_raw(&d.id)?;
+    let preview = client.preview_raw(&d.id, 10)?;
     fs::write(folder.join("detail.json"), &detail)?;
     fs::write(folder.join("preview.json"), &preview)?;
 

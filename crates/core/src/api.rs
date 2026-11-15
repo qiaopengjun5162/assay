@@ -19,6 +19,21 @@ pub fn enc(id: &str) -> String {
         .replace('=', "%3D")
 }
 
+/// 平台适配层：换一个开放数据平台，只实现这个 trait，其余流程不用动。
+///
+/// 约定：`detail_raw` / `preview_raw` 返回**原始响应字节**，
+/// 证据包要对它算哈希，不能经过二次序列化。
+pub trait CatalogSource: Send + Sync {
+    /// 展示用平台名（写进产物与页面）
+    fn platform(&self) -> &'static str;
+    fn catalog_page(&self, current: usize) -> Result<(usize, usize, Vec<CatalogRecord>)>;
+    fn catalog_all(&self, threads: usize) -> Result<Vec<CatalogRecord>>;
+    fn detail(&self, id: &str) -> Result<Value>;
+    fn preview(&self, id: &str, size: usize) -> Result<Value>;
+    fn detail_raw(&self, id: &str) -> Result<Vec<u8>>;
+    fn preview_raw(&self, id: &str, size: usize) -> Result<Vec<u8>>;
+}
+
 pub struct Client {
     agent: ureq::Agent,
 }
@@ -148,6 +163,36 @@ impl Client {
 
     pub fn preview(&self, id: &str, size: usize) -> Result<Value> {
         self.post(
+            &format!("/dataCatalog/catalogDataPreview/{}", enc(id)),
+            &json!({"current": 1, "size": size}),
+        )
+    }
+}
+
+impl CatalogSource for Client {
+    fn platform(&self) -> &'static str {
+        "浙江省公共数据开放平台"
+    }
+    fn catalog_page(&self, current: usize) -> Result<(usize, usize, Vec<CatalogRecord>)> {
+        Client::catalog_page(self, current)
+    }
+    fn catalog_all(&self, threads: usize) -> Result<Vec<CatalogRecord>> {
+        Client::catalog_all(self, threads)
+    }
+    fn detail(&self, id: &str) -> Result<Value> {
+        Client::detail(self, id)
+    }
+    fn preview(&self, id: &str, size: usize) -> Result<Value> {
+        Client::preview(self, id, size)
+    }
+    fn detail_raw(&self, id: &str) -> Result<Vec<u8>> {
+        self.post_raw(
+            &format!("/dataCatalog/catalogDetail/{}", enc(id)),
+            &json!({}),
+        )
+    }
+    fn preview_raw(&self, id: &str, size: usize) -> Result<Vec<u8>> {
+        self.post_raw(
             &format!("/dataCatalog/catalogDataPreview/{}", enc(id)),
             &json!({"current": 1, "size": size}),
         )

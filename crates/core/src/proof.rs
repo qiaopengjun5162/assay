@@ -3,7 +3,7 @@
 //! 优先读证据包里的 `preview.json`——证的就是已经落盘并算过哈希的那份字节，
 //! 而不是重新抓一遍。这样「证明对象」和「存证对象」是同一份数据。
 
-use crate::api::{preview_rows, Client};
+use crate::api::{preview_rows, CatalogSource};
 use crate::lean;
 use crate::model::{Dataset, ProofEntry};
 use crate::util::safe_id;
@@ -24,7 +24,7 @@ pub fn prove_top(
     items: &[Dataset],
     top: usize,
     out_dir: &str,
-    client: &Client,
+    client: &dyn CatalogSource,
 ) -> Result<ProofOutcome> {
     let mut picked: Vec<&Dataset> = items.iter().filter(|d| d.has_preview == 1).collect();
     picked.sort_by(|a, b| {
@@ -145,7 +145,7 @@ fn evidence_exists(d: &Dataset, out_dir: &str) -> bool {
         .exists()
 }
 
-fn load_rows(d: &Dataset, out_dir: &str, client: &Client) -> Option<Vec<Vec<String>>> {
+fn load_rows(d: &Dataset, out_dir: &str, client: &dyn CatalogSource) -> Option<Vec<Vec<String>>> {
     let path = Path::new(out_dir)
         .join("evidence")
         .join(safe_id(&d.id))

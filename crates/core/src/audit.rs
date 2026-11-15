@@ -6,7 +6,7 @@
 //!
 //! 只落 items 不落目录快照，是新环境跑 `report` 时时效性整块为空的原因。
 
-use crate::api::{preview_rows, Client};
+use crate::api::{preview_rows, CatalogSource};
 use crate::matrix;
 use crate::model::{CatalogRecord, Dataset};
 use crate::{Error, Result};
@@ -31,7 +31,7 @@ pub struct AuditOutcome {
 }
 
 /// 跑一次体检。`done.txt` 记录已完成条数，用于续跑。
-pub fn audit(opts: &AuditOptions, client: &Client) -> Result<AuditOutcome> {
+pub fn audit(opts: &AuditOptions, client: &dyn CatalogSource) -> Result<AuditOutcome> {
     let t0 = Instant::now();
     fs::create_dir_all(&opts.out_dir)?;
 
@@ -119,7 +119,12 @@ pub fn audit(opts: &AuditOptions, client: &Client) -> Result<AuditOutcome> {
     })
 }
 
-fn audit_one(rec: &CatalogRecord, index: usize, client: &Client, failed: &AtomicUsize) -> Dataset {
+fn audit_one(
+    rec: &CatalogRecord,
+    index: usize,
+    client: &dyn CatalogSource,
+    failed: &AtomicUsize,
+) -> Dataset {
     let mut d = Dataset {
         i: Some(index),
         id: rec.id.clone(),

@@ -32,8 +32,24 @@
 - 线上已切到 WASM 版：500 行榜单、详情六维、AI 解读、证据下载、证明页 PASS、浏览器返回正常
 - `docs/DECISIONS.md` 已补 D12–D15
 
+现场离线预案（已实测 2026-11-15）：
+```bash
+# 联网时做一次（vendor 目录 200MB，不要进 git）
+cargo vendor vendor
+
+# cargo 配置（可临时用 --config，避免把绝对路径写进仓库）
+cargo build --release --offline -p dataproof \
+  --config 'source.crates-io.replace-with="vendored-sources"' \
+  --config 'source.vendored-sources.directory="vendor"'
+# 实测：30 秒完成，exit 0
+
+# wasm 也要离线时：同样加 --offline，wasm32 目标提前装好
+cargo build -p dataproof-web --target wasm32-unknown-unknown --release --offline ...
+# 注意：trunk build 会去下载 wasm-bindgen CLI，离线前先装一次：
+cargo install wasm-bindgen-cli --version <与 Cargo.lock 一致>
+```
+
 待办（非阻塞）：
-1. `cargo vendor` 供现场离线构建（比赛网络可能 403）
 2. 证明从 100 扩到 500：已实测 63.9s / 5,923 条 / 506K，见 ARCHITECTURE 第 8 节；扩之前先决定要不要一起扩证据包（+16MB）
 3. 若换平台：把 `api.rs` 抽成 `CatalogSource` trait
 

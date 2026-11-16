@@ -22,3 +22,6 @@ __pycache__/
 
 # 前端构建产物
 crates/web/dist/
+
+# 离线依赖（现场预案，200MB，不进 git）
+vendor/

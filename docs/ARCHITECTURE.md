@@ -245,5 +245,8 @@ cd crates/web && trunk build --release                 # WASM → crates/web/dis
 
 - **换平台**：`api.rs` 抽 `Trait CatalogSource`，把三个端点参数化；`audit` 不感知具体平台。
 - **加指标**：在 `Dataset` 增加字段 → `audit` 计算 → `aggregate` 统计 → `export` 透出 → 前端展示。
-- **扩证明**：`prove --top N`；超过 500 时注意 Lean 单文件编译时间（线性增长）。
+- **扩证明**：`prove --top N`。实测（2026-11-15，M2 Pro）：
+  100 条 → 2,355 定理 / 15.3s / 186K；500 条 → 5,923 定理 / 63.9s / 506K（含补抓 400 份预览）。
+  一次 `lean` 编译约 60s 是可以接受的，但**扩证明必须同时扩证据包**，否则前 100 之外
+  的定理会依赖现场抓取，破坏「证明对象 = 存证对象」。500 份证据约 16MB，Pages 与仓库都要掂量。
 - **接交易所门禁**：把 `threshold` 做成配置，`prove` 的输出作为准入证据。

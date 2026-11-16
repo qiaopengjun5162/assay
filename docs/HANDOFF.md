@@ -50,7 +50,12 @@ cargo install wasm-bindgen-cli --version <与 Cargo.lock 一致>
 ```
 
 待办（非阻塞）：
-2. 证明从 100 扩到 500：已实测 63.9s / 5,923 条 / 506K，见 ARCHITECTURE 第 8 节；扩之前先决定要不要一起扩证据包（+16MB）
+2. **第二个平台**（上海 data.sh.gov.cn，11,477 个数据集）：先按这三步探明接口，再写一个 `CatalogSource` 实现——
+   a) 打开数据集列表页，DevTools 里筛 XHR，找到列表请求的 URL、分页参数（浙江是 `current/size`，`page` 会被忽略）
+   b) 找详情与预览两个端点，确认 id 是否需要 URL 编码（浙江是 base64，含 `+ / =`）
+   c) 用 `curl` 直接打一次，确认返回结构里「声明字段」与「样例行」分别在哪一层
+   拿到这三样，实现 7 个方法即可，后续采集/聚合/证明/导出不用改。
+3. 证明从 100 扩到 500：已实测 63.9s / 5,923 条 / 506K，见 ARCHITECTURE 第 8 节；扩之前先决定要不要一起扩证据包（+16MB）
 3. 若换平台：把 `api.rs` 抽成 `CatalogSource` trait
 
 一个已经踩过的坑，别再踩：

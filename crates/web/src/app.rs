@@ -137,6 +137,15 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
     let s = data.summary.clone();
     let rows = RwSignal::new(data.datasets.clone());
 
+    // 部门维度：按停更数量排，取前 12
+    let mut dept_top: Vec<(String, crate::model::DeptRow)> = s
+        .by_dept
+        .iter()
+        .map(|(k, v)| (k.clone(), v.clone()))
+        .collect();
+    dept_top.sort_by(|a, b| b.1.stopped.cmp(&a.1.stopped).then(b.1.n.cmp(&a.1.n)));
+    dept_top.truncate(12);
+
     let filtered = move || {
         let q = search.get().to_lowercase();
         let dd = dept.get();
@@ -185,6 +194,22 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             "覆盖：已证 "<b>{s.proof_count}</b>" 条 · 证据包 "<b>{s.evidence_count}</b>" 份 · AI 解读 "<b>{s.explain_count}</b>" 条"
             "（解读与证明都只覆盖问题最多的前 100 名）"
         </p>
+
+        <section class="deptboard">
+            <h2>"问题最多的部门"</h2>
+            <p class="hint">"按「停更数据集数量」排序，取前 12 个部门。平均空值率来自样例（每份 5 行左右），只作参考。"</p>
+            <div class="deptgrid">
+                {dept_top.into_iter().map(|(name, d)| view! {
+                    <div class="deptcard">
+                        <div class="dname">{name}</div>
+                        <div class="dmeta">{format!(
+                            "{} 个数据集 · 停更 {} · 平均空值率 {:.1}%",
+                            d.n, d.stopped, d.empty_avg * 100.0
+                        )}</div>
+                    </div>
+                }).collect_view()}
+            </div>
+        </section>
 
         <section class="filters">
             <input class="search" type="search" placeholder="搜索数据集名称或部门…" prop:value=move || search.get()

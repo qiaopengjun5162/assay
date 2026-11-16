@@ -42,6 +42,28 @@ pub struct Summary {
     pub evidence_count: usize,
     #[serde(default)]
     pub explain_count: usize,
+    /// 部门维度统计，key 是部门全名
+    #[serde(default)]
+    pub by_dept: std::collections::BTreeMap<String, DeptRow>,
+}
+
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct DeptRow {
+    #[serde(default)]
+    pub n: u64,
+    #[serde(default)]
+    pub preview: u64,
+    #[serde(default)]
+    pub empty_avg: f64,
+    #[serde(default)]
+    pub stopped: u64,
+    #[serde(default)]
+    pub mismatch: u64,
+    #[serde(default)]
+    pub all_empty: u64,
+    #[serde(default)]
+    pub no_desc: u64,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]

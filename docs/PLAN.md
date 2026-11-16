@@ -3,6 +3,10 @@
 > 第五元素 · 杭州 2026 AI × 数据创新赛｜赛道 02 AI 基础设施与可信数据
 > 报名：2026-11-25 截止｜比赛：2026-12-04 ~ 12-08
 > 本文件是施工图，不是介绍文。介绍文见 `notes/tech/ai/2026-11-14-dataproof-idea.md`。
+>
+> **状态（2026-11-15）：已上线，全 Rust。** 线上 https://qiaopengjun5162.github.io/dataproof/
+> 本文件下方的目录树与 CI 表已按 Rust 工作区更新；需求见 `REQUIREMENTS.md`，架构见 `ARCHITECTURE.md`，
+> 接手规则见 `HANDOFF.md`。
 
 ---
 
@@ -92,27 +96,19 @@ dataproof/
 ├── .github/workflows/
 │   ├── ci.yml                # rust job + lean job + secret-scan job
 │   └── release.yml           # tag → 构建二进制（决赛前）
-├── fixtures/                 # 固定快照，测试不碰网络
-│   ├── snapshot.json         # 3 个数据集的真实样例（已脱敏）
-│   └── expected.lean         # 黄金文件：生成的 Lean 应与之一致
-├── src/
-│   ├── lib.rs                # 纯函数：空值矩阵 / 定理生成 / 字段一致性分类（带单测）
-│   ├── main.rs               # 单次体检 CLI（demo 用）
-│   └── bin/full_audit.rs     # 全量并发体检 CLI
-├── scripts/
-│   ├── aggregate.py          # 聚合榜单
-│   ├── scoring.py            # 评分与分类（与 Rust 保持同口径）
-│   ├── proof_top.py          # 榜单前 N 名生成 Lean
-│   ├── export_web.py         # 导出静态 web/data.json
-│   ├── check_proofs.sh       # 拒绝 sorry / 审计公理 / 只接受 PASS
-│   └── log_step.py           # 全过程留痕
-├── web/                      # 静态站（读 data.json，无后端）
-│   ├── data.json
-│   └── index.html
-├── out-full/                 # 运行产物（gitignore，CI 用 fixtures）
-└── docs/
-    ├── PLAN.md               # 本文件
-    └── DECISIONS.md          # 关键取舍与踩坑记录
+├── crates/
+│   ├── core/                 # 纯逻辑 + IO，无 UI、无 clap
+│   │   └── src/{api,audit,scoring,matrix,lean,proof,evidence,
+│   │            aggregate,export,explain,guard,config,model,util}.rs
+│   ├── cli/                  # dataproof 二进制（audit/report/explain/…/serve/tamper）
+│   └── web/                  # Leptos 0.7 CSR + trunk → WASM
+├── ci/check_proofs.sh        # 拒绝 sorry / admit，只接受内核 PASS
+├── fixtures/expected.lean    # 黄金文件（CI 不联网）
+├── crates/core/tests/pipeline.rs  # 内存假平台，离线跑完 audit → aggregate
+├── web/                      # 前端数据源（data.json / evidence / TopProofs.lean）
+├── data/                     # 聚合结果快照（可离线查看）
+├── out-full/                 # 运行产物（gitignore）
+└── docs/                     # PLAN / REQUIREMENTS / ARCHITECTURE / DECISIONS / HANDOFF
 ```
 
 **为什么不做后端**：静态 JSON + 静态页，部署成本为零，断网也能演示。5 天里省掉一整天。
@@ -126,9 +122,9 @@ dataproof/
 | job | 内容 | 为什么必须有 |
 |---|---|---|
 | `rust` | `cargo fmt --check` / `clippy -D warnings` / `cargo test` / `cargo build --release` | 主干质量；clippy 零容忍（抄 moonpub） |
-| `lean` | 装 elan → `lean fixtures/expected.lean` → 校验退出码 0；再跑 `scripts/check_proofs.sh` 检查无 `sorry` | 证明是本项目的差异点，它坏了等于产品坏了 |
+| `lean` | 装 elan → `ci/check_proofs.sh fixtures/expected.lean`（拒绝 sorry / admit） | 证明是本项目的差异点，它坏了等于产品坏了 |
 | `secret-scan` | gitleaks（fetch-depth: 0） | 脚本要读 API key，防止误提交 |
-| `scripts` | `python3 -m py_compile scripts/*.py` | 聚合脚本是交付链的一环，别在赛场才发现语法错 |
+| `wasm` | wasm32 目标 + trunk 0.22.1 + `clippy -D warnings` + `trunk build --release` + 产物自检 | 前端也是交付物，别只测后端 |
 
 **不做**：MSRV（单人项目，工具链固定）、覆盖率地板（5 天内收益低）、Windows 冒烟（现场是 macOS）。
 
@@ -138,7 +134,7 @@ dataproof/
 
 ---
 
-## 6. 里程碑
+## 6. 里程碑（均已按期完成）
 
 ### 准备期（11/14 – 11/25，报名审核中）
 

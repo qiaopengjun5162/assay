@@ -61,6 +61,12 @@ enum Command {
         dest: String,
     },
     /// 篡改演示：把一条定理的计数 +1，确认内核会拒绝
+    /// 证明门禁：拒绝 sorry/admit，只接受 Lean 内核 PASS
+    CheckProofs {
+        #[arg(required = true)]
+        files: Vec<String>,
+    },
+
     Tamper {
         /// 证明文件（默认读 --out 下的 TopProofs.lean）
         #[arg(long)]
@@ -172,6 +178,9 @@ fn run(cli: Cli) -> dataproof_core::Result<()> {
                 o.rows, o.total, o.proofs, o.evidence, o.explanations
             );
         }
+        Command::CheckProofs { files } => {
+            std::process::exit(check_proofs(&files));
+        }
         Command::Tamper { file } => {
             let path = file.unwrap_or_else(|| format!("{out}/TopProofs.lean"));
             tamper(&path)?;
@@ -182,6 +191,48 @@ fn run(cli: Cli) -> dataproof_core::Result<()> {
 }
 
 /// 篡改演示。内核拒绝是预期结果：返回 Ok 表示「证明确实有约束力」。
+/// 证明门禁：等价于原 ci/check_proofs.sh，但用 Rust 实现。
+/// 规则：拒绝 sorry/admit；只有 lean 退出码 0 才算 PASS。
+fn check_proofs(files: &[String]) -> i32 {
+    let mut fail = 0;
+    for f in files {
+        println!("== {f}");
+        let text = match std::fs::read_to_string(f) {
+            Ok(t) => t,
+            Err(_) => {
+                println!("   FAIL 文件不存在");
+                fail = 1;
+                continue;
+            }
+        };
+        let forbidden = text
+            .split(|c: char| !(c.is_alphanumeric() || c == '_'))
+            .any(|w| w == "sorry" || w == "admit");
+        if forbidden {
+            println!("   FAIL 含 sorry/admit，拒绝接受");
+            fail = 1;
+            continue;
+        }
+        match std::process::Command::new("lean").arg(f).output() {
+            Ok(o) if o.status.success() => println!("   PASS 内核校验通过"),
+            Ok(o) => {
+                println!("   FAIL 内核拒绝:");
+                let mut msg = String::from_utf8_lossy(&o.stdout).to_string();
+                msg.push_str(&String::from_utf8_lossy(&o.stderr));
+                for line in msg.lines().take(20) {
+                    println!("{line}");
+                }
+                fail = 1;
+            }
+            Err(_) => {
+                println!("   FAIL 找不到 lean 可执行文件");
+                fail = 1;
+            }
+        }
+    }
+    fail
+}
+
 fn tamper(path: &str) -> dataproof_core::Result<()> {
     use std::io::Write;
     let text = std::fs::read_to_string(path)?;

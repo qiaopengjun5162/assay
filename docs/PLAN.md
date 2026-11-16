@@ -102,7 +102,7 @@ dataproof/
 │   │            aggregate,export,explain,guard,config,model,util}.rs
 │   ├── cli/                  # dataproof 二进制（audit/report/explain/…/serve/tamper）
 │   └── web/                  # Leptos 0.7 CSR + trunk → WASM
-├── ci/check_proofs.sh        # 拒绝 sorry / admit，只接受内核 PASS
+├── dataproof check-proofs        # 拒绝 sorry / admit，只接受内核 PASS
 ├── fixtures/expected.lean    # 黄金文件（CI 不联网）
 ├── crates/core/tests/pipeline.rs  # 内存假平台，离线跑完 audit → aggregate
 ├── web/                      # 前端数据源（data.json / evidence / TopProofs.lean）
@@ -122,7 +122,7 @@ dataproof/
 | job | 内容 | 为什么必须有 |
 |---|---|---|
 | `rust` | `cargo fmt --check` / `clippy -D warnings` / `cargo test` / `cargo build --release` | 主干质量；clippy 零容忍（抄 moonpub） |
-| `lean` | 装 elan → `ci/check_proofs.sh fixtures/expected.lean`（拒绝 sorry / admit） | 证明是本项目的差异点，它坏了等于产品坏了 |
+| `lean` | 装 elan → `dataproof check-proofs fixtures/expected.lean`（拒绝 sorry / admit） | 证明是本项目的差异点，它坏了等于产品坏了 |
 | `secret-scan` | gitleaks（fetch-depth: 0） | 脚本要读 API key，防止误提交 |
 | `wasm` | wasm32 目标 + trunk 0.22.1 + `clippy -D warnings` + `trunk build --release` + 产物自检 | 前端也是交付物，别只测后端 |
 

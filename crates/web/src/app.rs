@@ -203,8 +203,8 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
                     <div class="deptcard">
                         <div class="dname">{name}</div>
                         <div class="dmeta">{format!(
-                            "{} 个数据集 · 停更 {} · 平均空值率 {:.1}%",
-                            d.n, d.stopped, d.empty_avg * 100.0
+                            "{} 个数据集 · 停更 {} · 字段对不上 {} · 平均空值率 {:.1}%",
+                            d.n, d.stopped, d.mismatch, d.empty_avg * 100.0
                         )}</div>
                     </div>
                 }).collect_view()}

@@ -53,17 +53,11 @@ pub struct DeptRow {
     #[serde(default)]
     pub n: u64,
     #[serde(default)]
-    pub preview: u64,
-    #[serde(default)]
     pub empty_avg: f64,
     #[serde(default)]
     pub stopped: u64,
     #[serde(default)]
     pub mismatch: u64,
-    #[serde(default)]
-    pub all_empty: u64,
-    #[serde(default)]
-    pub no_desc: u64,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]

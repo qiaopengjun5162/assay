@@ -19,6 +19,7 @@ pub mod matrix;
 pub mod model;
 pub mod proof;
 pub mod scoring;
+pub mod single;
 pub mod util;
 
 pub use model::{CatalogRecord, Dataset};

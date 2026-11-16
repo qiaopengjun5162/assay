@@ -61,6 +61,15 @@ enum Command {
         dest: String,
     },
     /// 篡改演示：把一条定理的计数 +1，确认内核会拒绝
+    /// 单数据集报告：渲染成 Markdown（可直接贴进评审流程）
+    ReportOne {
+        /// 数据集 ID
+        id: String,
+        /// 输出文件；省略则打印到标准输出
+        #[arg(long)]
+        to: Option<String>,
+    },
+
     /// 证明门禁：拒绝 sorry/admit，只接受 Lean 内核 PASS
     CheckProofs {
         #[arg(required = true)]
@@ -177,6 +186,40 @@ fn run(cli: Cli) -> dataproof_core::Result<()> {
                 "导出 {} 条（共 {}）：证明 {} / 证据 {} / 解读 {}",
                 o.rows, o.total, o.proofs, o.evidence, o.explanations
             );
+        }
+        Command::ReportOne { id, to } => {
+            let items = dataproof_core::audit::read_items(&format!("{out}/items.jsonl"))?;
+            let d = items
+                .iter()
+                .find(|d| d.id == id)
+                .ok_or_else(|| dataproof_core::Error::Other(format!("未找到数据集 {id}")))?;
+            let (ev, rows) = dataproof_core::single::load_evidence(&out, &id);
+            let explain = std::fs::read_to_string(format!("{out}/explanations.json"))
+                .ok()
+                .and_then(|t| serde_json::from_str::<serde_json::Value>(&t).ok())
+                .and_then(|v| {
+                    v.get("items")
+                        .and_then(|i| i.as_array())
+                        .and_then(|a| {
+                            a.iter()
+                                .find(|e| e.get("id").and_then(|x| x.as_str()) == Some(id.as_str()))
+                                .and_then(|e| e.get("text").and_then(|t| t.as_str()).map(String::from))
+                        })
+                });
+            let md = dataproof_core::single::render(
+                d,
+                d.lag_days,
+                ev.as_ref(),
+                rows.as_deref(),
+                explain.as_deref(),
+            );
+            match to {
+                Some(path) => {
+                    std::fs::write(&path, &md)?;
+                    println!("已写出 {path}（{} 字节）", md.len());
+                }
+                None => print!("{md}"),
+            }
         }
         Command::CheckProofs { files } => {
             std::process::exit(check_proofs(&files));

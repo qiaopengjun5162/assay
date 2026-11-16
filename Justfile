@@ -33,7 +33,7 @@ test:
 
 # 证明门禁：拒绝 sorry，内核必须 PASS
 proofs file="fixtures/expected.lean":
-    ./ci/check_proofs.sh {{file}}
+    cargo run --release -q -p dataproof -- check-proofs {{file}}
 
 # 本地完整检查（提交前跑这个）
 check: fmt-check clippy test proofs

@@ -7,8 +7,9 @@
 
 1. `README.md`（怎么跑、边界在哪）
 2. `AGENTS.md`（架构边界与护栏）
-3. `docs/ENGINEERING_AGENT_GUARDAILS_ZH.md`（分支、文档先行、提交、PR 纪律）
-4. `docs/ENGINEERING_LESSONS_ZH.md`（已经踩过的坑，排障前先搜）
+3. `docs/TEAM_DAY_ONE.md`（第一天怎么上手、能领什么活）
+4. `docs/ENGINEERING_AGENT_GUARDAILS_ZH.md`（分支、文档先行、提交、PR 纪律）
+5. `docs/ENGINEERING_LESSONS_ZH.md`（已经踩过的坑，排障前先搜）
 
 改统计、证明、证据、导出之前，再加读 `docs/ARCHITECTURE.md` 与 `docs/DECISIONS.md`。
 

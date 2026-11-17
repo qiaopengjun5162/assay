@@ -152,6 +152,7 @@ dataproof/
 
 ## 文档
 
+- [docs/TEAM_DAY_ONE.md](docs/TEAM_DAY_ONE.md) — 新队友第一天怎么加入（10 分钟上手，先读这个）
 - [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) — 需求、范围、验收标准、指标定义
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 分层、数据流、模块契约、不变量
 - [docs/DECISIONS.md](docs/DECISIONS.md) — 关键技术决策与理由

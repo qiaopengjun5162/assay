@@ -37,6 +37,16 @@
 
 无。第二平台需要人工探明接口，属于下一步而非阻塞。
 
+## 测试覆盖率（2026-11-17 实测）
+
+`cargo llvm-cov nextest`：总行覆盖 **45.54%**（1972 行，覆盖 898 行）。
+
+纯函数层基本满分：`lean` 100%、`util` 98.4%、`matrix` 97.9%、`scoring` 92.5%、`aggregate` 92.9%。
+
+零覆盖的是 IO 编排层——`evidence`、`explain`、`export`、`proof` 与 `cli` 全 0%。
+它们都要 HTTP 或外部进程，`crates/core/tests/pipeline.rs` 目前只覆盖 `audit` → `report`。
+下一步补法：给 `evidence` / `export` 用假 `CatalogSource` 补集成测试，`proof` 断言生成文本而非真跑 lean。
+
 ## 冻结说明
 
 `just all` 会用当天数据重跑并刷新快照，数字会漂。路演或引用前不要执行，

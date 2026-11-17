@@ -36,6 +36,7 @@
 | 单数据集报告 | 完成：前 100 名 Markdown，页面上可直接下载 |
 | AI 解释层 | 完成：100 条解读，数字护栏 100/100 通过 |
 | 前端 | 完成：Leptos + WASM，榜单 / 详情 / 证明三视图，刷新可直达 |
+| 工程门禁 | 完成：fmt(Rust+TOML) / clippy / nextest / cargo-deny / lean / 密钥扫描 / 文档 lint |
 | 语言构成 | Rust 全量（CLI / 库 / WASM 前端），Python 已移除；线上为 WASM 版 |
 
 ## 快速开始

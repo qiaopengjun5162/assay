@@ -72,7 +72,7 @@ just all          # 全量（联网，约 14 分钟）
 just serve        # 本地预览 crates/web/dist
 ```
 
-单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just export 500`、`just web`、`just tamper`。
+单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just web`、`just tamper`。
 
 ## 4. 硬规则
 
@@ -104,6 +104,7 @@ just serve        # 本地预览 crates/web/dist
 | 证据包 / 哈希 | `crates/core/src/evidence.rs` |
 | 聚合 / 榜单 / 滞后天数 | `crates/core/src/aggregate.rs` |
 | 前端 JSON | `crates/core/src/export.rs` |
+| 单数据集报告 | `crates/core/src/single.rs` |
 | 解释层 / 重试 | `crates/core/src/explain.rs` |
 | 数字护栏 | `crates/core/src/guard.rs` |
 | 命令入口 | `crates/cli/src/main.rs` |
@@ -145,5 +146,6 @@ just web && just serve   # 打开 8080，确认榜单 500 行、详情、证明�
 - [ ] 口径对齐（若改了统计）
 - [ ] `lean` PASS，`verify.txt` 为 PASS
 - [ ] 前端三视图可访问，浏览器返回正常
+- [ ] `web/reports` 与 `proofs.json` 的 id 集合一致（同为前 100 名）
 - [ ] 文档更新（README / ARCHITECTURE / DECISIONS 至少一处）
 - [ ] 没有 key、没有 `out-full/` 大文件进 git

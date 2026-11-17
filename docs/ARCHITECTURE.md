@@ -8,12 +8,12 @@
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  crates/web   Leptos CSR + WASM                              │
-│  只读 data.json / evidence/* / TopProofs.lean，不发任何写请求 │
+│  只读 data.json / evidence/* / reports/* / TopProofs.lean，不发写请求 │
 └───────────────────────────▲──────────────────────────────────┘
                             │ web/data.json（静态文件）
 ┌───────────────────────────┴──────────────────────────────────┐
 │  crates/cli   dataproof <audit|report|explain|evidence|      │
-│                        prove|export|serve|tamper>            │
+│            prove|reports|report-one|export|serve|tamper>     │
 └───────────────────────────▲──────────────────────────────────┘
                             │ 直接调用库函数
 ┌───────────────────────────┴──────────────────────────────────┐
@@ -34,6 +34,7 @@
 │    aggregate 聚合                                             │
 │    export   前端数据                                          │
 │    explain  模型调用 + 护栏                                   │
+│    single   单数据集报告渲染                                  │
 │    config   key 读取                                          │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -175,7 +176,20 @@ pub fn dataset_facts(d: &Dataset, lag: Option<i64>, dept: &str) -> Vec<(&'static
 - 不合格重试 1 次；仍不合格标 `rejected`，前端不展示。
 - 模型看不到原始数据，只能看 `dataset_facts`。
 
-### 3.8 `export.rs`
+### 3.8 `single.rs`
+
+```rust
+pub fn render(d: &Dataset, lag, ev, rows, explain) -> String;
+pub fn render_top(items, top, out_dir, dest, explanations) -> Result<RenderOutcome>;
+pub fn load_explanations(out_dir) -> HashMap<String, String>;
+```
+
+- 一条数据集一页 Markdown：字段差异、原始样例、证据哈希、通过护栏的 AI 解读。
+- `render_top` 的筛选与 `proof::prove_top` 同口径（`has_preview == 1` + 按 `score` 降序），
+  报告集与证明集因此严格一致；文件名走 `util::safe_id`，前端用同一映射拼链接。
+- 只收 `status == "pass"` 的解读，与页面同口径。
+
+### 3.9 `export.rs`
 
 ```rust
 pub fn export(opts: &ExportOptions) -> Result<ExportOutcome>;
@@ -184,12 +198,13 @@ pub fn export(opts: &ExportOptions) -> Result<ExportOutcome>;
 - 输出单文件 JSON，字段名 camelCase，与前端 `model.rs` 一一对应。
 - summary 里补 `proofCount` / `evidenceCount` / `explainCount`。
 - 按 `score` 降序，`limit` 截断。
+- `reports_dir` 下存在 `safe_id`.md 的行输出 `report: true`，前端据此渲染下载链接。
 
-### 3.9 `crates/web`
+### 3.10 `crates/web`
 
 - Leptos 0.7 CSR，trunk 打包；hash 路由：`#/`、`#/detail/<urlencoded id>`、`#/proof/<id>`。
 - 数据只读 `data.json`；不做任何写操作、不调平台接口。
-- 三个视图：榜单（搜索/部门/排序/三个筛选）、详情（六维 + 字段差异 + AI 解读 + 证据 + 证明入口）、证明（PASS、哈希、定理示例、下载）。
+- 三个视图：榜单（搜索/部门/排序/三个筛选）、详情（六维 + 字段差异 + AI 解读 + 证据 + 证明入口 + 报告下载）、证明（PASS、哈希、定理示例、下载）。
 - 浏览器前进/后退通过 `hashchange` 监听同步。
 
 ## 4. 产物契约
@@ -203,6 +218,7 @@ pub fn export(opts: &ExportOptions) -> Result<ExportOutcome>;
 | `evidence.json` | evidence | export / proof | **哈希敏感** |
 | `proofs.json` | proof | export | **哈希敏感** |
 | `TopProofs.lean` | proof | lean | 可重生成 |
+| `reports/<safe_id>.md` | single | 浏览器 / Pages | 可重生成 |
 | `web/data.json` | export | 前端 | 可重生成 |
 | `crates/web/dist` | trunk | 浏览器 / Pages | 可重生成 |
 

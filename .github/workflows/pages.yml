@@ -7,6 +7,7 @@ on:
       - "crates/web/**"
       - "web/data.json"
       - "web/evidence/**"
+      - "web/reports/**"
       - "web/TopProofs.lean"
       - ".github/workflows/pages.yml"
   workflow_dispatch:

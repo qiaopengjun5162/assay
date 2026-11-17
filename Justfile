@@ -59,16 +59,20 @@ evidence top="100" threads="4":
 prove top="100":
     cargo run --release -p dataproof -- --out {{out}} prove --top {{top}}
 
-# 6) 导出静态站数据
-export limit="500":
-    cargo run --release -p dataproof -- --out {{out}} export --limit {{limit}}
+# 6) 单数据集报告（前 N 名 → Markdown，随站点发布）
+reports top="100" dest="web/reports":
+    cargo run --release -p dataproof -- --out {{out}} reports --top {{top}} --dest {{dest}}
 
-# 7) 构建 WASM 前端（trunk → crates/web/dist）
+# 7) 导出静态站数据（报告目录由 dest 同级决定）
+export limit="500" dest="web/data.json":
+    cargo run --release -p dataproof -- --out {{out}} export --limit {{limit}} --dest {{dest}}
+
+# 8) 构建 WASM 前端（trunk → crates/web/dist）
 web:
     cd crates/web && trunk build --release
 
-# 全流水线：体检 → 榜单 → 解释 → 证据 → 证明 → 导出 → 前端
-all: audit report explain evidence prove export web
+# 全流水线：体检 → 榜单 → 解释 → 证据 → 证明 → 报告 → 导出 → 前端
+all: audit report explain evidence prove reports export web
     echo "完成：just serve 预览"
 
 # 小样本端到端自检（不覆盖正式产物）
@@ -78,8 +82,9 @@ smoke:
     just out=out-smoke explain 3 2
     just out=out-smoke evidence 5 2
     just out=out-smoke prove 5
-    just out=out-smoke export 50 --dest out-smoke/data.json
-    echo "smoke 通过：out-smoke/ 下有榜单、解读、证据、证明、前端数据"
+    just out=out-smoke reports 5 out-smoke/reports
+    just out=out-smoke export 50 out-smoke/data.json
+    echo "smoke 通过：out-smoke/ 下有榜单、解读、证据、证明、报告、前端数据"
 
 # 篡改演示：改一位数字，让内核当场拒绝
 tamper:

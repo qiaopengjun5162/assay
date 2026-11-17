@@ -60,7 +60,14 @@ enum Command {
         #[arg(long, default_value = "web/data.json")]
         dest: String,
     },
-    /// 篡改演示：把一条定理的计数 +1，确认内核会拒绝
+    /// 批量生成单数据集报告（前 N 名，Markdown，写进站点目录）
+    Reports {
+        #[arg(long, default_value_t = 100)]
+        top: usize,
+        /// 输出目录（默认 web/reports）；export 从这里判断哪些条有报告
+        #[arg(long, default_value = "web/reports")]
+        dest: String,
+    },
     /// 单数据集报告：渲染成 Markdown（可直接贴进评审流程）
     ReportOne {
         /// 数据集 ID
@@ -76,6 +83,7 @@ enum Command {
         files: Vec<String>,
     },
 
+    /// 篡改演示：把一条定理的计数 +1，确认内核会拒绝
     Tamper {
         /// 证明文件（默认读 --out 下的 TopProofs.lean）
         #[arg(long)]
@@ -166,6 +174,10 @@ fn run(cli: Cli) -> dataproof_core::Result<()> {
             }
         }
         Command::Export { limit, dest } => {
+            let reports_dir = Path::new(&dest).parent().map(|p| p.join("reports"));
+            let reports_dir = reports_dir
+                .as_ref()
+                .map(|p| p.to_string_lossy().to_string());
             let o = export::export(&export::ExportOptions {
                 items_path: &Path::new(&out).join("items.jsonl").to_string_lossy(),
                 summary_path: &Path::new(&out).join("summary.json").to_string_lossy(),
@@ -179,6 +191,7 @@ fn run(cli: Cli) -> dataproof_core::Result<()> {
                 explanations_path: Some(
                     &Path::new(&out).join("explanations.json").to_string_lossy(),
                 ),
+                reports_dir: reports_dir.as_deref(),
                 out_path: &dest,
                 limit,
             })?;
@@ -187,6 +200,12 @@ fn run(cli: Cli) -> dataproof_core::Result<()> {
                 o.rows, o.total, o.proofs, o.evidence, o.explanations
             );
         }
+        Command::Reports { top, dest } => {
+            let items = dataproof_core::audit::read_items(&format!("{out}/items.jsonl"))?;
+            let explanations = dataproof_core::single::load_explanations(&out);
+            let o = dataproof_core::single::render_top(&items, top, &out, &dest, &explanations)?;
+            println!("报告: {} 条 → {dest}", o.written);
+        }
         Command::ReportOne { id, to } => {
             let items = dataproof_core::audit::read_items(&format!("{out}/items.jsonl"))?;
             let d = items
@@ -194,24 +213,13 @@ fn run(cli: Cli) -> dataproof_core::Result<()> {
                 .find(|d| d.id == id)
                 .ok_or_else(|| dataproof_core::Error::Other(format!("未找到数据集 {id}")))?;
             let (ev, rows) = dataproof_core::single::load_evidence(&out, &id);
-            let explain = std::fs::read_to_string(format!("{out}/explanations.json"))
-                .ok()
-                .and_then(|t| serde_json::from_str::<serde_json::Value>(&t).ok())
-                .and_then(|v| {
-                    v.get("items")
-                        .and_then(|i| i.as_array())
-                        .and_then(|a| {
-                            a.iter()
-                                .find(|e| e.get("id").and_then(|x| x.as_str()) == Some(id.as_str()))
-                                .and_then(|e| e.get("text").and_then(|t| t.as_str()).map(String::from))
-                        })
-                });
+            let explain = dataproof_core::single::load_explanations(&out);
             let md = dataproof_core::single::render(
                 d,
                 d.lag_days,
                 ev.as_ref(),
                 rows.as_deref(),
-                explain.as_deref(),
+                explain.get(&id).map(String::as_str),
             );
             match to {
                 Some(path) => {
@@ -388,6 +396,7 @@ fn mime_of(p: &Path) -> &'static str {
         "css" => "text/css; charset=utf-8",
         "js" => "application/javascript; charset=utf-8",
         "json" => "application/json; charset=utf-8",
+        "md" | "markdown" => "text/markdown; charset=utf-8",
         "wasm" => "application/wasm",
         "png" => "image/png",
         "jpg" | "jpeg" => "image/jpeg",

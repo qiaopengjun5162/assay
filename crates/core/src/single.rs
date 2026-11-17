@@ -4,10 +4,12 @@
 //! 字段差异、样例质量、证据哈希与 AI 解读——一页纸能贴进评审流程。
 
 use crate::api::preview_rows;
-use crate::model::Dataset;
+use crate::model::{Dataset, Explanation};
 use crate::scoring::{classify, score};
 use crate::util::safe_id;
+use crate::Result;
 use sha2::{Digest, Sha256};
+use std::collections::HashMap;
 use std::path::Path;
 
 pub struct Evidence {
@@ -24,7 +26,10 @@ pub fn load_evidence(out_dir: &str, id: &str) -> (Option<Evidence>, Option<Vec<V
             .map(|b| crate::evidence::hex(&Sha256::digest(&b)))
     };
     let ev = match (hash_of("detail.json"), hash_of("preview.json")) {
-        (Some(detail_sha), Some(preview_sha)) => Some(Evidence { detail_sha, preview_sha }),
+        (Some(detail_sha), Some(preview_sha)) => Some(Evidence {
+            detail_sha,
+            preview_sha,
+        }),
         _ => None,
     };
     let rows = std::fs::read(dir.join("preview.json"))
@@ -33,6 +38,63 @@ pub fn load_evidence(out_dir: &str, id: &str) -> (Option<Evidence>, Option<Vec<V
         .map(|v| preview_rows(&v))
         .filter(|r| !r.is_empty());
     (ev, rows)
+}
+
+/// 读解释层产物，只留通过护栏的条目（`status == "pass"`）。
+///
+/// 未通过的解读留在 `explanations.json` 里备查，但不进报告——页面上也是同样口径。
+pub fn load_explanations(out_dir: &str) -> HashMap<String, String> {
+    std::fs::read(Path::new(out_dir).join("explanations.json"))
+        .ok()
+        .and_then(|b| serde_json::from_slice::<serde_json::Value>(&b).ok())
+        .and_then(|v| serde_json::from_value::<Vec<Explanation>>(v["items"].clone()).ok())
+        .map(|list| {
+            list.into_iter()
+                .filter(|e| e.status == "pass" && !e.text.is_empty())
+                .map(|e| (e.id, e.text))
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+/// 批量渲染问题最多的前 `top` 个数据集，写到 `dest/<safe_id>.md`。
+///
+/// 与 `proof` / `evidence` 同一选择口径（有样例、按问题分降序），
+/// 这样报告、证明、证据三份产物覆盖的是同一批数据集。
+pub fn render_top(
+    items: &[Dataset],
+    top: usize,
+    out_dir: &str,
+    dest: &str,
+    explanations: &HashMap<String, String>,
+) -> Result<RenderOutcome> {
+    let mut picked: Vec<&Dataset> = items.iter().filter(|d| d.has_preview == 1).collect();
+    picked.sort_by(|a, b| {
+        score(b)
+            .partial_cmp(&score(a))
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+    picked.truncate(top);
+
+    std::fs::create_dir_all(dest)?;
+    let mut written = 0;
+    for d in &picked {
+        let (ev, rows) = load_evidence(out_dir, &d.id);
+        let md = render(
+            d,
+            d.lag_days,
+            ev.as_ref(),
+            rows.as_deref(),
+            explanations.get(&d.id).map(String::as_str),
+        );
+        std::fs::write(Path::new(dest).join(format!("{}.md", safe_id(&d.id))), md)?;
+        written += 1;
+    }
+    Ok(RenderOutcome { written })
+}
+
+pub struct RenderOutcome {
+    pub written: usize,
 }
 
 pub fn render(
@@ -45,9 +107,18 @@ pub fn render(
     let mut s = String::new();
     s.push_str(&format!("# {}\n\n", d.name));
     s.push_str(&format!("- 数据集 ID：`{}`\n", d.id));
-    s.push_str(&format!("- 提供部门：{}\n", d.dept.as_deref().unwrap_or("未标注")));
-    s.push_str(&format!("- 开放类型：{}\n", d.open_type.as_deref().unwrap_or("未标注")));
-    s.push_str(&format!("- 数据量：{}\n", d.data_size.as_deref().unwrap_or("未标注")));
+    s.push_str(&format!(
+        "- 提供部门：{}\n",
+        d.dept.as_deref().unwrap_or("未标注")
+    ));
+    s.push_str(&format!(
+        "- 开放类型：{}\n",
+        d.open_type.as_deref().unwrap_or("未标注")
+    ));
+    s.push_str(&format!(
+        "- 数据量：{}\n",
+        d.data_size.as_deref().unwrap_or("未标注")
+    ));
     if let Some(days) = lag {
         s.push_str(&format!("- 距基准日：{} 天\n", days));
     }
@@ -64,10 +135,16 @@ pub fn render(
     s.push_str(&format!("- 字段说明长度：{} 字\n", d.desc_len));
     s.push_str(&format!("- 问题分：{:.2}（仅用于排序）\n", score(d)));
     if !d.missing_fields.is_empty() {
-        s.push_str(&format!("- 声明里有、样例里没有：{}\n", d.missing_fields.join("、")));
+        s.push_str(&format!(
+            "- 声明里有、样例里没有：{}\n",
+            d.missing_fields.join("、")
+        ));
     }
     if !d.extra_fields.is_empty() {
-        s.push_str(&format!("- 样例里有、声明里没有：{}\n", d.extra_fields.join("、")));
+        s.push_str(&format!(
+            "- 样例里有、声明里没有：{}\n",
+            d.extra_fields.join("、")
+        ));
     }
     s.push('\n');
 

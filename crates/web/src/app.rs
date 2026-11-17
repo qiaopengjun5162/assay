@@ -338,6 +338,9 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
     let explain = r.explain.clone();
     let evidence = r.evidence.clone();
     let proof = r.proof.clone();
+    let report = r.report;
+
+    let report_href = r.report_path();
 
     view! {
         <nav class="crumb"><a href="#/" on:click=move |_| route.set(Route::List)>"榜单"</a>" / 数据集详情"</nav>
@@ -349,9 +352,13 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
             {r.update_time.clone().map(|t| view! { <span class="chip">"最近更新 " {t}</span> })}
             {r.overdue.then(|| view! { <span class="chip bad">"超过声明更新周期"</span> })}
             {r.proof.is_some().then(|| view! { <span class="chip ok">"已生成证明"</span> })}
+            {report.then(|| view! { <span class="chip ok">"有书面报告"</span> })}
         </div>
         <div class=format!("verdict{}", if bad { " bad" } else { "" })>
             <b>{verdict}</b>" · 问题分只用于排序，不是科学指标。准确性不在评价范围内。"
+            {report.then(|| view! {
+                <a class="btn" href=report_href.clone() download>"下载体检报告（Markdown）"</a>
+            })}
         </div>
 
         <h2 class="section">"GB/T 36344 六维体检（准确性不评价）"</h2>

@@ -106,6 +106,9 @@ pub struct Row {
     pub evidence: Option<Evidence>,
     #[serde(default)]
     pub explain: Option<Explain>,
+    /// 站点里有这份数据集的 Markdown 报告
+    #[serde(default)]
+    pub report: bool,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]
@@ -171,5 +174,22 @@ impl Row {
 
     pub fn empty_pct(&self) -> f64 {
         self.empty_rate * 100.0
+    }
+
+    /// 报告文件名：与后端 `util::safe_id` 同一映射（非 `[A-Za-z0-9_-]` 一律换成 `_`，截 64）。
+    pub fn report_path(&self) -> String {
+        let name: String = self
+            .id
+            .chars()
+            .map(|c| {
+                if c.is_ascii_alphanumeric() || c == '-' || c == '_' {
+                    c
+                } else {
+                    '_'
+                }
+            })
+            .take(64)
+            .collect();
+        format!("reports/{name}.md")
     }
 }

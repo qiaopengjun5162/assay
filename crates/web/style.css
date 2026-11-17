@@ -115,6 +115,7 @@ input[type="search"]:focus, select:focus { outline: 2px solid var(--accent); out
 .verdict.good { border-left-color: var(--ok); }
 .verdict .big { font-size: 18px; font-weight: 700; }
 .verdict .why { color: var(--ink-2); font-size: 14px; margin-top: 6px; }
+.verdict .btn { display: block; width: fit-content; margin-top: 12px; }
 
 .dims { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 18px; }
 .dim { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }

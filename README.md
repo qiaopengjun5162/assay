@@ -33,6 +33,7 @@
 | 全量体检 | 完成：11.7 分钟，0 条详情失败 |
 | Lean 证明 | 完成：前 100 名 2,355 条定理，内核 PASS，全部基于已存证快照 |
 | 证据包 | 完成：100 份原始响应，SHA-256 可复核 |
+| 单数据集报告 | 完成：前 100 名 Markdown，页面上可直接下载 |
 | AI 解释层 | 完成：100 条解读，数字护栏 100/100 通过 |
 | 前端 | 完成：Leptos + WASM，榜单 / 详情 / 证明三视图，刷新可直达 |
 | 语言构成 | Rust 全量（CLI / 库 / WASM 前端），Python 已移除；线上为 WASM 版 |
@@ -57,7 +58,7 @@ just all
 just serve
 ```
 
-拆开跑（`all` 就是这七步）：
+拆开跑（`all` 就是这八步）：
 
 ```bash
 just audit 8 0      # 1) 体检：线程数 8，0 = 全部
@@ -65,8 +66,9 @@ just report         # 2) 聚合榜单 → summary.json / leaderboard.md
 just explain 100    # 3) 解释层（需要 LLM key，见下）
 just evidence 100   # 4) 证据包：原始响应 + SHA-256
 just prove 100      # 5) 生成定理并跑 Lean 内核
-just export 500     # 6) 导出 web/data.json
-just web            # 7) 构建 WASM 前端 → crates/web/dist
+just reports 100    # 6) 单数据集报告 → web/reports/*.md
+just export 500     # 7) 导出 web/data.json
+just web            # 8) 构建 WASM 前端 → crates/web/dist
 just tamper         # 篡改演示：内核必须拒绝
 ```
 
@@ -93,13 +95,14 @@ dataproof/
 │   │   ├── aggregate.rs     #   聚合：summary.json / 两张榜单
 │   │   ├── export.rs        #   导出 web/data.json
 │   │   ├── explain.rs       #   解释层：模型写话 + 重试
+│   │   ├── single.rs        #   单数据集报告（Markdown）
 │   │   ├── guard.rs         #   数字护栏
 │   │   ├── config.rs        #   模型 key 读取（不落盘、不打印）
 │   │   ├── model.rs         #   数据模型（serde camelCase）
 │   │   └── util.rs          #   日期、四舍五入、文件名安全化
-│   ├── cli/                 # 二进制 dataproof（audit/report/explain/…/serve/tamper）
+│   ├── cli/                 # 二进制 dataproof（audit/report/…/reports/…/serve/tamper）
 │   └── web/                 # Leptos + WASM 前端（trunk 打包）
-├── web/                     # 数据产物：data.json / evidence/ / TopProofs.lean
+├── web/                     # 数据产物：data.json / evidence/ / reports/ / TopProofs.lean
 ├── data/                    # 聚合结果快照（可离线核对）
 ├── fixtures/                # 黄金文件（CI 用，不联网）
 ├── ci/                      # 证明门禁脚本
@@ -140,6 +143,7 @@ dataproof/
 | `out-full/proofs.json` | 100 个数据集的定理元信息 |
 | `out-full/TopProofs.lean` | 2,355 条定理，`lean` 退出码 0 |
 | `web/data.json` | 前端数据（500 条明细） |
+| `web/reports/*.md` | 前 100 名单数据集报告（字段差异、原始样例、证据哈希、AI 解读） |
 | `crates/web/dist/` | 打包后的静态站 |
 
 ## 文档

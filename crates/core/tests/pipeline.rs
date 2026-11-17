@@ -175,6 +175,28 @@ fn audit_and_report_run_offline() {
     assert_eq!(summary["mismatchKinds"]["列数不一致"], 1);
     assert_eq!(summary["mismatchKinds"]["仅命名不一致"], 1);
 
+    // 报告：与证明同一选择口径，只覆盖有样例的数据集；文件名走 safe_id
+    let dest = format!("{out}/reports");
+    let explanations = HashMap::new();
+    let rendered =
+        dataproof_core::single::render_top(&items, 10, &out, &dest, &explanations).unwrap();
+    assert_eq!(rendered.written, 3);
+    let top = items
+        .iter()
+        .max_by(|a, b| {
+            dataproof_core::scoring::score(a)
+                .partial_cmp(&dataproof_core::scoring::score(b))
+                .unwrap()
+        })
+        .unwrap();
+    let md = std::fs::read_to_string(format!(
+        "{dest}/{}.md",
+        dataproof_core::util::safe_id(&top.id)
+    ))
+    .unwrap();
+    assert!(md.contains(&top.name));
+    assert!(md.contains("## 体检结论"));
+
     let _ = std::fs::remove_dir_all(&dir);
 }
 

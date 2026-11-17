@@ -4,6 +4,7 @@
 
 use crate::aggregate::{cycle_threshold, lag_days, load_catalog};
 use crate::model::{Dataset, EvidenceEntry, Explanation, ProofEntry};
+use crate::util::safe_id;
 use crate::{Error, Result};
 use serde_json::{json, Value};
 use std::collections::HashMap;
@@ -17,6 +18,8 @@ pub struct ExportOptions<'a> {
     pub catalog_path: Option<&'a str>,
     pub evidence_path: Option<&'a str>,
     pub explanations_path: Option<&'a str>,
+    /// 报告目录：命中 `<dir>/<safe_id>.md` 的行会在前端得到下载链接
+    pub reports_dir: Option<&'a str>,
     pub out_path: &'a str,
     pub limit: usize,
 }
@@ -77,7 +80,16 @@ pub fn export(opts: &ExportOptions<'_>) -> Result<ExportOutcome> {
 
     let mut rows: Vec<Value> = items
         .iter()
-        .map(|d| row(d, &catalog, &proof_by_id, &evidence_by_id, &explain_by_id))
+        .map(|d| {
+            row(
+                d,
+                &catalog,
+                &proof_by_id,
+                &evidence_by_id,
+                &explain_by_id,
+                opts.reports_dir,
+            )
+        })
         .collect();
     rows.sort_by(|a, b| {
         b["score"]
@@ -121,11 +133,19 @@ fn row(
     proofs: &HashMap<String, ProofEntry>,
     evidence: &HashMap<String, EvidenceEntry>,
     explanations: &HashMap<String, Explanation>,
+    reports_dir: Option<&str>,
 ) -> Value {
     let update_time = catalog.get(&d.id).cloned();
     let lag = update_time.as_deref().and_then(lag_days);
     let overdue = cycle_threshold(&d.cycle_str())
         .map(|limit| lag.map(|l| l > limit).unwrap_or(false))
+        .unwrap_or(false);
+    let report = reports_dir
+        .map(|dir| {
+            Path::new(dir)
+                .join(format!("{}.md", safe_id(&d.id)))
+                .is_file()
+        })
         .unwrap_or(false);
     json!({
         "id": d.id,
@@ -151,6 +171,7 @@ fn row(
         "proof": proofs.get(&d.id),
         "evidence": evidence.get(&d.id),
         "explain": explanations.get(&d.id),
+        "report": report,
     })
 }
 

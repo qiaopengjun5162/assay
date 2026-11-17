@@ -70,12 +70,15 @@ cargo install wasm-bindgen-cli --version <与 Cargo.lock 一致>
 ## 3. 必跑命令
 
 ```bash
-just check        # fmt + clippy(core/cli) + 单测 + 证明门禁，必须全绿
+just check        # fmt(Rust+TOML) + clippy + nextest + cargo-deny + 证明门禁，必须全绿
 just clippy-wasm  # 前端也在门禁内
+just lint-docs    # Markdown lint
 just smoke        # 200 条端到端（联网，约 90 秒），产物进 out-smoke/，不覆盖正式产物
 just all          # 全量（联网，约 14 分钟）
 just serve        # 本地预览 crates/web/dist
 ```
+
+首次克隆后必跑 `just hooks`（装 commit-msg 钩子）。
 
 单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just web`、`just tamper`。
 
@@ -145,7 +148,7 @@ just web && just serve   # 打开 8080，确认榜单 500 行、详情、证明�
 
 ## 8. 交付前检查清单
 
-- [ ] `just check` 全绿
+- [ ] `just check` 全绿（含 `cargo deny check`）
 - [ ] `just clippy-wasm` 全绿
 - [ ] `just smoke` 通过
 - [ ] 口径对齐（若改了统计）

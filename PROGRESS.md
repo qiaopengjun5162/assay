@@ -19,12 +19,12 @@
 | 单数据集报告 | `██████████` 100% | 100 份 Markdown，CLI 可复现，与证明同口径，页面可下载 |
 | 前端 | `█████████░` 88% | 三视图 + 部门榜 + 报告入口 + 浏览器返回正常；缺部门页与无障碍复查 |
 | 第二平台 | `░░░░░░░░░░` 0% | 上海为 0，接口未探明；`CatalogSource` 已就位 |
-| CI / 工程 | `██████████` 100% | 六关全绿；占位符扫描、文档 lint、commit 钩子齐备 |
+| CI / 工程 | `██████████` 100% | 八关全绿：fmt(Rust+TOML)、clippy、nextest、cargo-deny、wasm clippy、lean、密钥扫描、文档 lint |
 | 文档 | `██████████` 100% | README / ARCHITECTURE / DECISIONS / HANDOFF / ROADMAP / 经验库 |
 
 ## 已验证证据（可复核）
 
-- `just check` 全绿：fmt、clippy(core/cli)、25 个测试、`check-proofs` PASS。
+- `just check` 全绿：fmt（Rust + TOML）、clippy、25 个测试（nextest）、`cargo deny check`、`check-proofs` PASS。
 - `just clippy-wasm` 全绿。
 - 口径对齐：用冻结 `items.jsonl` 重算 `summary.json`，标量与 2,500 个部门全等。
 - 证明对齐：100 条定理的 SHA-256 与顺序与改动前一致，`lean` PASS，2,355 条 / 15.3 秒。

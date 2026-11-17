@@ -44,9 +44,12 @@
 # 0) 环境：Rust 1.85+、Lean 4（elan）、trunk
 rustup target add wasm32-unknown-unknown
 cargo install trunk --locked        # 或下载预编译二进制
+cargo install cargo-nextest cargo-deny taplo-cli typos-cli just
+./scripts/install-git-hooks.sh      # Conventional Commits 校验
 
-# 1) 本地完整检查（不联网）：格式 + clippy + 单测 + 证明门禁
+# 1) 本地完整检查（不联网）：格式 + clippy + 测试 + 依赖审计 + 证明门禁
 just check
+just clippy-wasm
 
 # 2) 小样本端到端自检（联网，约 90 秒）：200 条 → 榜单 → 解读 → 证据 → 证明
 just smoke

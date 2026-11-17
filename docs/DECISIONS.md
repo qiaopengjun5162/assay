@@ -2,6 +2,18 @@
 
 > 只记「当时为什么这么选」。每条都能在文章里展开成一段。
 
+## D17 `cargo deny` 的许可证白名单按依赖树放开，advisory 只放行 unmaintained
+
+**背景**：把 `cargo deny check` 接进 `just check` 与 CI 时，它红了 14 条：12 条是许可证
+（`Zlib` / `ISC` / `BSD-3-Clause` / `BSL-1.0` / `CDLA-Permissive-2.0`，来自 `ring`、`slotmap`、
+`konst`、`webpki-roots` 等纯传递依赖），2 条是 `unmaintained` 公告（`paste`、`proc-macro-error2`）。
+**决定**：五条许可证全部加进 `allow`；两条 advisory 按 ID 加进 `ignore` 并写明来源与影响面。
+**边界**：只放行 unmaintained，`vulnerability` 与 `unsound` 一律不放行，出问题必须真修。
+**为什么值**：这五条都是 OSI 认可的自由许可证，且没有一条是本项目直接选的——卡住它们等于
+卡住 `ureq`/`leptos` 的整条依赖链；而 `paste` 与 `proc-macro-error2` 只在宏展开期跑，
+运行时不进二进制，等 leptos 换代自然消失。
+**复核**：`just deny`，应输出 `advisories ok, bans ok, licenses ok, sources ok`。
+
 ## D16 报告与证明、证据用同一选择口径
 
 **背景**：报告最初是手工对着 `proofs.json` 跑 `report-one` 生成的 100 份文件。

@@ -34,13 +34,18 @@
 ## 常用命令
 
 ```bash
-just check        # fmt + clippy + 单测 + 证明门禁，必须全绿
+just check        # fmt(Rust+TOML) + clippy + nextest + cargo-deny + 证明门禁，必须全绿
 just clippy-wasm  # 前端也在门禁内
 just lint-docs    # Markdown lint
+just typos        # 拼写检查
+just deny         # 依赖审计（许可证 + 漏洞），白名单在 deny.toml
+just changelog    # 由 Conventional Commits 生成 CHANGELOG.md
 just smoke        # 200 条端到端（联网），产物进 out-smoke/
 just all          # 全量（联网，约 14 分钟）
 just serve        # 本地预览
 ```
+
+首次克隆后跑 `just hooks` 安装 commit-msg 钩子（Conventional Commits 校验）。
 
 ## 模块职责
 

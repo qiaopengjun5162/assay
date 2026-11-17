@@ -22,3 +22,10 @@ clap = { version = "4", features = ["derive"] }
 [profile.release]
 codegen-units = 1
 lto = "fat"
+panic = "abort"
+# 注意：不能开 strip = true，wasm-bindgen 会读不到 target_features 段
+
+[profile.profiling]
+debug = "full"
+inherits = "release"
+strip = false

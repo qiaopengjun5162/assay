@@ -1,0 +1,8 @@
+# 本机编译用 target-cpu=native。wasm32 不认这个 cpu 名，单独排除掉，
+# 否则每条编译都会刷 "apple-m2 is not a recognized processor"。
+[target.'cfg(not(target_arch = "wasm32"))']
+rustflags = ["-C", "target-cpu=native"]
+
+[alias]
+# 前端也在门禁内
+wasm-clippy = "clippy -p dataproof-web --target wasm32-unknown-unknown --all-features -- -D warnings"

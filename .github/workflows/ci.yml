@@ -14,7 +14,7 @@ env:
 
 jobs:
   rust:
-    name: rust · fmt / clippy / test
+    name: rust · fmt / clippy / test / deny
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,14 +25,25 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Format
+      - name: 安装 nextest / deny / taplo
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest,cargo-deny,taplo
+
+      - name: Format（Rust）
         run: cargo fmt --all -- --check
 
-      - name: Clippy（零容忍）
-        run: cargo clippy -p dataproof-core -p dataproof --all-targets -- -D warnings
+      - name: Format（TOML）
+        run: taplo fmt --check
 
-      - name: Test
-        run: cargo test -p dataproof-core -p dataproof
+      - name: Clippy（零容忍）
+        run: cargo clippy -p dataproof-core -p dataproof --all-targets --all-features -- -D warnings
+
+      - name: Test（nextest）
+        run: cargo nextest run -p dataproof-core -p dataproof --all-features
+
+      - name: 依赖审计（许可证 + 漏洞）
+        run: cargo deny check
 
       - name: Build release
         run: cargo build --release --locked -p dataproof
@@ -61,7 +72,7 @@ jobs:
           trunk --version
 
       - name: Clippy（wasm 目标，零容忍）
-        run: cargo clippy -p dataproof-web --target wasm32-unknown-unknown -- -D warnings
+        run: cargo clippy -p dataproof-web --target wasm32-unknown-unknown --all-features -- -D warnings
 
       - name: Build dist
         working-directory: crates/web

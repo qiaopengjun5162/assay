@@ -11,17 +11,31 @@ default:
 build:
     cargo build --release -p dataproof-core -p dataproof
 
-# 格式化
+# 格式化（Rust + TOML）
 fmt:
     cargo fmt --all
+    taplo fmt
 
 # 格式检查
 fmt-check:
     cargo fmt --all -- --check
+    taplo fmt --check
 
-# 静态分析（core/cli，零容忍）
+# 拼写检查
+typos:
+    typos
+
+# 依赖审计（许可证 + 漏洞 + 供应链）
+deny:
+    cargo deny check
+
+# 静态分析（core/cli/web，零容忍）
 clippy:
-    cargo clippy -p dataproof-core -p dataproof --all-targets -- -D warnings
+    cargo clippy --all-targets --all-features --tests --benches -- -D warnings
+
+# 生成 CHANGELOG（git-cliff 从 Conventional Commits 派生）
+changelog:
+    git cliff -o CHANGELOG.md
 
 # 文档 lint
 lint-docs:
@@ -41,14 +55,18 @@ clippy-wasm:
 
 # 单元 + 集成测试
 test:
-    cargo test -p dataproof-core -p dataproof
+    cargo nextest run -p dataproof-core -p dataproof --all-features
+
+# 测试 + 覆盖率
+coverage:
+    cargo llvm-cov nextest -p dataproof-core -p dataproof --all-features --html
 
 # 证明门禁：拒绝 sorry，内核必须 PASS
 proofs file="fixtures/expected.lean":
     cargo run --release -q -p dataproof -- check-proofs {{file}}
 
 # 本地完整检查（提交前跑这个）
-check: fmt-check clippy test proofs
+check: fmt-check clippy test deny proofs
     echo "全部通过"
 
 # 1) 全量体检（真实网络，约 12 分钟；limit=0 表示全部）

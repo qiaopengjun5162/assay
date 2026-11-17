@@ -5,11 +5,17 @@ extend-ignore-re = [
   # Lean 定理里的坐标
   "empty_\\d+_\\d+",
 ]
+
+# typos 1.5x 起排除规则搬到 [files]
+[files]
 extend-exclude = [
   "out-full/",
   "out-smoke/",
   "web/evidence/",
   "web/reports/",
   "crates/web/dist/",
+  # 生成产物：data.json 里全是 base64 id
+  "web/data.json",
   "target/",
+  "vendor/",
 ]

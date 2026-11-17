@@ -9,6 +9,8 @@ config:
   # 裸 URL 与表格竖线：早期文档大量使用，改起来噪音大于收益
   MD034: false
   MD056: false
+  # MD060 要求表头竖线空格风格统一，全仓都是 `|---|---|` 紧凑写法
+  MD060: false
 globs:
   - "**/*.md"
 ignores:

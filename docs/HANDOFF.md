@@ -17,7 +17,7 @@
 
 已经验证过的事（不要重复怀疑，除非你有新证据）：
 
-- `just check` 全绿（fmt / clippy core+cli / 23 个单测 / 证明门禁）
+- `just check` 全绿（fmt / clippy core+cli / 25 个单测 / 证明门禁）
 - `just clippy-wasm` 全绿
 - 口径对齐：用旧 `out-full/items.jsonl` 重算，`summary.json` 标量与 **2,500 个部门全部一致**
 - 证明对齐：100 条定理的 **SHA-256 与顺序全部一致**，`lean` PASS，2,355 条定理，15.3 秒
@@ -27,12 +27,14 @@
 ## 2. 已完成 / 待办
 
 已完成（2026-11-15）：
+
 - CI 四个 job：rust（fmt/clippy/test/build）、wasm（trunk 构建 + clippy）、lean（内核校验）、密钥扫描
 - Pages 两段式：分支只构建 artifact，`main` 才部署 `crates/web/dist`
 - 线上已切到 WASM 版：500 行榜单、详情六维、AI 解读、证据下载、证明页 PASS、浏览器返回正常
 - `docs/DECISIONS.md` 已补 D12–D15
 
 现场离线预案（已实测 2026-11-15）：
+
 ```bash
 # 联网时做一次（vendor 目录 200MB，不要进 git）
 cargo vendor vendor
@@ -50,17 +52,20 @@ cargo install wasm-bindgen-cli --version <与 Cargo.lock 一致>
 ```
 
 待办（非阻塞）：
-2. **第二个平台**（上海 data.sh.gov.cn，11,477 个数据集）：先按这三步探明接口，再写一个 `CatalogSource` 实现——
+
+1. **第二个平台**（上海 data.sh.gov.cn，11,477 个数据集）：先按这三步探明接口，再写一个 `CatalogSource` 实现——
    a) 打开数据集列表页，DevTools 里筛 XHR，找到列表请求的 URL、分页参数（浙江是 `current/size`，`page` 会被忽略）
    b) 找详情与预览两个端点，确认 id 是否需要 URL 编码（浙江是 base64，含 `+ / =`）
    c) 用 `curl` 直接打一次，确认返回结构里「声明字段」与「样例行」分别在哪一层
    拿到这三样，实现 7 个方法即可，后续采集/聚合/证明/导出不用改。
-3. 证明从 100 扩到 500：已实测 63.9s / 5,923 条 / 506K，见 ARCHITECTURE 第 8 节；扩之前先决定要不要一起扩证据包（+16MB）
-3. 若换平台：把 `api.rs` 抽成 `CatalogSource` trait
+2. 证明从 100 扩到 500：已实测 63.9s / 5,923 条 / 506K，见 ARCHITECTURE 第 8 节；扩之前先决定要不要一起扩证据包（+16MB）
 
 一个已经踩过的坑，别再踩：
+`CatalogSource` trait 已经就位，换平台只需新增一个实现（见待办 1）。
+
+另一个已经踩过的坑：
 **trunk 默认生成绝对路径**（`/dataproof-web-*.js`），项目站点在 `/dataproof/` 子路径下会 404、页面空白。
-`Trunk.toml` 里 `public_url = "./"` 不能删。
+`Trunk.toml` 里 `public_url = "./"` 不能删。更多见 `docs/ENGINEERING_LESSONS_ZH.md`。
 
 ## 3. 必跑命令
 
@@ -82,7 +87,7 @@ just serve        # 本地预览 crates/web/dist
 3. **禁止编造运行结果。** 报告里的每个数字都要来自真实命令输出。跑不了就说跑不了。
 4. **证明对象 = 存证对象。** `proof` 优先读 `evidence/<id>/preview.json`，不要改成现场重抓。
 5. **哈希算原始字节。** 证据包用 `api::post_raw`；不要 `send_json` 后重新序列化再哈希。
-6. **`proofs.json` 的 sha256 用 Python 兼容 JSON**（`[["a", "b"], ...]`，分隔符 `, `）。
+6. **`proofs.json` 的 sha256 用 Python 兼容 JSON**（`[["a", "b"], ...]`，分隔符逗号+空格）。
    换成紧凑格式会让历史哈希全部漂移。
 7. **基准日写死** `NOW_YMD = (2026, 11, 14)`，不读系统时间。
 8. **模型不参与取数与算数。** 解释层输入只有事实字典；输出必须过 `guard::check`。

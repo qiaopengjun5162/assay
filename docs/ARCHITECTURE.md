@@ -227,7 +227,7 @@ pub fn export(opts: &ExportOptions) -> Result<ExportOutcome>;
 1. **字段分类只有一处实现**：`scoring::classify`。任何地方复制这段逻辑都会分叉。
 2. **证明对象 = 存证对象**：`proof` 必须优先读 `evidence/<id>/preview.json`。
 3. **哈希算在原始字节上**：证据包用 `post_raw`，不要 `send_json` 后重新序列化。
-4. **`proofs.json` 的 sha256 用 Python 兼容 JSON**（分隔符 `, `），否则历史哈希漂移。
+4. **`proofs.json` 的 sha256 用 Python 兼容 JSON**（分隔符逗号+空格），否则历史哈希漂移。
 5. **基准日写死**：`NOW_YMD` 是常量，不读系统时间；否则今天跑和明天跑结论不同。
 6. **模型不参与取数、不参与算数**：解释层的输入只有事实字典，输出必须过 `guard::check`。
 7. **前端零写入**：WASM 只 GET，不 POST；断网也要能看已加载的数据。

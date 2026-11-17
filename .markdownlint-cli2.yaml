@@ -1,0 +1,24 @@
+config:
+  default: true
+  MD013: false
+  MD024:
+    siblings_only: true
+  MD033: false
+  MD040: false
+  MD025: false
+  # 裸 URL 与表格竖线：早期文档大量使用，改起来噪音大于收益
+  MD034: false
+  MD056: false
+globs:
+  - "**/*.md"
+ignores:
+  - "target"
+  - "dist"
+  # 生成产物：报告里的样例表格含 `**`、`***` 单元格，不是手写文档
+  - "crates/web/dist"
+  - "web/reports"
+  - "web/evidence"
+  - "out-full"
+  - "out-smoke"
+  - "vendor"
+  - "CHANGELOG.md"

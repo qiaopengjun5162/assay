@@ -1,0 +1,56 @@
+name: Bug 报告
+description: 体检结论、证明、证据或前端出了问题
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        先搜一下 `docs/ENGINEERING_LESSONS_ZH.md`，可能已有结论。
+        涉及口径变化时，请说明先后两次的产出差异。
+  - type: dropdown
+    id: area
+    attributes:
+      label: 受影响部分
+      options:
+        - 体检 / 取数
+        - 分类或评分（口径）
+        - 聚合 / 榜单
+        - Lean 证明
+        - 证据包 / 哈希
+        - 解释层 / 数字护栏
+        - 前端
+        - CI / 构建
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: 现象
+      description: 实际发生了什么，影响范围多大
+    validations:
+      required: true
+  - type: textarea
+    id: expect
+    attributes:
+      label: 预期
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: 复现
+      description: 命令 + 输出。能离线复现请用 `fixtures/` 或 `out-smoke/`
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: 环境
+      placeholder: rustc / lean / 系统
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 自查
+      options:
+        - label: 已搜过 `docs/ENGINEERING_LESSONS_ZH.md`
+        - label: 没有粘贴任何 key

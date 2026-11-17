@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# commit-msg 钩子：校验 Conventional Commits。
+# 安装：./scripts/install-git-hooks.sh
+set -euo pipefail
+
+MSG_FILE="$1"
+MSG=$(head -n1 "$MSG_FILE")
+
+ALLOWED_TYPES="build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test"
+PATTERN="^(${ALLOWED_TYPES})(\(.+\))?!?: .+"
+
+if [[ ! "$MSG" =~ $PATTERN ]]; then
+  echo "提交信息不合规：$MSG" >&2
+  echo "必须遵循 Conventional Commits。允许的类型：${ALLOWED_TYPES//|/ }" >&2
+  echo "例：" >&2
+  echo "  feat(cli): add reports subcommand" >&2
+  echo "  fix(proof): read preview snapshot before refetch" >&2
+  echo "  docs: record D16 selection parity" >&2
+  exit 1
+fi

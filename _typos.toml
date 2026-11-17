@@ -1,0 +1,15 @@
+[default]
+extend-ignore-re = [
+  # 证据哈希、SHA-256 摘要
+  "[0-9a-f]{16,}",
+  # Lean 定理里的坐标
+  "empty_\\d+_\\d+",
+]
+extend-exclude = [
+  "out-full/",
+  "out-smoke/",
+  "web/evidence/",
+  "web/reports/",
+  "crates/web/dist/",
+  "target/",
+]

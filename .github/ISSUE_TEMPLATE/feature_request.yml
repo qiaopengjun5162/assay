@@ -1,0 +1,39 @@
+name: 功能请求
+description: 新指标、新平台、新产物
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        本项目只做能自动算的维度，准确性问题请先看 `docs/DECISIONS.md` D3。
+  - type: textarea
+    id: problem
+    attributes:
+      label: 要解决什么问题
+      description: 现在的做法哪里不够
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 打算怎么做
+      description: 属于哪一维（规范性/完整性/一致性/时效性/可访问性），数据从哪来
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: 影响范围
+      options:
+        - 只加指标
+        - 改口径（需要对齐与决策记录）
+        - 新平台接入
+        - 前端
+        - 工程/CI
+    validations:
+      required: true
+  - type: textarea
+    id: proof
+    attributes:
+      label: 可复核性
+      description: 新结论能否写成定理或绑哈希？不能的话属于什么级别

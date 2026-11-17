@@ -6,8 +6,8 @@
 
 **背景**：报告最初是手工对着 `proofs.json` 跑 `report-one` 生成的 100 份文件。
 立刻出现两个问题：重跑要手敲 100 次；并且没有任何机制保证覆盖的是同一批数据集。
-**决定**：新增 `reports` 子命令，筛选条件照抄 `proof::prove_top`（`has_preview == 1`
-+ 按 `score` 降序 + `truncate(top)`），文件名统一走 `util::safe_id`。
+**决定**：新增 `reports` 子命令，筛选条件照抄 `proof::prove_top`
+（`has_preview == 1` + 按 `score` 降序 + `truncate(top)`），文件名统一走 `util::safe_id`。
 前端是否显示下载链接不靠 `proof.is_some()` 猜，而是由 `export` 落一个 `report` 布尔字段——
 证明和报告将来谁先跑、谁多覆盖一条，链接都不会指到 404。
 **代价**：`export` 多读一次报告目录（每行一次 `is_file`）。

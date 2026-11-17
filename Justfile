@@ -23,6 +23,18 @@ fmt-check:
 clippy:
     cargo clippy -p dataproof-core -p dataproof --all-targets -- -D warnings
 
+# 文档 lint
+lint-docs:
+    ./scripts/lint-docs.sh
+
+# 文档 lint（只查改动）
+lint-docs-changed:
+    ./scripts/lint-docs.sh --changed
+
+# 安装仓库 git 钩子（Conventional Commits）
+hooks:
+    ./scripts/install-git-hooks.sh
+
 # 前端静态分析（wasm 目标）
 clippy-wasm:
     cd crates/web && cargo clippy --target wasm32-unknown-unknown -- -D warnings

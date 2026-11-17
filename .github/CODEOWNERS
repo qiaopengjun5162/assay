@@ -1,0 +1,21 @@
+# Rust / 前端 / 配置
+*.rs @qiaopengjun5162
+*.toml @qiaopengjun5162
+*.css @qiaopengjun5162
+*.html @qiaopengjun5162
+
+# CI 与工程文件
+/.github/ @qiaopengjun5162
+/Justfile @qiaopengjun5162
+/deny.toml @qiaopengjun5162
+/_typos.toml @qiaopengjun5162
+
+# 口径敏感模块
+/crates/core/src/scoring.rs @qiaopengjun5162
+/crates/core/src/aggregate.rs @qiaopengjun5162
+/crates/core/src/proof.rs @qiaopengjun5162
+/crates/core/src/evidence.rs @qiaopengjun5162
+/crates/core/src/lean.rs @qiaopengjun5162
+
+# 文档
+*.md @qiaopengjun5162

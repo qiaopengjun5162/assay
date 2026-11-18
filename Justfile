@@ -65,8 +65,12 @@ coverage:
 proofs file="fixtures/expected.lean":
     cargo run --release -q -p dataproof -- check-proofs {{file}}
 
+# 证据门禁：逐份重算 SHA-256，改一个字节就红（跑入库的站点证据，CI 可用）
+verify-evidence:
+    cargo run --release -q -p dataproof -- verify-evidence web/data.json web/evidence
+
 # 本地完整检查（提交前跑这个）
-check: fmt-check clippy test deny proofs
+check: fmt-check clippy test deny verify-evidence proofs
     echo "全部通过"
 
 # 1) 全量体检（真实网络，约 12 分钟；limit=0 表示全部）

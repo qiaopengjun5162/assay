@@ -45,6 +45,18 @@ jobs:
       - name: 依赖审计（许可证 + 漏洞）
         run: cargo deny check
 
+      # RSI 外环：踩过的坑要变成门禁。
+      # 「文档引用已删除路径」曾让 PLAN.md 在另一个 AI 接手时误导排错——
+      # 见 docs/HISTORY.md 第八节。历史记录 DECISIONS.md 不参与检查。
+      - name: 文档不得引用已删除路径
+        run: |
+          if grep -rnE 'scripts/(aggregate|scoring|proof_top|export_web|explain|evidence|guard|test_guard|log_step)\.py|rust-core/|check_proofs\.sh' README.md AGENTS.md docs/REQUIREMENTS.md docs/ARCHITECTURE.md docs/PLAN.md docs/HANDOFF.md; then
+            echo "文档漂移：引用了不存在的路径"; exit 1
+          fi
+
+      - name: 证据复核（入库的 100 份，逐份重算 SHA-256）
+        run: cargo run --release -q -p dataproof -- verify-evidence web/data.json web/evidence
+
       - name: Build release
         run: cargo build --release --locked -p dataproof
 
@@ -77,6 +89,16 @@ jobs:
       - name: Build dist
         working-directory: crates/web
         run: trunk build --release
+
+      # RSI 外环：trunk 默认生成绝对路径，项目站点在 /<repo>/ 子路径下
+      # 会 404 导致页面空白——本地根路径复现不了，只有 CI 能拦。
+      - name: 资产必须是相对路径
+        working-directory: crates/web/dist
+        run: |
+          if grep -oE '(href|src)="(/[^/])' index.html; then
+            echo "发现绝对路径引用，子路径部署会 404"; exit 1
+          fi
+          echo "资产均为相对路径"
 
       - name: 产物自检
         run: |

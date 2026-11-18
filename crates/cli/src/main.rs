@@ -83,6 +83,13 @@ enum Command {
         files: Vec<String>,
     },
 
+    /// 证据复核：逐份重算 SHA-256，和索引里的值比对
+    VerifyEvidence {
+        /// 索引文件：data.json（datasets[].evidence）或 evidence.json（items[]）
+        index: String,
+        /// 证据根目录
+        evidence_dir: String,
+    },
     /// 篡改演示：把一条定理的计数 +1，确认内核会拒绝
     Tamper {
         /// 证明文件（默认读 --out 下的 TopProofs.lean）
@@ -232,6 +239,12 @@ fn run(cli: Cli) -> dataproof_core::Result<()> {
         Command::CheckProofs { files } => {
             std::process::exit(check_proofs(&files));
         }
+        Command::VerifyEvidence {
+            index,
+            evidence_dir,
+        } => {
+            std::process::exit(verify_evidence(&index, &evidence_dir));
+        }
         Command::Tamper { file } => {
             let path = file.unwrap_or_else(|| format!("{out}/TopProofs.lean"));
             tamper(&path)?;
@@ -239,6 +252,34 @@ fn run(cli: Cli) -> dataproof_core::Result<()> {
         Command::Serve { dir, port } => serve(&dir, port)?,
     }
     Ok(())
+}
+
+/// 证据复核：逻辑在 `evidence::verify_index`，这里只打结果与给退出码。
+/// 索引里一条都没识别出来也算失败——空跑不能当通过。
+fn verify_evidence(index: &str, evidence_dir: &str) -> i32 {
+    let report = match dataproof_core::evidence::verify_index(
+        std::path::Path::new(index),
+        std::path::Path::new(evidence_dir),
+    ) {
+        Ok(r) => r,
+        Err(e) => {
+            println!("FAIL 复核不了 {index}：{e}");
+            return 1;
+        }
+    };
+    for c in &report.checks {
+        if c.mismatched {
+            println!("   FAIL {} 缺文件或哈希不符", c.name);
+        } else {
+            println!("   OK   {}", c.name);
+        }
+    }
+    println!("== {} / {} 份一致", report.matched, report.listed);
+    if report.passed() {
+        0
+    } else {
+        1
+    }
 }
 
 /// 篡改演示。内核拒绝是预期结果：返回 Ok 表示「证明确实有约束力」。

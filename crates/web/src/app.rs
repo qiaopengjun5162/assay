@@ -5,6 +5,7 @@
 
 use crate::model::{Data, Row};
 use leptos::prelude::*;
+use sha2::Digest;
 
 #[derive(Clone, Debug, PartialEq)]
 enum Route {
@@ -409,6 +410,18 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
                         }).collect_view()}
                     </td></tr>
                 </table>
+                <h3>"自己验一遍"</h3>
+                <p class="hint">
+                    "不用装我们的东西。先在本页点按钮，浏览器会把两个原始文件取回来，在本地重算哈希并跟上表的 SHA-256 逐字符比对；也可以把原始文件下到同一个目录，跑下面这条命令，输出必须与上表相同。对不上，就是这份证据被动过。"
+                </p>
+                <VerifyButton sha256=e.sha256.clone() files=e.files.clone() />
+                {e.files.first().map(|first| {
+                    let dir = first.rsplit_once('/').map(|(d, _)| d).unwrap_or(first).to_string();
+                    view! {
+                        <pre class="mono-block">{format!("mkdir -p {dir} && cd {dir} && curl -O {} && curl -O {}\n(cat detail.json; printf '\\n--split--\\n'; cat preview.json) | shasum -a 256", e.files[0], e.files.get(1).cloned().unwrap_or_default())}</pre>
+                        <p class="hint">"Linux 把 shasum -a 256 换成 sha256sum 即可，输出格式一致。文件地址相对本页，所以从站点根目录跑。"</p>
+                    }
+                })}
             </section>
         })}
 
@@ -422,6 +435,97 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
             </section>
         })}
     }.into_any()
+}
+
+/// 浏览器内复核：把两个原始文件取回来，在本地算 SHA-256，和索引里的值逐字符对照。
+///
+/// 等于把 `dataproof verify-evidence` 跑在页面里——评委不用装 Rust、不用开终端，
+/// 只用看页面自己的结果。取值必须走原始字节（`binary()`），转成文本再算会漂。
+#[component]
+fn VerifyButton(sha256: String, files: Vec<String>) -> impl IntoView {
+    let state = RwSignal::new(State::Idle);
+    let expected = sha256.clone();
+
+    let run = move |_| {
+        let files = files.clone();
+        let expected = expected.clone();
+        state.set(State::Running);
+        leptos::task::spawn_local(async move {
+            state.set(match recompute(&files).await {
+                Ok(d) if d == expected => State::Ok(d),
+                Ok(d) => State::Mismatch(d),
+                Err(e) => State::Failed(e),
+            });
+        });
+    };
+
+    view! {
+        <p class="verify">
+            <button class="btn" on:click=run disabled=move || state.get() == State::Running>
+                {move || if state.get() == State::Running { "正在重算…" } else { "在浏览器里重算 SHA-256" }}
+            </button>
+            {move || match state.get() {
+                State::Idle => view! { <span class="hint">"只读本页静态文件，不发任何写请求。"</span> }.into_any(),
+                State::Running => view! { <span class="hint">"取原始字节中…"</span> }.into_any(),
+                State::Ok(d) => view! {
+                    <span class="chip ok">"一致"</span>
+                    <span class="mono-sm">{d}</span>
+                }.into_any(),
+                State::Mismatch(d) => view! {
+                    <span class="chip bad">"不一致，这份证据被动过"</span>
+                    <span class="mono-sm">{d}</span>
+                }.into_any(),
+                State::Failed(e) => view! { <span class="chip warn">{e}</span> }.into_any(),
+            }}
+        </p>
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+enum State {
+    Idle,
+    Running,
+    Ok(String),
+    Mismatch(String),
+    Failed(String),
+}
+
+/// 与 `evidence::capture_one` 同一字节顺序：detail ‖ "\n--split--\n" ‖ preview。
+///
+/// 只依赖 `sha2`，不引 `dataproof-core`——core 拖着 ureq/rustls，进 wasm 不值当。
+async fn recompute(files: &[String]) -> Result<String, String> {
+    let [detail_url, preview_url] = files else {
+        return Err(format!("证据条目只给了 {} 个文件", files.len()));
+    };
+    let mut buf: Vec<u8> = Vec::new();
+    for (i, url) in [detail_url, preview_url].iter().enumerate() {
+        let resp = gloo_net::http::Request::get(url)
+            .send()
+            .await
+            .map_err(|e| format!("取不到 {}：{e}", url.rsplit('/').next().unwrap_or(url)))?;
+        if !resp.ok() {
+            return Err(format!("{} 返回 HTTP {}", url, resp.status()));
+        }
+        if i == 1 {
+            buf.extend_from_slice(b"\n--split--\n");
+        }
+        buf.extend_from_slice(
+            &resp
+                .binary()
+                .await
+                .map_err(|e| format!("读不出 {url}：{e}"))?,
+        );
+    }
+    Ok(hex(&sha2::Sha256::digest(&buf)))
+}
+
+/// 与 `evidence::hex` 相同的十六进制小写输出。
+fn hex(bytes: &[u8]) -> String {
+    use std::fmt::Write;
+    bytes.iter().fold(String::new(), |mut s, b| {
+        let _ = write!(s, "{b:02x}");
+        s
+    })
 }
 
 fn proof_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {

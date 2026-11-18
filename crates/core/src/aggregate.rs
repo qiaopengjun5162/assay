@@ -125,6 +125,24 @@ fn round4(x: f64) -> f64 {
     crate::util::round_to(x, 4)
 }
 
+/// 部门统计的 JSON 形状。
+///
+/// `byDept` 是给 `web/data.json` 前端读的，key 必须 camelCase——前端
+/// `DeptRow` 是 `rename_all = "camelCase"`。曾经写成 `empty_avg`，
+/// 前端反序列化失败取默认 0，部门榜「平均空值率」整片显示 0.0% 而没人发现。
+fn dept_object(v: &DeptStat) -> Result<Value> {
+    let mut obj = serde_json::to_value(v)?;
+    if let Some(m) = obj.as_object_mut() {
+        let avg = if v.empty_n > 0 {
+            Some(round4(v.empty_sum / v.empty_n as f64))
+        } else {
+            None
+        };
+        m.insert("emptyAvg".into(), json!(avg));
+    }
+    Ok(obj)
+}
+
 pub fn aggregate(items_path: &str, catalog_path: &str, out_dir: &str) -> Result<Value> {
     let items = crate::audit::read_items(items_path)?;
     let catalog = load_catalog(catalog_path)?;
@@ -232,16 +250,7 @@ pub fn aggregate(items_path: &str, catalog_path: &str, out_dir: &str) -> Result<
 
     let mut by_dept = Map::new();
     for (k, v) in &dept_sorted {
-        let mut obj = serde_json::to_value(v)?;
-        if let Some(m) = obj.as_object_mut() {
-            let avg = if v.empty_n > 0 {
-                Some(round4(v.empty_sum / v.empty_n as f64))
-            } else {
-                None
-            };
-            m.insert("empty_avg".into(), json!(avg));
-        }
-        by_dept.insert((*k).clone(), obj);
+        by_dept.insert((*k).clone(), dept_object(v)?);
     }
 
     let summary = json!({
@@ -357,4 +366,43 @@ fn json_object(entries: Vec<(String, usize)>) -> Value {
         m.insert(k, json!(v));
     }
     Value::Object(m)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// 部门维度的 key 必须是前端认得的 camelCase。
+    ///
+    /// 这个 bug 在页面上表现为「平均空值率全是 0.0%」——不报错、不崩，
+    /// 只是安静地显示成 0，比崩溃更难发现。所以钉成测试。
+    #[test]
+    fn dept_object_uses_camel_case_keys() {
+        let v = DeptStat {
+            n: 4,
+            empty_sum: 0.5,
+            empty_n: 2,
+            ..Default::default()
+        };
+        let obj = dept_object(&v).unwrap();
+
+        assert_eq!(obj["emptyAvg"], json!(0.25), "空值率应按 camelCase 给出");
+        assert!(
+            obj.get("empty_avg").is_none(),
+            "snake_case key 会让前端静默读成 0：{obj}"
+        );
+        // 单词类字段（n / stopped / mismatch）大小写一致，两边都读得到
+        assert_eq!(obj["n"], json!(4));
+    }
+
+    /// 部门里一条样例都没有时，平均空值率是「不知道」（null），不是 0。
+    #[test]
+    fn dept_object_reports_null_when_no_samples() {
+        let v = DeptStat {
+            n: 3,
+            empty_n: 0,
+            ..Default::default()
+        };
+        assert_eq!(dept_object(&v).unwrap()["emptyAvg"], Value::Null);
+    }
 }

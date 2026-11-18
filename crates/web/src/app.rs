@@ -103,7 +103,7 @@ pub fn App() -> impl IntoView {
         <div class="wrap">
             <header class="topbar">
                 <div class="brand"><span class="mark">"数验"</span>" Assay"</div>
-                <div class="top-meta">"可机器复核的数据体检报告"</div>
+                <div class="top-meta">"每条结论都能自己验"</div>
                 <nav class="top-nav">
                     <a href="#/" on:click=move |_| { route.set(Route::List); }>"榜单"</a>
                 </nav>
@@ -137,6 +137,45 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
 
     let s = data.summary.clone();
     let rows = RwSignal::new(data.datasets.clone());
+
+    // 首屏「最离谱的一条」：声明了列、但实际给的列数远多于声明。
+    // 声明 0 列的（字段清单根本没填）是另一种毛病，这里排掉，免得被说成挑刺。
+    let exhibit = data
+        .datasets
+        .iter()
+        .filter(|r| r.declared_cols > 0 && r.sample_cols > r.declared_cols)
+        .max_by_key(|r| r.sample_cols - r.declared_cols)
+        .cloned();
+    let exhibit_view = exhibit.map(|e| {
+        let id = e.id.clone();
+        view! {
+            <section class="exhibit">
+                <div class="exhibit-head">
+                    <span class="tag">"最离谱的一条"</span>
+                    <span class="exhibit-dept">{e.dept.clone()}</span>
+                </div>
+                <h3>{e.name.clone()}</h3>
+                <div class="vs">
+                    <div class="vs-col">
+                        <div class="vs-h">"页面上写着"</div>
+                        <div class="vs-num">{e.declared_cols}" 个字段"</div>
+                    </div>
+                    <div class="vs-arrow">"→"</div>
+                    <div class="vs-col bad">
+                        <div class="vs-h">"实际给到"</div>
+                        <div class="vs-num">{e.sample_cols}" 列"</div>
+                        {(e.all_empty_cols > 0).then(|| view! {
+                            <div class="vs-note">"其中 "{e.all_empty_cols}" 列整列是空的"</div>
+                        })}
+                    </div>
+                </div>
+                <a class="exhibit-link" href=format!("#/detail/{}", urlencoding(&id))
+                   on:click=move |_| { route.set(Route::Detail(id.clone())); }>
+                    "看这条的原始证据和机器证明 →"
+                </a>
+            </section>
+        }
+    });
 
     // 部门维度：按停更数量排，取前 12
     let mut dept_top: Vec<(String, crate::model::DeptRow)> = s
@@ -173,16 +212,20 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
 
     view! {
         <section class="hero">
-            <h1>"浙江开放数据健康榜"</h1>
+            <p class="kicker">
+                "浙江 · "{fmt_num(s.audited)}" 个数据集全查（"{fmt_num(s.with_preview)}" 个拿到样例）· 抓取于 "{data.generated_at.clone()}
+            </p>
+            <h1>"政府开放数据「货不对板」榜"</h1>
             <p class="lede">
-                "对 "<b>{fmt_num(s.audited)}</b>" 个政府开放数据集逐个体检（其中 "<b>{fmt_num(s.with_preview)}</b>" 个有样例）：字段是否对得上、数据是否停更、样例里有多少空值。"
-                "每条结论都能展开看原始快照和机器可复核的证明。"
+                "页面写着 7 个字段，实际给你 92 列；标着「每年更新」，两年没动。"
+                "有问题的排成榜，每条结论你都能自己验——不用信我。"
             </p>
         </section>
+        {exhibit_view}
 
         <section class="stats">
             <div class="stat"><div class="num">{fmt_num(s.audited)}</div><div class="lbl">"纳入体检的数据集"</div></div>
-            <div class="stat bad"><div class="num">{format!("{:.0}%", if s.audited > 0 { s.lag_over90_days as f64 / s.audited as f64 * 100.0 } else { 0.0 })}</div>
+            <div class="stat bad"><div class="num">{format!("{:.1}%", if s.audited > 0 { s.lag_over90_days as f64 / s.audited as f64 * 100.0 } else { 0.0 })}</div>
                 <div class="lbl">{format!("超过 90 天未更新（{} 个）", fmt_num(s.lag_over90_days))}</div></div>
             <div class="stat bad"><div class="num">{fmt_num(s.empty_rate_over30)}</div><div class="lbl">"样例空值率 > 30%"</div></div>
             <div class="stat bad"><div class="num">{fmt_num(s.all_empty_column_datasets)}</div><div class="lbl">"存在整列为空"</div></div>
@@ -198,14 +241,18 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
 
         <section class="deptboard">
             <h2>"问题最多的部门"</h2>
-            <p class="hint">"按「停更数据集数量」排序，取前 12 个部门。平均空值率来自样例（每份 5 行左右），只作参考。"</p>
-            <div class="deptgrid">
+            <p class="hint">"按「停更数据集数量」排序，取前 12 个部门。平均空值率来自样例（每份 5 行左右），只作参考。"</p>            <div class="deptgrid">
                 {dept_top.into_iter().map(|(name, d)| view! {
                     <div class="deptcard">
                         <div class="dname">{name}</div>
                         <div class="dmeta">{format!(
-                            "{} 个数据集 · 停更 {} · 字段对不上 {} · 平均空值率 {:.1}%",
-                            d.n, d.stopped, d.mismatch, d.empty_avg * 100.0
+                            "{} 个数据集 · 停更 {} · 字段对不上 {} · 平均空值率 {}",
+                            d.n,
+                            d.stopped,
+                            d.mismatch,
+                            d.empty_avg
+                                .map(|v| format!("{:.1}%", v * 100.0))
+                                .unwrap_or_else(|| "无样例".to_string())
                         )}</div>
                     </div>
                 }).collect_view()}
@@ -539,8 +586,18 @@ fn proof_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
         }
         .into_any();
     };
-    let theorem =
-        "def rows_0 : List (List Nat) := [...]\n\ntheorem empty_0_0 : countEmpty rows_0 0 = 0 := by decide";
+    // 这里只放格式示意，不放可执行代码：页面拿不到真实定理片段，
+    // 编一条 `= 0` 出来反而会让懂行的人怀疑整份证明是假的。
+    // 真实定理在 TopProofs.lean 里，下载入口就在下面。
+    let theorem = format!(
+        "-- 每条定理长这样（本数据集共 {} 条，真实内容见下方 TopProofs.lean）：\n\
+         --\n\
+         --   theorem empty_col_37 : countEmpty rows 37 = 2 := by decide\n\
+         --\n\
+         -- rows 是这份数据的样例矩阵，1 表示空值；\n\
+         -- 等号右边是内核要验的结论，改一位数字就报错。",
+        p.cols
+    );
     view! {
         <nav class="crumb"><a href="#/" on:click=move |_| route.set(Route::List)>"榜单"</a>" / 证明"</nav>
         <div class="pass-card">

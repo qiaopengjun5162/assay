@@ -24,13 +24,9 @@
 | 33 | null | 有资质运输单位运输、储存地方进行防腐、防渗、防废气处理。 | null | null | null | 德清水一方环保科技有限公司 | 330521 | 2017-07-10 15:18:56 |  | null | null | null | null | null | null | null | null | null | 35009254-X | 2016-09-28 00:00:00 | null | 德清水一方环保科技有限公司 | 2017-07-07 16:03:04 | 2020-09-27 00:00:00 | 2017-07-07 00:00:00 | null | 3305 | null | null | null | 浙危废经 第171号 | 全国范围 | null | null | 3 | null | null | null | 9133052135009254X6 | null | null | null | null |  | 0734108a-264c-4391-8578-725a60f28d27 |
 | 33 | null | 有资质运输单位运输、储存地方进行防腐、防渗、防废气处理。 | null | null | null | 德清水一方环保科技有限公司 | 330521 | 2016-12-26 16:34:25 |  | null | null | null | null | null | null | null | null | null | 35009254-X | 2016-09-28 00:00:00 | null | 德清水一方环保科技有限公司 | 2016-12-26 16:10:10 | 2021-09-27 00:00:00 | 2016-12-26 00:00:00 | null | 3305 | null | null | null | 浙危废经 第171号 | 全国范围 | null | null | 1 | null | null | null | 9133052135009254X6 | null | null | null | null |  | a2022e0b-b8e7-4e06-a9a2-bd2dba58c6de |
 
-## AI 解读（数字已核对）
-
-这份数据最要紧的问题是声明结构与实际样例不一致，且完全没有字段说明。使用者无法确认字段含义与覆盖范围，取数时容易误读误用。建议先向提供方索取字段清单和口径说明，确认后再投入使用。
-
 ## 证据
 
-- detail.json SHA-256：`1c8c9871d7350a055b0e75259bfaa3e609604c8edf6d11e00631f3655d4f37d9`
-- preview.json SHA-256：`fb16747a6236bd1b5d2fe69decdf529f6da43047f3d7c071a5cc4710a03b34b2`
+- detail.json SHA-256：`1bbe55984039f3d05da14a3fa112b8d34757b9c74757b9af479829590e22add2`
+- preview.json SHA-256：`3afb81dff9a88a8d7b8af786b8fd429636bd202f71d6ba5d705ca73dafee1fb5`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

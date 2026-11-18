@@ -24,13 +24,9 @@
 | 庙上新村 |  |  |
 | 际下村 |  |  |
 
-## AI 解读（数字已核对）
-
-该数据集已停更，样例缺少声明字段且多数取值为空，完整性存疑。使用者直接采用可能得到不可靠结论。建议先向省民宗委核实字段与更新状态，确认前暂停用于正式分析。
-
 ## 证据
 
-- detail.json SHA-256：`d00c3953b6bb986df4df85d6210947fbeece479c78ad5cb31a060540b5b28cda`
-- preview.json SHA-256：`72cd606139f181e631f95fcd0a35f69711fbc2712ae589b222a8ae38ebb58781`
+- detail.json SHA-256：`806da7bc0abb3800ff668e2d70bac762b7d9e1a4f01014db36c55dfe5ba7cb18`
+- preview.json SHA-256：`df8f095ed7fadf10ddac578a7206e92f354b4100aa2d9f8793de2a5e5a9b0f30`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

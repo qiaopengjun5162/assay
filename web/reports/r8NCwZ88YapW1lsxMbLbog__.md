@@ -24,13 +24,9 @@
 | null | 3a4d18ffd01911e89f36801844ecd939 | 1RA5ONK7ZfDxHN8faHITwuDRNhWHVGz/GVxbJ3YLAzYDY9HrvglECi1SdLGd3Lpg | null | 浙江创鑫木业有限公司 | 1RA5ONK7ZfDxHN8faHITwuDRNhWHVGz/GVxbJ3YLAzYDY9HrvglECi1SdLGd3Lpg | H/c6ccV8KKhHDgQ92iWPgF6pkJVhRrR2JSewTXYys1Qsi/SagsxGPjHSLEZ5eW8r | 开槽车间 | 1 | 0 | 湖州市南浔镇东迁 | null | null | HK3020101 | 1RA5ONK7ZfDxHN8faHITwuDRNhWHVGz/GVxbJ3YLAzYDY9HrvglECi1SdLGd3Lpg |  |  | 01af086cba0343dc9ae296599bb2367b | 10 | null | H/c6ccV8KKhHDgQ92iWPgF6pkJVhRrR2JSewTXYys1Qsi/SagsxGPjHSLEZ5eW8r | 100 | H/c6ccV8KKhHDgQ92iWPgF6pkJVhRrR2JSewTXYys1Qsi/SagsxGPjHSLEZ5eW8r |
 | null | 97f51e257c9211ebbec5801844ecdebf | flvEzFH4rp4dvpJYM2/CPhXgpTdKZR502dt6TOU2EbVjSCcR3ok/Wy0XCGzPiGjy | null | 湖州佳川木业有限公司 | flvEzFH4rp4dvpJYM2/CPhXgpTdKZR502dt6TOU2EbVjSCcR3ok/Wy0XCGzPiGjy | fZ8TCtCkUQufERjxMC7qKiXP5sgkV+RcbAc6Rk3SyjjPDZkDCyn6/R9cBrno0ayS | 开槽车间 | 1 | 1 | 湖州市南浔区练市镇花林水口村 | null | 20231215090352 | HK3020101 | flvEzFH4rp4dvpJYM2/CPhXgpTdKZR502dt6TOU2EbVjSCcR3ok/Wy0XCGzPiGjy |  |  | 0323fab3d86b4722aec93209b436cb57 | 10 | null | fZ8TCtCkUQufERjxMC7qKiXP5sgkV+RcbAc6Rk3SyjjPDZkDCyn6/R9cBrno0ayS | 100 | fZ8TCtCkUQufERjxMC7qKiXP5sgkV+RcbAc6Rk3SyjjPDZkDCyn6/R9cBrno0ayS |
 
-## AI 解读（数字已核对）
-
-字段说明与实际样例对不上，多个关键字段未在声明中列出。使用者若按字段说明取数，就会漏掉企业名称、负责人联系方式等关键信息，并误判数据完整性。建议先向数据提供方索取完整字段清单，再决定如何使用。
-
 ## 证据
 
-- detail.json SHA-256：`6f70c52ebc5053504e257ef52eb98b953ffe12818397e7081a48242dbac54ad1`
-- preview.json SHA-256：`9921eaa9020cfa182005575ef5a87900edb9f16cee6b853fa45c7aed8b34ff0a`
+- detail.json SHA-256：`a3d1179db1ff482b494b93bc9c8658b6e064c94d7bcf67e200781512dd6c0b99`
+- preview.json SHA-256：`1242e075dffcb421d0c962c3d9185577bb1227dd08732751128ffe4c50734556`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

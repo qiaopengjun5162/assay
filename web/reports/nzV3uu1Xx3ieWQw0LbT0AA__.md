@@ -24,13 +24,9 @@
 | B000013 |  | null |  | null | null |  | null | null |  |  | 均质坝 | null | null | null | 1956-11-01 00:00:00 | null | null |  | null | null | null | null |  | null | null | null | 30.606116 |  | 湖州市 | 330521003 | null | null | null |  | null | null | 田青坞水库 | null |  | 0.03 | null | null | null | null | null | null |  | 1985国家高程基准 | 10.7 | null | null | 山丘水库 | 119.933436 |  | Ⅴ | 虹吸管 |  | null | null | null | 德清县 | 敞开式宽顶堰 | 10.0 | null | null | null | 正槽 |  | null | null |  | null | null | 阜溪街道三桥村 | null | null |  | null | null | null | null | 0.43 | null | 5.85 | null | null | null | null | null | null |  |  | null | 120.0 | null | 土坝 |  |
 | B000014 |  | null | 1970-04-01 | null | null |  | null | null |  |  | 心墙坝 | null | null | null | 1970-01-01 00:00:00 | null | null |  | null | null | null | null |  | null | null | null | 30.509491 |  | 湖州市 | 330521002 | null | null | null |  | null | null | 东坞水库 | null |  | 0.02 | null | null | null | null | null | null |  | 1985国家高程基准 | 10.25 | null | null | 山丘水库 | 119.902194 |  | Ⅴ | 虹吸管 |  | null | null | null | 德清县 | 敞开式宽顶堰 | 10.2 | null | null | null |  |  | null | null |  | null | null | 舞阳街道城山村 | null | null |  | null | null | null | null | 0.8 | null | 4.7 | null | null | null | null | null | null |  |  | null | 96.0 | null | 土坝 |  |
 
-## AI 解读（数字已核对）
-
-这份水库基础信息声明没有列定义，实际字段与说明完全脱节，且已停更。使用者无法判断字段含义和可用性，直接取用会承担误读风险。建议先向水利局索取字段说明与更新安排，再决定是否使用。
-
 ## 证据
 
-- detail.json SHA-256：`1371a2041d8e074c5b7f501dac351b5f33621d303ce657d4452cde8a5c65a6da`
-- preview.json SHA-256：`fe259b5ae23a36d29120264edc17e22da97f76cdd234b92c30bf3a64b35b4ec8`
+- detail.json SHA-256：`54342023a70d903adffa7bba4fe007ada964d69e91bf660b37b4272043f0742b`
+- preview.json SHA-256：`18efef0f1cf9e7a8d001d87ddacb2f5aba3db321adc6aa461f61adc5f3b548df`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

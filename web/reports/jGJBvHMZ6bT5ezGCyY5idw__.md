@@ -24,13 +24,9 @@
 | 1864513179723300865 | OSS对象存储 | 1 | com.swgj.web.controller.system.SysOssController.upload() | POST | 1 | 13757261077 | /system/oss/upload | 39.185.85.24 | 中国|浙江省|宁波市|移动 |  | {"code":200,"msg":"操作成功","data":{"ossId":"1864513179706523650","url":"/dchyoss/nanxun/2024/12/05/33e80673e4ee45178da356aded7a4d06.pdf","fileName":"3规划红线.pdf"}} | 0 |  | 2024-12-05 11:32:38 |
 | 1906962444198109186 | OSS对象存储 | 1 | com.swgj.web.controller.system.SysOssController.upload() | POST | 1 | 18705825812 | /system/oss/upload | 115.208.158.162 | 中国|浙江省|湖州市|电信 |  | {"code":200,"msg":"操作成功","data":{"ossId":"1906962444181331970","url":"/dchyoss/nanxun/2025/04/01/8ddbc1b3b86f41c89e6d84a1af7e507a.txt","fileName":"m1.txt"}} | 0 |  | 2025-04-01 14:50:51 |
 
-## AI 解读（数字已核对）
-
-该数据集没有声明任何字段，也没有字段说明，样例中的字段无法与声明对应。使用者因此无法确认字段含义和取值，取数结果有误用风险。建议先向提供方索取字段清单及说明，确认后再用于分析。
-
 ## 证据
 
-- detail.json SHA-256：`e4f4b9f8cc838f2dbda7b3f13a65880f9493da983a6b27480e7292f61fc50e2d`
-- preview.json SHA-256：`a2ddd268908e91daa3483f728076b31d459b355c1fe3173f3c215c1bdb601978`
+- detail.json SHA-256：`5426b86a072fbd1e301f7ca2c7686d0f21770ea7ff5bb843215e8a2440ded7b7`
+- preview.json SHA-256：`725322685b2e3fca754961f6148508b0d9f1c1e850aaefe06e09dd947089e423`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

@@ -215,6 +215,6 @@ just web && just serve   # 打开 8080，确认榜单 500 行、详情、证明�
 - [ ] 口径对齐（若改了统计）
 - [ ] `lean` PASS，`verify.txt` 为 PASS
 - [ ] 前端三视图可访问，浏览器返回正常
-- [ ] `web/reports` 与 `proofs.json` 的 id 集合一致（同为前 100 名）
+- [ ] `web/reports` 覆盖导出的前 N 名；`proofs.json` 是其中有数据行的那部分（现为 500 / 391）
 - [ ] 文档更新（README / ARCHITECTURE / DECISIONS 至少一处）
 - [ ] 没有 key、没有 `out-full/` 大文件进 git

@@ -24,13 +24,9 @@
 |  | null | 9 | 2023-06-16 11:08:42 | lf0gLdwipDtkbjN+TLRzChi/uBGZEtlP1sFEQ5+wSYYlziCsD6+ozIu/I3l75PBA | null | 0 | 【测试】油罐车 | 120.4302 | 351 | 南浔古镇 | 2023-06-16 11:08:42 | 2023-06-30 11:05:05 | null | 30.8697 | null | 测试 |
 |  | null | 1 | 2023-08-20 11:28:27 | 64ZZ5kA2s8yZ0EXdGdJmALnMZlbHlfkrtu5YY/A93sX1whhkuH6/NVlDX5Rqigu5 | null | 0 | 【测试】雨雪冰冻10 | 120.0932 | 346 | 南浔古镇 | 2023-08-20 11:28:27 | 2023-08-20 11:28:27 | eventReport | 30.8950 | null | 测试 |
 
-## AI 解读（数字已核对）
-
-字段说明与实际样例对不上，还多出声明里没有的字段。这意味着照说明取数会漏掉内容，容易误用。建议使用前先按实际样例逐列核对，并确认数据是否仍需更新。
-
 ## 证据
 
-- detail.json SHA-256：`731936eaa0db44009e1adb64b2ec27d10487634d392a14eb9ad1c17ba9f5ff57`
-- preview.json SHA-256：`ed7b3ef381d55113d938aca63bb3527b2ddbbbeb94270f5916f1e23783804efb`
+- detail.json SHA-256：`69872b5ecf95488bbbc0f866d05e748b1a0867b6804c4e289af860efbac52c71`
+- preview.json SHA-256：`c88640080b1996c0b76d336a2e0ebc715458620892f772e374ab7508bfedf873`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

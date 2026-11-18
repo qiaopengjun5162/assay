@@ -24,13 +24,9 @@
 |  |  | 应急管理局 |  |  | cPR9iShtbwVkMRsloOvf7Q== | 2021.12.6 |  | 不带储存经营（票据）:油漆、辅料 | 2021.12.6至2024.12.5 |
 |  |  | 应急管理局 |  |  | JqzwlvQyH6uxnz22bDrbDg== | 2021.1.21 |  | 带储存经营：汽油、柴油 | 2021.1.21至2024.1.20 |
 
-## AI 解读（数字已核对）
-
-样例出现声明之外的字段，且整列为空的列占一半，数据已停更。使用者按声明取数会口径对不上、可用信息不足。建议先向应急管理局核实字段与停更情况，再决定是否采用。
-
 ## 证据
 
-- detail.json SHA-256：`c742df59f1425c731cfc9b82ec205924606eae4c40cacbe15681cbfe576e4f30`
-- preview.json SHA-256：`900079ca09fc35f4b666037b087ede5d8ea0c8965a5a18988fd10d6e39f7af3f`
+- detail.json SHA-256：`740a9b5aa6b2f16ff878ed76a98a7a0ba1401a9274106adafdee60d0704e8be7`
+- preview.json SHA-256：`97e8383fd7a09385e5d1caab522afb1f6bb7bd76ef795b94b3f8b394e569762c`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

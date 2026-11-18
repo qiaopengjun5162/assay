@@ -110,7 +110,9 @@ a:hover { text-decoration: underline; }
 .stat .lbl { color: var(--ink-2); font-size: 13px; margin-top: 4px; }
 .stat.bad .num { color: var(--bad); }
 .stat.warn .num { color: var(--warn); }
-.coverage { color: var(--muted); font-size: 13px; margin: 0 0 8px; }
+.coverage { color: var(--ink-2); font-size: 13px; margin: 0 0 8px; line-height: 1.9; }
+.coverage b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.coverage .hint { display: block; margin-top: 2px; }
 
 /* ---------- 部门榜 ---------- */
 .deptboard { margin: 30px 0 10px; }

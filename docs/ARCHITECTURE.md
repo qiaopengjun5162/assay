@@ -238,9 +238,20 @@ pub fn compare(baseline: &Summary, current: &Summary, opts: &DriftOptions) -> Dr
 | `TopProofs.lean` | proof | lean | 可重生成 |
 | `reports/<safe_id>.md` | single | 浏览器 / Pages | 可重生成 |
 | `web/data.json` | export | 前端 | 可重生成 |
+| `index.json` | export（`--split`） | 前端列表页 | 可重生成，**字段集≈未来 API 的 DTO** |
+| `shards/NN.json` | export（`--split`） | 前端详情页 | 可重生成，按需加载 |
 | `crates/web/dist` | trunk | 浏览器 / Pages | 可重生成 |
 | `baseline/summary.json` | drift（`--write-baseline`） | drift | **对照系，只随 PR 合并前进** |
 | `docs/audit/latest.md` | drift（`--md-out`） | 周度巡检 PR 正文 | 可重生成 |
+
+**为什么要有 `--split`（2026-11-18 实测）**：全量 24,322 条下，`data.json` 只带 500 条
+（732KB）；全量索引 `index.json` 是 **7.3MB**（每行 276 字节），详情分片合计 **12MB**。
+共用一份单文件意味着首屏要拉 19MB，分层后首屏只拉索引（gzip 后约 1.5MB），
+详情按片 500KB 懒加载。
+
+**但分层解决不了历史**：每周存一份全量是 19MB，只存索引也要 7.3MB，一年 380MB 进 git。
+「时间序列」这件事静态托管天生装不下——它是后续引入查询后端的硬理由，
+而不是「项目变大了所以要后端」这种模糊说法。
 
 ## 5. 不变量（改动时最容易踩坏）
 

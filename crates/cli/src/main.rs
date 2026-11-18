@@ -59,6 +59,15 @@ enum Command {
         /// 输出文件（默认 web/data.json）
         #[arg(long, default_value = "web/data.json")]
         dest: String,
+        /// 同时产出 index.json + shards/（全量，不受 --limit 影响）
+        ///
+        /// 单文件 data.json 是全量加载的，一周涨约 723KB。分层后列表只读索引，
+        /// 详情按分片懒加载。两个产物并存，前端可分步迁移。
+        #[arg(long)]
+        split: bool,
+        /// 分片数量（配合 --split）
+        #[arg(long, default_value_t = 24)]
+        shards: usize,
     },
     /// 批量生成单数据集报告（前 N 名，Markdown，写进站点目录）
     Reports {
@@ -212,7 +221,12 @@ fn run(cli: Cli) -> assay_core::Result<()> {
                 std::process::exit(1);
             }
         }
-        Command::Export { limit, dest } => {
+        Command::Export {
+            limit,
+            dest,
+            split,
+            shards,
+        } => {
             let reports_dir = Path::new(&dest).parent().map(|p| p.join("reports"));
             let reports_dir = reports_dir
                 .as_ref()
@@ -233,11 +247,23 @@ fn run(cli: Cli) -> assay_core::Result<()> {
                 reports_dir: reports_dir.as_deref(),
                 out_path: &dest,
                 limit,
+                shards: split.then_some(shards),
             })?;
             println!(
                 "导出 {} 条（共 {}）：证明 {} / 证据 {} / 解读 {}",
                 o.rows, o.total, o.proofs, o.evidence, o.explanations
             );
+            if o.shards_written > 0 {
+                println!(
+                    "分层：index.json {} 条（全量）+ {} 个分片 → {}",
+                    o.total,
+                    o.shards_written,
+                    Path::new(&dest)
+                        .parent()
+                        .unwrap_or(Path::new("."))
+                        .display()
+                );
+            }
         }
         Command::Reports { top, dest } => {
             let items = assay_core::audit::read_items(&format!("{out}/items.jsonl"))?;

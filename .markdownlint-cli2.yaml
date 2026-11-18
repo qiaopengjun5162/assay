@@ -23,4 +23,7 @@ ignores:
   - "out-full"
   - "out-smoke"
   - "vendor"
+  - "out-*"
   - "CHANGELOG.md"
+  # AI 协作工具的本地会话记忆，不是交付文档
+  - ".workbuddy"

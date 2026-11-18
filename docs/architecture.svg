@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620" font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">
   <rect width="1000" height="620" fill="#f5f4f1"/>
 
-  <text x="40" y="46" font-size="22" font-weight="800" fill="#14161a">数证 DataProof · 数据体检与可复核证明</text>
+  <text x="40" y="46" font-size="22" font-weight="800" fill="#14161a">数验 Assay · 数据体检与可复核证明</text>
   <text x="40" y="70" font-size="13" fill="#4d5462">两条链都绕开模型：哈希钉住时点，定理钉住推导</text>
 
   <defs>

@@ -40,7 +40,7 @@ pub struct ExplainOutcome {
 
 pub fn explain(opts: &ExplainOptions<'_>) -> Result<ExplainOutcome> {
     let key = crate::config::llm_key()
-        .ok_or_else(|| Error::Other("找不到 LLM key：设置 DATAPROOF_LLM_KEY 或本地配置".into()))?;
+        .ok_or_else(|| Error::Other("找不到 LLM key：设置 ASSAY_LLM_KEY 或本地配置".into()))?;
     let mut items = crate::audit::read_items(opts.items_path)?;
     items.retain(|d| d.has_preview == 1);
     items.sort_by(|a, b| {

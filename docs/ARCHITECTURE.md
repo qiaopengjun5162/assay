@@ -258,7 +258,7 @@ cd crates/web && trunk build --release                 # WASM → crates/web/dis
 | 预览无数据 | `hasPreview == 1` 但无行 | 记 `sampleRows = 0`，分类为「无样例」 |
 | Lean 未安装 | `require_lean` 报错 | 提示安装 elan；CI 单独装 |
 | Lean 校验失败 | `verify.txt` 写 FAIL | 命令退出码 1，禁止发布 |
-| 模型 key 缺失 | `explain` 报错 | 设置 `DATAPROOF_LLM_KEY` |
+| 模型 key 缺失 | `explain` 报错 | 设置 `ASSAY_LLM_KEY` |
 | 模型编数字 | 护栏 `rejected` | 重写一次；仍不合格不展示，产物里保留 `illegal` 供审计 |
 | 数字漂移 | `summary.json` 与 `data/` 快照不一致 | 说明重跑了新快照；引用前确认时点 |
 

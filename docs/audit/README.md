@@ -66,7 +66,11 @@
 4. 仓库 → Settings → Secrets and variables → Actions → New repository secret →
    名字 `AUDIT_PAT`，值粘 token
 
-没配也能跑：job 会在「检查 PR 凭据」那步红，并明确提示缺 `AUDIT_PAT`。
+没配也能跑，但会降级：job 不再红，而是改用 `GITHUB_TOKEN` 开一个 issue，
+body 就是这份 `docs/audit/latest.md`。报告一样能看到，只是不自动开 PR——
+因为 `GITHUB_TOKEN` 开的 PR 不触发 CI，会永远卡在「等待状态上报」。
+
+要让漂移走进 PR 流程（CI 门禁、对比 diff、合并后基线前进），才需要配这个 token。
 
 ## 手动试跑
 

@@ -3,17 +3,20 @@
 //! 意义：`CatalogSource` 这一层抽象真的能换掉平台；CI 不需要访问政府网站，
 //! 也能验证「取数 → 分类 → 聚合」整条链路的数字。
 
-use assay_core::api::{preview_rows, CatalogSource};
+use assay_core::api::{CatalogSource, DatasetMeta};
 use assay_core::audit::{audit, AuditOptions};
 use assay_core::{aggregate, model::CatalogRecord};
-use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::path::PathBuf;
 
+/// 假平台：直接返回**归一化**数据，不模拟任何一家平台的 JSON。
+///
+/// 这一点本身就是被测的东西——如果下游还在按浙江的 `result.columnList` 取值，
+/// 这个只有字段名和行的 fixture 就编译不过、跑不通。
 struct FixtureSource {
     catalog: Vec<CatalogRecord>,
-    detail: HashMap<String, Value>,
-    preview: HashMap<String, Value>,
+    meta: HashMap<String, DatasetMeta>,
+    rows: HashMap<String, Vec<Vec<String>>>,
 }
 
 impl CatalogSource for FixtureSource {
@@ -34,17 +37,21 @@ impl CatalogSource for FixtureSource {
     fn catalog_all(&self, _threads: usize) -> assay_core::Result<Vec<CatalogRecord>> {
         Ok(self.catalog.clone())
     }
-    fn detail(&self, id: &str) -> assay_core::Result<Value> {
-        Ok(self.detail[id].clone())
+    fn meta(&self, id: &str) -> assay_core::Result<DatasetMeta> {
+        Ok(self.meta[id].clone())
     }
-    fn preview(&self, id: &str, _size: usize) -> assay_core::Result<Value> {
-        Ok(self.preview[id].clone())
+    fn rows(&self, id: &str, _size: usize) -> assay_core::Result<Vec<Vec<String>>> {
+        Ok(self.rows[id].clone())
+    }
+    fn rows_from_raw(&self, raw: &[u8]) -> assay_core::Result<Vec<Vec<String>>> {
+        // 假平台的快照格式就是它自己：JSON 数组，第一行表头。
+        Ok(serde_json::from_slice(raw)?)
     }
     fn detail_raw(&self, id: &str) -> assay_core::Result<Vec<u8>> {
-        Ok(serde_json::to_vec(&self.detail[id])?)
+        Ok(serde_json::to_vec(&self.meta[id])?)
     }
     fn preview_raw(&self, id: &str, _size: usize) -> assay_core::Result<Vec<u8>> {
-        Ok(serde_json::to_vec(&self.preview[id])?)
+        Ok(serde_json::to_vec(&self.rows[id])?)
     }
 }
 
@@ -59,55 +66,56 @@ fn rec(id: &str, name: &str) -> CatalogRecord {
     }
 }
 
-fn detail(cols: &[&str], desc: &str) -> Value {
-    json!({"result": {
-        "columnList": cols.iter().map(|c| json!({"colNameCn": c})).collect::<Vec<_>>(),
-        "hasPreviewData": 1,
-        "dopSourceInfo": {"description": desc}
-    }})
+fn meta(cols: &[&str], desc: &str) -> DatasetMeta {
+    DatasetMeta {
+        columns: cols.iter().map(|c| c.to_string()).collect(),
+        has_preview: true,
+        description_len: desc.chars().count(),
+    }
 }
 
-fn preview(header: &[&str], rows: Vec<Vec<&str>>) -> Value {
-    let mut data: Vec<Value> = vec![json!(header)];
+/// 表头 + 数据行，和 trait 约定的形状一致。
+fn table(header: &[&str], rows: Vec<Vec<&str>>) -> Vec<Vec<String>> {
+    let mut out: Vec<Vec<String>> = vec![header.iter().map(|s| s.to_string()).collect()];
     for r in rows {
-        data.push(json!(r));
+        out.push(r.iter().map(|s| s.to_string()).collect());
     }
-    json!({"result": {"data": data}})
+    out
 }
 
 fn fixture() -> FixtureSource {
     // 1) 完全一致；第 3 列两行都空 → 空值率 2/6，整列全空 1
     // 2) 声明 4 列、样例 3 列 → 列数不一致，缺「备注」
     // 3) 声明名带部门前缀 → 仅命名不一致（不算结构问题）
-    let mut detail_map = HashMap::new();
-    let mut preview_map = HashMap::new();
-    detail_map.insert(
+    let mut meta_map = HashMap::new();
+    let mut rows_map = HashMap::new();
+    meta_map.insert(
         "a".to_string(),
-        detail(&["编号", "名称", "更新时间"], "示例说明文字足够长"),
+        meta(&["编号", "名称", "更新时间"], "示例说明文字足够长"),
     );
-    preview_map.insert(
+    rows_map.insert(
         "a".to_string(),
-        preview(
+        table(
             &["编号", "名称", "更新时间"],
             vec![vec!["1", "甲", ""], vec!["2", "乙", ""]],
         ),
     );
-    detail_map.insert(
+    meta_map.insert(
         "b".to_string(),
-        detail(&["编号", "名称", "更新时间", "备注"], "说明"),
+        meta(&["编号", "名称", "更新时间", "备注"], "说明"),
     );
-    preview_map.insert(
+    rows_map.insert(
         "b".to_string(),
-        preview(
+        table(
             &["编号", "名称", "更新时间"],
             vec![vec!["1", "丙", "2026-01-01"]],
         ),
     );
-    detail_map.insert(
+    meta_map.insert(
         "c".to_string(),
-        detail(&["鹿西乡民宿房间数"], "说明文字也不短"),
+        meta(&["鹿西乡民宿房间数"], "说明文字也不短"),
     );
-    preview_map.insert("c".to_string(), preview(&["房间数"], vec![vec!["12"]]));
+    rows_map.insert("c".to_string(), table(&["房间数"], vec![vec!["12"]]));
 
     FixtureSource {
         catalog: vec![
@@ -115,8 +123,8 @@ fn fixture() -> FixtureSource {
             rec("b", "少一列的数据集"),
             rec("c", "带前缀的数据集"),
         ],
-        detail: detail_map,
-        preview: preview_map,
+        meta: meta_map,
+        rows: rows_map,
     }
 }
 
@@ -194,12 +202,4 @@ fn audit_and_report_run_offline() {
     assert!(md.contains("## 体检结论"));
 
     let _ = std::fs::remove_dir_all(&dir);
-}
-
-#[test]
-fn preview_rows_parses_header_and_body() {
-    let v = preview(&["a", "b"], vec![vec!["1", "2"]]);
-    let rows = preview_rows(&v);
-    assert_eq!(rows.len(), 2);
-    assert_eq!(rows[0], vec!["a".to_string(), "b".to_string()]);
 }

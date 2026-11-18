@@ -3,7 +3,7 @@
 //! 优先读证据包里的 `preview.json`——证的就是已经落盘并算过哈希的那份字节，
 //! 而不是重新抓一遍。这样「证明对象」和「存证对象」是同一份数据。
 
-use crate::api::{preview_rows, CatalogSource};
+use crate::api::CatalogSource;
 use crate::lean;
 use crate::model::{Dataset, ProofEntry};
 use crate::util::safe_id;
@@ -151,11 +151,12 @@ fn load_rows(d: &Dataset, out_dir: &str, client: &dyn CatalogSource) -> Option<V
         .join(safe_id(&d.id))
         .join("preview.json");
     if let Ok(bytes) = fs::read(&path) {
-        if let Ok(v) = serde_json::from_slice::<serde_json::Value>(&bytes) {
-            return Some(preview_rows(&v));
+        // 快照优先，且由适配器解析——证明对象必须和存证对象是同一份字节。
+        if let Ok(rows) = client.rows_from_raw(&bytes) {
+            return Some(rows);
         }
     }
-    client.preview(&d.id, 10).ok().map(|v| preview_rows(&v))
+    client.rows(&d.id, 10).ok()
 }
 
 /// 与 Python `json.dumps(rows, ensure_ascii=False)` 同格式：分隔符带空格。

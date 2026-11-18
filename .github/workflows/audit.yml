@@ -11,6 +11,9 @@ name: audit
 # 注意：开 PR 用的是 AUDIT_PAT，不是默认 GITHUB_TOKEN。
 # GitHub 防递归：GITHUB_TOKEN 建的 PR 不会触发 ci.yml，会永远卡在
 # 「Expected — waiting for status」，没法按模板合并 CI 绿了才合。
+#
+# 没配 AUDIT_PAT 不算失败：降级为用 GITHUB_TOKEN 开 issue，报告内容一样，
+# 只是不自动开 PR。理由是「让巡检卡在配置项上」比「让报告进不了人眼」更糟。
 
 on:
   schedule:
@@ -27,6 +30,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 # 体检是联网长任务，两轮并行只会互相拖慢，还可能把同一份基线写乱
 concurrency:
@@ -111,18 +115,22 @@ jobs:
             docs/audit/latest.md
           retention-days: 30
 
-      - name: 检查 PR 凭据
+      - name: 选通道（有 PAT 开 PR，没有就开 issue）
+        id: route
         if: steps.drift.outputs.code == '1'
         env:
           PAT: ${{ secrets.AUDIT_PAT }}
         run: |
-          if [ -z "$PAT" ]; then
-            echo "::error::缺少仓库 secret AUDIT_PAT，无法开 PR；见 docs/audit/README.md"
-            exit 1
+          if [ -n "$PAT" ]; then
+            echo "mode=pr" >> "$GITHUB_OUTPUT"
+            echo "用 AUDIT_PAT 开 PR"
+          else
+            echo "mode=issue" >> "$GITHUB_OUTPUT"
+            echo "::warning::没配 AUDIT_PAT，降级为开 issue（报告照常产出，只是不能自动开 PR）"
           fi
 
       - name: 开 PR（仅漂移）
-        if: steps.drift.outputs.code == '1'
+        if: steps.drift.outputs.code == '1' && steps.route.outputs.mode == 'pr'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.AUDIT_PAT }}
@@ -135,3 +143,15 @@ jobs:
           commit-message: "chore(audit): 周度体检指标漂移"
           title: "chore(audit): 周度体检发现指标漂移"
           body-path: docs/audit/latest.md
+
+      # 降级通道：没配 AUDIT_PAT 时不再让 job 红着什么都不留。
+      # 用 GITHUB_TOKEN 开 issue 不受防递归限制（限制只针对触发 workflow），
+      # 报告里带着复现命令，人看到后照样能决定「接受为新常态」。
+      - name: 开 issue（没有 PAT 时的降级）
+        if: steps.drift.outputs.code == '1' && steps.route.outputs.mode == 'issue'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "chore(audit): 周度体检发现指标漂移（$(date -u +%F)）" \
+            --body-file docs/audit/latest.md

@@ -98,11 +98,19 @@ cargo install wasm-bindgen-cli --version <与 Cargo.lock 一致>
 
 待办（非阻塞）：
 
-1. **第二个平台**（上海 data.sh.gov.cn，11,477 个数据集）：先按这三步探明接口，再写一个 `CatalogSource` 实现——
-   a) 打开数据集列表页，DevTools 里筛 XHR，找到列表请求的 URL、分页参数（浙江是 `current/size`，`page` 会被忽略）
-   b) 找详情与预览两个端点，确认 id 是否需要 URL 编码（浙江是 base64，含 `+ / =`）
-   c) 用 `curl` 直接打一次，确认返回结构里「声明字段」与「样例行」分别在哪一层
-   拿到这三样，实现 7 个方法即可，后续采集/聚合/证明/导出不用改。
+1. **第二个平台**（原定上海，2026-11-18 实测被挡，见 D25）：
+   上海 `data.sh.gov.cn` 的 `/`、`/api/`、`/api/search` 全部返回 **HTTP 412** + 混淆 JS，
+   是瑞数类动态防护，连接口路径都进不去；江苏 403/504；山东、北京的目录页是服务端渲染 HTML。
+   **改候选为深圳**（`opendata.sz.gov.cn`）：目录与预览接口形态最接近浙江（POST + JSON +
+   表头/行），但要实名注册领 APPKEY，属外部依赖而非编码任务。
+   拿到 key 后按这三步确认：
+   a) 列表请求的 URL 与分页参数（浙江是 `current/size`，`page` 会被静默忽略）
+   b) 详情与预览两个端点，id 是否需要 URL 编码（浙江是 base64，含 `+ / =`）
+   c) `curl` 打一次，确认「声明字段」与「样例行」分别在哪一层
+   然后写一个 `CatalogSource` 实现：七个方法（目录分页 / 目录全量 / `meta` / `rows` /
+   `rows_from_raw` / `detail_raw` / `preview_raw`）。
+   **核心库其余模块不需要改**——平台形状从 trait 边界上清掉了（D25），
+   `tests/pipeline.rs` 的假平台不带任何真实平台 JSON 也能跑通全链路。
 2. 证明从 100 扩到 500：已实测 63.9s / 5,923 条 / 506K，见 ARCHITECTURE 第 8 节；扩之前先决定要不要一起扩证据包（+16MB）
 
 一个已经踩过的坑，别再踩：

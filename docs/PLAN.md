@@ -122,9 +122,13 @@ assay/
 | job | 内容 | 为什么必须有 |
 |---|---|---|
 | `rust` | `cargo fmt --check` / `clippy -D warnings` / `cargo test` / `cargo build --release` | 主干质量；clippy 零容忍（抄 moonpub） |
+| `msrv` | 1.88.0 + `--locked` 真编一次 | 声明不测等于没声明 |
+| `coverage` | `scripts/coverage.sh`，行覆盖地板 52% | 让「能自动验证的那部分」不会悄悄烂掉 |
+| `commit-lint` | `scripts/check-commits.sh` 查 Conventional Commits | 本地钩子能被 `--no-verify` 绕过 |
 | `lean` | 装 elan → `assay check-proofs fixtures/expected.lean`（拒绝 sorry / admit） | 证明是本项目的差异点，它坏了等于产品坏了 |
 | `secret-scan` | gitleaks（fetch-depth: 0） | 脚本要读 API key，防止误提交 |
 | `wasm` | wasm32 目标 + trunk 0.22.1 + `clippy -D warnings` + `trunk build --release` + 产物自检 | 前端也是交付物，别只测后端 |
+| `docs` | markdownlint-cli2 | 文档即交付物 |
 
 **冲刺期不做（2026-11-18 已补前两项）**：MSRV、覆盖率地板、Windows 冒烟（现场是 macOS，仍不做）。
 
@@ -132,9 +136,17 @@ assay/
   实测 1.86 就编不过（`icu_*` 2.4 要求 1.88）。已加 `rust-version = "1.88"` 与 `msrv` job。
 - **覆盖率地板**：冲刺期砍掉，现已补回。实测 54.16% 行覆盖，地板 52%（`scripts/coverage.sh`）。
 
-### `release.yml`（打 tag 时）
+### `audit.yml`（每周一 10:00 + 手动触发）
 
-抄 moonpub 的结构，并在注释里保留那个坑：**release-please 用 GITHUB_TOKEN 创建的 release 不会触发下游 workflow**，需要手动 `gh workflow run` 或用 PAT。
+周度巡检：全量体检 → `assay drift` 比对 `baseline/summary.json` → 漂移就开 PR。
+退出码三档（0 正常 / 1 漂移 / 2 跑批不可信），口径见 `docs/audit/README.md` 与 D19。
+小样本手动试跑（`limit > 0`）会跳过漂移判定，只验证链路。
+
+### `release.yml`（打 tag 时）—— 尚未实现
+
+仓库至今没有任何 tag，所以这个 workflow 还没写。真要打 v0.1.0 时再补，
+抄 moonpub 的结构，并在注释里保留那个坑：**release-please 用 GITHUB_TOKEN
+创建的 release 不会触发下游 workflow**，需要手动 `gh workflow run` 或用 PAT。
 
 ---
 

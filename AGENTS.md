@@ -39,6 +39,9 @@
    `web/reports` 的 id 集合要等于 `proofs.json` 的 id 集合，见 `docs/DECISIONS.md` D16。
 6. **准确性明确不评价**：没有权威源，评了就是编。
 7. **样例级**：完整性来自表头 + 5 行样例，不是全量 2.26 亿行；文案不许说成全量。
+8. **基线只在漂移 PR 合并时前进**：`baseline/summary.json` 是「上次人工确认过的常态」。
+   跑批被判不可信（`assay drift` 退出码 2）时绝不写基线——脏数据进对照系，之后所有对比全废。
+   见 `docs/DECISIONS.md` D19。
 
 ## 分层边界
 

@@ -231,4 +231,7 @@ jobs:
       - name: Lint
         run: |
           chmod +x scripts/lint-docs.sh
-          npx --yes markdownlint-cli2@0.18.1
+          # 版本钉死且与本地一致：本地 `just lint-docs` 用的是已安装的那版，
+          # 之前 CI 钉 0.18.1、本地跑 0.23.2，两边规则集不同 —— 会出现
+          # 「本地绿 CI 红」或更糟的「CI 绿本地红」。改版本两边一起改。
+          npx --yes markdownlint-cli2@0.23.2

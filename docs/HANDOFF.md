@@ -17,7 +17,7 @@
 
 已经验证过的事（不要重复怀疑，除非你有新证据）：
 
-- `just check` 全绿（fmt / clippy core+cli / 25 个单测 / 证明门禁）
+- `just check` 全绿（fmt / clippy core+cli / 45 个单测 / 证明门禁）
 - `just clippy-wasm` 全绿
 - 口径对齐：用旧 `out-full/items.jsonl` 重算，`summary.json` 标量与 **2,500 个部门全部一致**
 - 证明对齐：100 条定理的 **SHA-256 与顺序全部一致**，`lean` PASS，2,355 条定理，15.3 秒
@@ -28,10 +28,19 @@
 
 已完成（2026-11-15）：
 
-- CI 四个 job：rust（fmt/clippy/test/build）、wasm（trunk 构建 + clippy）、lean（内核校验）、密钥扫描
+- CI：rust（fmt/clippy/test/build）、wasm（trunk 构建 + clippy）、lean（内核校验）、密钥扫描
 - Pages 两段式：分支只构建 artifact，`main` 才部署 `crates/web/dist`
 - 线上已切到 WASM 版：500 行榜单、详情六维、AI 解读、证据下载、证明页 PASS、浏览器返回正常
 - `docs/DECISIONS.md` 已补 D12–D15
+
+已完成（2026-11-18）：
+
+- CI 从 4 个 job 扩到 8 个：新增 `msrv`（1.88 真编）、`coverage`（地板 52%）、
+  `commit-lint`（Conventional Commits）、`docs`（markdownlint）
+- `assay drift` + `audit.yml` 周度巡检，退出码三档（见 D19、`docs/audit/README.md`）
+  首份基线 `baseline/summary.json`（24,322 条 / 抓取成功率 81.53%）
+- 改名残留清理完毕：环境变量改 `ASSAY_LLM_KEY` / `ASSAY_CONFIG`，旧名过渡期仍可读
+- ⚠️ **`AUDIT_PAT` 尚未配置**：漂移那一周会停在「检查 PR 凭据」并提示缺 secret
 
 现场离线预案（已实测 2026-11-15）：
 

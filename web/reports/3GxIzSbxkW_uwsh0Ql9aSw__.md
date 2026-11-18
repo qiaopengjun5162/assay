@@ -24,13 +24,9 @@
 | 5 |  | SZS | null | 1 | null | 330503 | 国家85高程 |  | 08 15 2019  3:49PM | null | 330503 |  | null | null | null | null | ZZ | 147393a4-197a-4edd-8957-95b9584ab5e8 | null | 菁山闸(上) | 0.0000 | null | 8877 | 浙江水文 | null | null | null | null | null | null | 菱湖镇三山村 | null |
 | 5 | 鄱阳湖水系（信江水系） | NYL | null | 1 | null | 330503 | null |  | 08 15 2019  3:49PM | 0.0000 | 330503 | 长江流域 | null | null | null | null | ZZ | 147393a4-197a-4edd-8957-95b9584ab5e8 | null | 南浔雨量2 | 0.0000 | null | 7248 | 浙江水文 | null | null | null | null | null | null | 南浔镇浔北村 | null |
 
-## AI 解读（数字已核对）
-
-该数据集已停更，且实际字段与声明不一致，最需警惕。使用者直接按声明取数会漏掉未声明字段，影响口径一致。使用前应向提供方确认更新计划并核对字段清单。
-
 ## 证据
 
-- detail.json SHA-256：`ec4f888fd368cb8b9580dc7f50f1a20ad17d93c60fdd0d1993c062fcaa5cd39a`
-- preview.json SHA-256：`f1512c7cb5ddcf9a7d90c17c5dc69a941212d96de90f3a30e13fc595c2964460`
+- detail.json SHA-256：`dab1d0c9f0064c3934fd25d67232ee00a81bb91b64da04c501ed6fff2345998c`
+- preview.json SHA-256：`31afe3e8a9468a84b27fb4245a82d6a27913bed0dcbf4127aafdb242ef2b31f9`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

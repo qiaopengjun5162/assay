@@ -24,13 +24,9 @@
 | 16 |  | 9437 | 3 |
 | 17 |  | 341 | 4 |
 
-## AI 解读（数字已核对）
-
-样例缺少声明的服务时间字段，且存在整列为空的列，这是最要紧的问题。使用者无法按服务时间筛选，数据覆盖也不完整，需自行核实。建议先向发布部门确认字段口径与更新状态，再决定是否使用。
-
 ## 证据
 
-- detail.json SHA-256：`40c1ec0ac6b690de7d86cf2c248b4caedcd583fbc14e6ad1cfc5b447ef815957`
-- preview.json SHA-256：`a339d806db05e4aa5f70215ef1652b8c2204c4c6a8572f260c6ad20b24c09a9d`
+- detail.json SHA-256：`3784957956ddcf1e575e98b872f3c3ee6ff1bff36c803bf1266f5bafd49d5cde`
+- preview.json SHA-256：`77c6b1ac1be5bb9d8643a0c808725d106f60366777bcfa511fd26d09a5b4f5d4`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

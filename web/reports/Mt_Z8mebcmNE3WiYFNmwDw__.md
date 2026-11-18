@@ -24,13 +24,9 @@
 | ZHEJIANG JINMIN INTERNATIONAL TRADE CO., LTD |  | JMI@hzjinmin.com | 2021-07-14 | KqVletJfe6ucPqWRIebv6Q== | CE79HEKDIRB/2lCDR/KfC/DsBKPjk7y6udkVficgfJk= | 浙江省湖州市南浔区千金镇千金工业园区排塘港路99号（自主申报） | 无 | /9dKiI7FVcWVbeKeS8WdMA== | Nqs5IRAoSgY2cXV7wwd0bamq0RAd6n84iqoQ9EQu3g7gnM6jnrkjvsEpo0nGw5hOJhw5HUvfVycy545Xg8c+CLwQL0AAQPGhDcgPgJAkjnEqpQxXOcJVPVsY5q3Kz/Bu | 有限责任公司 | 313016 | 1000 | 浙江晋民国际贸易有限公司 | 南浔区商务局 | 91330503MA2JKC5K5G | ZHEmQl2QtKnGz65Xk+TZOg== | 9月13日 | 00000000000 | 04351887 | No.99,paitanggang road,Qianjin Industrial park,Qianjin town，Nanxun area，Huzhou city,Zhejiang province,China. |
 | HUZHOU LICHENG ELECTRONIC COMMERCE CO.,LTD |  | 764250513@qq.com | 2021-05-26 | M7NmvjR7YJtwz07ZQWI7/w== | Fzg9M3Sv+wYy1SdisAbJIBkD4rorgxBlAvV9B2d00eo= | 浙江省湖州市南浔经济开发区东马路1188号4幢3楼340(自主申报） | 无 | /9dKiI7FVcWVbeKeS8WdMA== | Nqs5IRAoSgY2cXV7wwd0bVDbqRenyWdDQ5VBO1u4+zSJTxULuyd79yLXiIQMGxnz3VXj10znwDk4luHinnEMZxyRzTBTbqfzaghma+8beBbXrnxggIPhazpCzerrMWG1 | 有限责任公司 | 313009 | 50 | 湖州里乘电子商务有限公司 | 南浔区商务局 | 91330503MA2JJYRE0P | OKpgvt/9RjYlXZyRQi6ygA== | 7月12日 | 00000000000 | 04351842 | Room 340,3rd Floor,Building4,No.1188,Dongma Road,Nanxun Economic Development Zone,Huzhou City,Zhejiang Province,China. |
 
-## AI 解读（数字已核对）
-
-最要紧的是声明字段与实际样例字段对不上，样例还多出若干未说明字段。使用者据此取数容易误解字段含义、误用数据。建议使用前向商务局核对字段口径，并以核对结果为准。
-
 ## 证据
 
-- detail.json SHA-256：`e8762f32b5375fdad7364126408fb9ad37d676ce7b3c21e6b1b27dd3795f227f`
-- preview.json SHA-256：`9ed167cea601deacf86bd118bf94e85878b7906d7983adcba2b3af70d1174102`
+- detail.json SHA-256：`7cc99e4d21a22b07d4f155efe822887faf3d2c460cb025dd07df46938b3d3cf8`
+- preview.json SHA-256：`449ec778c2efa950852c2b696fdb320f536dc644886e72b7813448bc30a0a81a`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

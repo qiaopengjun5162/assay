@@ -24,13 +24,9 @@
 | 77763ba6-1eac-4850-bd24-ce512bee5712 | 63 |  | cc8bfeeb-6d73-4972-b04e-dbe6ca11a837 | 浙江瑞诺生态科技有限公司 | 3 |  | [{"code":"1","score":"3"},{"code":"2","score":"3"},{"code":"3","score":"3"},{"code":"4","score":"3"},{"code":"5","score":"2"},{"code":"6","score":"2"},{"code":"7","score":"3"},{"code":"8","score":"3"},{"code":"9","score":"1"},{"code":"10","score":"1"},{"code":"11","score":"4"},{"code":"12","score":"2"},{"code":"13","score":"2"},{"code":"14","score":"4"},{"code":"15","score":"3"},{"code":"16","score":"2"},{"code":"17","score":"2"},{"code":"18","score":"4"},{"code":"19","score":"3"},{"code":"20","score":"3"},{"code":"21","score":"2"},{"code":"22","score":"2"},{"code":"23","score":"2"},{"code":"24","score":"2"},{"code":"25","score":"2"},{"code":"26","score":"0"},{"code":"27","score":"0"},{"code":"28","score":"0"}] |
 | 9e772db0-bec0-4ca6-9743-89a127379dbc | 65 |  | febddeb1-75ce-4dfc-9aba-86ac5a99ae19 | 温州鑫盛环境安全科技有限公司 | 3 |  | [{"code":"1","score":"3"},{"code":"2","score":"2"},{"code":"3","score":"2"},{"code":"4","score":"2"},{"code":"5","score":"2"},{"code":"6","score":"2"},{"code":"7","score":"2"},{"code":"8","score":"3"},{"code":"9","score":"2"},{"code":"10","score":"2"},{"code":"11","score":"0"},{"code":"12","score":"3"},{"code":"13","score":"3"},{"code":"14","score":"3"},{"code":"15","score":"2"},{"code":"16","score":"3"},{"code":"17","score":"3"},{"code":"18","score":"3"},{"code":"19","score":"4"},{"code":"20","score":"5"},{"code":"21","score":"3"},{"code":"22","score":"3"},{"code":"23","score":"3"},{"code":"24","score":"3"},{"code":"25","score":"2"},{"code":"26","score":"0"},{"code":"27","score":"0"},{"code":"28","score":"0"}] |
 
-## AI 解读（数字已核对）
-
-声明字段与实际样例不符，多个字段在样例中缺失，数据也未按声明的频率更新。使用者据此无法完成依赖完整字段的分析。建议先向数据提供方核实字段与更新状态，取得完整最新数据后再使用。
-
 ## 证据
 
-- detail.json SHA-256：`f44971434324277737a5bc04a7cac1d5ad687dc49e0f2454f1059b9be737f031`
-- preview.json SHA-256：`64dd7bf4128916e6af1c06c14b9121a8fbe47b46662a380418c7447a9fcd17bc`
+- detail.json SHA-256：`0bed12fc8751d5b267bded66ee009c5494e3ca9af16b5f4e5467a6adb81682cc`
+- preview.json SHA-256：`df9b23f0a185b559bd3fd570c6caa75a5672243981986637d007bb4c345cafb2`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

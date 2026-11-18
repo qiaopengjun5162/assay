@@ -24,13 +24,9 @@
 | 0 |  | 1474 | 0 | 0 | 16 | 2019091113587277071 | null | 1 | 1 | 176 | 2021-06-16 09:25:43 | KDQu7mF2P/R/a8FO3Is0UvgMAVFOZUJrGBl1ao7rNVdeaBXQikCq1jEpj9uk8dODk6PWTa9l/YktSork0psiXHnqcv9ZwFbwsZYbjF+qtcXJXGE3a7wTR5UeD7ZGHnjZeCvQcoET3WmREiYUsLVtHshVwVeUhoqNx/RR9s6AFVbnTm0sigm0YFCbkR14JGqiHyeWXlkokjDuHdRxQF1hrVTHep/DpkfHYHhdwSFnXgWTHfVblG4QV1V26KhOZfh6N/fA98MlrPW0UvxEotXhUKSfYLdmrDeahxVdsEd7AV8lixSB5oDm34PuVbC7KZU7 | 913305037200685569 | 91866386911565516072 | 192 | 浙江永吉木业有限公司 |  | 1 | null | 99*********q.com |
 | 0 |  | 1475 | 0 | 0 | 11 | 2019091113587277071 | null | 1 | 1 | 119 | 2021-06-16 09:26:21 | KDQu7mF2P/R/a8FO3Is0UvgMAVFOZUJrGBl1ao7rNVdeaBXQikCq1jEpj9uk8dODk6PWTa9l/YktSork0psiXHnqcv9ZwFbwsZYbjF+qtcXJXGE3a7wTR5UeD7ZGHnjZeCvQcoET3WmREiYUsLVtHshVwVeUhoqNx/RR9s6AFVbnTm0sigm0YFCbkR14JGqiHyeWXlkokjDuHdRxQF1hrVTHep/DpkfHYHhdwSFnXgWTHfVblG4QV1V26KhOZfh6N/fA98MlrPW0UvxEotXhUKSfYLdmrDeahxVdsEd7AV8lixSB5oDm34PuVbC7KZU7 | 913305037200685569 | 35078231603187106681 | 130 | 浙江永吉木业有限公司 |  | 1 | null | 99*********q.com |
 
-## AI 解读（数字已核对）
-
-声明字段与实际样例不符，样例中多出未声明的字段，并且存在整列为空的情况。若按声明取用，会漏读字段、误判完整性，也难以判断时效。建议先按实际样例逐列核对，再向提供方确认字段口径与更新情况。
-
 ## 证据
 
-- detail.json SHA-256：`1bc4b0b1f486af1f5cb9255abc743bd28426c4dce6f559d3d67babdd77fee367`
-- preview.json SHA-256：`44099daddb85862d3e2c075d104f54104173eeee5ded96557df4266fb57bd0e9`
+- detail.json SHA-256：`7b0f4c23dcd0930885faa580e2b0e89e6bc10e3dae317d9c7d37cb7332253b26`
+- preview.json SHA-256：`c1f3b45abb57666d366349545046093fb967b17dfabfd9ed5d529604bec7c51f`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

@@ -24,13 +24,9 @@
 |  |  | 30 | 周桂珠“助企纾困”服务委员工作室传达学习党代会精神 | 2023-03-03 13:09:45 | 5 | 575 | 0 | /file/2023/03/03/20230303131205343dk6xyl.jpg?iid=7 | 137 |  | 5ec04468b0fd425e8f49f11ecb14448c | <p><span style="color: rgb(34, 34, 34); font-family: system-ui, -apple-system, BlinkMacSystemFont, " helvetica="" pingfang="" hiragino="" sans="" microsoft="" yahei="" font-size:="" letter-spacing:="" text-align:=""></span></p><section powered-by="xiumi.us" style="margin: 0px; padding: 0px 10px; outline: 0px; max-width: 100%; box-sizing: border-box; color: rgb(34, 34, 34); font-family: system-ui, -apple-system, BlinkMacSystemFont, " helvetica="" pingfang="" hiragino="" sans="" microsoft="" yahei | 2023-03-03 13:08:00 | 2 | 309 |
 |  |  | 31 | 为贯彻落实省党代会精神，湖州这家政协委员工作室改名了！ | 2023-03-03 13:18:38 | 5 | 575 | 0 | /file/2023/03/03/20230303131834659ubid7x.jpg?iid=8 | 138 |  | 3250b97943d3450b9327b6b06b896c97 | <p style="margin-top: 0px; margin-bottom: 0px; padding: 0px; outline: 0px; max-width: 100%; box-sizing: border-box; clear: both; min-height: 1em; color: rgb(34, 34, 34); font-family: system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 17px; white-space: normal; background-color: rgba(68, 68, 68, 0.04); text-align: justify; visibil | 2023-03-03 13:13:00 | 2 | 309 |
 
-## AI 解读（数字已核对）
-
-该数据未提供任何字段声明与说明，样例中却存在多个未登记字段，含义无从确认。使用者据此取数容易误读，且数据已停更，结论会随时间失真。建议使用前向提供方索取字段释义与更新安排，否则只作线索、不作统计依据。
-
 ## 证据
 
-- detail.json SHA-256：`ce1929e64aa3b5318c4ccb754a75dc43fa0d9a6591c994f529568aabfc9b3352`
-- preview.json SHA-256：`5c9da7536c23a50989f764871d8ef1373482393e4d3598911d7c8951362591fe`
+- detail.json SHA-256：`6e3d9568fc14b5cd15d27a4c69736ec10aad28c8b0ed29e74770f869e0d1b56b`
+- preview.json SHA-256：`48afaad4e0d959d5f84a0d5b4ca94bd4bf670e82bdbb126b3288ccc09c84a2bc`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

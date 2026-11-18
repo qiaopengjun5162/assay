@@ -24,13 +24,9 @@
 |  | 浙江省湖州市德清县 | 企业 | null | 2019-04-10 00:00:00 | 使用 | null | 3700000000000 | null | 330521 | Ⅱ类 | 成都中核高通同位素股份有限公司 | null | null | 1707000000000 | 2013-05-24 00:00:00 | null | null | null | null | null | 伽玛探伤机 | null | 330521 | null | null | 0313CO000452 | null | 2a59d916-5b41-11e9-b869-6c92bf6778f0 | 3305 | 湖州南丰机械制造有限公司 | Co-60 | 手工Excel导入 | null | null | 中国 | 33 | 2019-04-10 00:00:00 | null | SYSTEM | null | SYSTEM |
 |  | 浙江省湖州市德清县 | 企业 | null | 2019-04-10 00:00:00 | 使用 | null | 7400000000 | null | 330521 | Ⅴ类 | 原子高科股份有限公司 | null | null | 4575000000 | 2011-11-08 00:00:00 | null | null | null | null | null | 测厚仪 | null | 330521 | null | null | 0111KR002485 | null | 2a5c93e3-5b41-11e9-b869-6c92bf6778f0 | 3305 | 德清县方毅纸业有限公司 | Kr-85 | 手工Excel导入 | null | null | 中国 | 33 | 2019-04-10 00:00:00 | null | SYSTEM | null | SYSTEM |
 
-## AI 解读（数字已核对）
-
-声明列数与实际不符、没有字段说明，是最要紧的问题。使用者无法确认各列含义和取值口径，直接使用容易误读。建议使用前向提供方索取字段清单与口径说明，核对后再入库。
-
 ## 证据
 
-- detail.json SHA-256：`4be60efca41bb76928f3c9a9d899988631b74c34cff56efbf58cba843d1ffa3d`
-- preview.json SHA-256：`01005b90421e354e7b0abc238194bc12e7bbd1d11af4cd1487f36c90e316a784`
+- detail.json SHA-256：`faa179ef542d730ca7943c4906a6c9f396ea8308daf4f29f3b5edd2c907c9562`
+- preview.json SHA-256：`f9f87cd6597f6a2e1bef573d9c52ba370c71878e7fe9c491f8e470be621451c3`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

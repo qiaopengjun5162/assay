@@ -24,13 +24,9 @@
 | 文化教育类教育培训 |  | 2018-1-9至2022-1-8 | /9dKiI7FVcWVbeKeS8WdMA== | 0y868/RWiTncqoWTaDEoZA== | gdvLo5MLhrPsKRIbqIlwXw== |  | 沈** | 5133050357395096X8 | 50 |  | 133050370000270 |  | 练市镇中心北路竹梗头38号 | H0MFn5NqYX1YIykEt7hDBw== | 文化教育类培训机构 |  | 湖州市南浔区练市镇未来星业余培训学校 |
 | 文化教育类教育培训 |  | 2016-10-28至2024-10-27 | /9dKiI7FVcWVbeKeS8WdMA== | Q1DycbEBymorsD/XUWEB9g== | hp/fX6GqlSfF1K1VR0KfWA== | 201192 | 沈** | 51330503580394869G | 50 |  | 133050370000291 | 963304620000094 | 练市镇南环路 | c71eXxQjegxj04f8Mlns1Q== | 文化教育类培训机构 |  | 湖州市南浔区新思维业余培训学校 |
 
-## AI 解读（数字已核对）
-
-字段说明与样例数据明显不符，实际列数多于声明，且有两列整列为空，这是最要紧的问题。使用者仅凭现有说明无法正确理解字段含义，加上数据声明不更新，完整性与时效性都缺乏保障。建议使用前向提供方索取完整字段清单并核实空列，再决定是否采用。
-
 ## 证据
 
-- detail.json SHA-256：`b9a475e70c230433c1db26fb4e67f7ef4885488a159ba931f12f4ce8dcb5295f`
-- preview.json SHA-256：`1f67b07054112b82f8deae5636e335b927f90a9ec16b8c1c418fa6766cf551a4`
+- detail.json SHA-256：`c280a5508068b706c47f1adb3762c483518ab998c9ffa583dc5ffa9e9a2bf757`
+- preview.json SHA-256：`f3e41e6ed6928122fe5dbacb029b791f22f03f3b11305f8d558febfc813beea9`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

@@ -24,13 +24,9 @@
 | 后疫情时代开辟跨境电商新赛道 助力南浔产业持续高效发展 |  | 33cb339060354878a059eb44217cbc67 | 6 |  | 2023-01-18 09:32:52 | 0 | 27 | 0 | 8 | B | 政协四届二次 | 575 | <p style="text-indent: 40px; line-height: 37px; text-align: left;">“出海抢单”，是这几天最火的热词，引爆全网，也成为了当下南浔“拼经济”的最强注脚。连日来，在优化调整新冠疫情防控措施的背景下，我省启动“千团万企拓市场抢订单行动”，组织企业走出国门，拓展国际市场。12月4日，由浙江省商务厅带队的“抢单团”飞抵德国，开始为期6天的欧洲行。是的，后疫情时代已经真正到来了。</p><p style="text-indent: 40px; line-height: 37px; text-align: left;">一、目前南浔区的跨境电商发展现状：</p><p style="text-indent: 43px; line-height: 37px; text-align: left;">跨境电商是一个长链机制，在全球疫情的影响下跨境电商依然成为引领国际贸易发展新趋势的贸易新业态，我区跨境电商贸易呈现出以进口为主转向出口为主的变化，出口市场和出口商品日益多元、渠道日益多样、业态日益丰富。目前我区跨境电商实际业绩114家，截止1-1 | 0 | 0 | 0 | null | 339 | 1 | 0 | 区商务局 | 1 | null | 0 |  | 0 | null | 0 | null | *** | 0 | 054 | 2 | **** | 2023 | 0 | ** |  | null | 2 | 3 | 339 | 10 | null | 3 | 0 | 0 | 592 |  | 64 | null | null | 1 |
 | 加大创新平台建设，提升科技成果转化 |  | c91ed6ac582e46d7af9b5cd7463eeeb7 | 7 |  | 2023-01-18 09:35:09 | 0 | 18 | 0 | 8 | A | 政协四届二次 | 575 | <p style="text-indent: 24px; text-align: left;"><span style="color: rgb(18, 18, 18); letter-spacing: 0px;">加快实施创新驱动发展战略</span><span style="color: rgb(18, 18, 18); letter-spacing: 0px;">，提高科技成果转化和产业化水平</span><span style="color: rgb(18, 18, 18); letter-spacing: 0px;">。</span><span style="color: rgb(18, 18, 18); letter-spacing: 0px;">近年来，</span><span style="color: rgb(18, 18, 18); letter-spacing: 0px;">区委区政府</span><span style="color: rgb(18, 18, 18); letter-spacing: 0px;">坚持以科技创新支撑高质量发展建设共同富裕示范区为主线 | 0 | 0 | 0 | null | 445 | 0 | 0 | 区科技局、区科协 | 1 | null | 0 |  | 0 | null | 0 | null | *** | 0 | 055 | 2 | **** | 2023 | 0 | ** |  | null | 2 | 3 | 445 | 10 | null | 8 | 0 | 0 | 592 |  | 64 | null | null | 0 |
 
-## AI 解读（数字已核对）
-
-该数据集已停更，且字段声明与说明缺失，元数据与实际样例明显对不上。使用者难以确认字段口径，取数时容易误用未声明字段或误读整列为空的列。建议使用前先按样例逐项核对字段并向提供方确认口径，暂不用于正式统计。
-
 ## 证据
 
-- detail.json SHA-256：`d50d7fd0fca7f46b2ecd4f6cd60911654e98aadfa3d2df2ad91d1e273c3f8bb8`
-- preview.json SHA-256：`dcd571bcfb5720ed4eb1156e5b272795e7739bebbba92bda3838b8a2a0f22542`
+- detail.json SHA-256：`377349862b7fbf390603ff364aaca788af6caf16b28f918de0620ee12540c8d6`
+- preview.json SHA-256：`6d4efc9372d7a49d8635fbae678c69cf6a48aa2297199627ad4c9d293168fbeb`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

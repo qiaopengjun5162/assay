@@ -24,13 +24,9 @@
 | 2014 | null | null | null | null | null | null | 3305 | null | null | null | 33 | null | null | null | null | null | null | null | null | 手工Excel导入 | null | null | null | null | null | null | null | null | null | null | null | null | null | null | 330521 | null | null | 330521 |  | 2019-04-25 00:00:00.0 | SYSTEM | 2019-04-25 00:00:00.0 | null | null | null | null | 78eefa9e-6715-11e9-b869-6c92bf6778f0 | null | null |  | null | null | SYSTEM | null | 德清县维康生物科技有限公司 |  |  | null |
 | 2014 | null | null | null | null | null | null | 3305 | null | null | null | 33 | null | null | null | null | null | null | null | null | 手工Excel导入 | null | null | null | null | null | null | null | null | null | null | null | null | null | null | 330521 | null | null | 330521 |  | 2019-04-25 00:00:00.0 | SYSTEM | 2019-04-25 00:00:00.0 | null | null | null | null | 78f1331f-6715-11e9-b869-6c92bf6778f0 | null | null |  | null | null | SYSTEM | null | 浙江泰瑞重型机械有限公司 |  |  | null |
 
-## AI 解读（数字已核对）
-
-这份数据没有字段说明，声明的列与实际列也对不上，使用者无法确认各字段的含义和统计范围。直接取用容易把企业名称、审核意见这类关键信息理解错，影响分析和对外报送。建议先向数据提供方索取字段清单和统计说明，核对无误后再投入使用。
-
 ## 证据
 
-- detail.json SHA-256：`4a8e1165dab1af46fd2595d958f3244351d3ed5f98aeac33d19b2a16fe926e16`
-- preview.json SHA-256：`d5cbc93742f2d9ab441c2b399add26f3342ce2c7e9ed9bb4005e32215f31ab2c`
+- detail.json SHA-256：`f80599905ac6ddeee97ab24f3e84fcf11f60eaf3f35a64eafd80b14510e76748`
+- preview.json SHA-256：`88888bf30fef43edb455be3d2e79faadecf003c0a4d9fa3de58f0de5fa09aea5`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

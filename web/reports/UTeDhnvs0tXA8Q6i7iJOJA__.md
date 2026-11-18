@@ -24,13 +24,9 @@
 | 7 | 3 | 178 |  |
 | 8 | 4 | 9 |  |
 
-## AI 解读（数字已核对）
-
-该数据集已停止更新，声明的字段在样例中缺失，另有整列为空。使用者难以判断信息是否仍反映当前情况，直接引用存在风险。建议使用前向发布部门核实更新状态并索取完整字段说明。
-
 ## 证据
 
-- detail.json SHA-256：`284c2a2fd1a669584e686cd22aec4777d3cad417ae780a13d271db53974f2892`
-- preview.json SHA-256：`1600ceec942fc6cc543b718141e1a9dfed5207008ae87e3182c657a3bc594e41`
+- detail.json SHA-256：`49322a3fb6e8e485f92f9dbf18d41ee548a810e646a5e5d9b5ad66715fe33b0f`
+- preview.json SHA-256：`9ce0c7d8d2e985d6a2de40f33b89a76b608a2edd800ec96bdee17e3f8c56541c`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

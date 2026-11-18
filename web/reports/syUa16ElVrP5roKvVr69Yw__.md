@@ -28,13 +28,9 @@
 | null | 1 | 8 | null | [13] | null | null | null | null | 1 | null | 一般信访 | null | null | null | null | null | 1 | null | null | null | 电话 | 330521090508001 |   | null | null | null | null | null |     请沈百海同志调查处理 | 尚一煤球厂 | . . 企业工艺废气 | null | 浙江省环保厅信访系统 | null | null | null | null | null | null | 来访 | 来访 | 2009-05-08 15:50:00 | null | 3 | null | null | null | null | 0 | 1 | null | null | null | 尚一煤球厂废气污染附近农户。 | 2009-05-08 15:50:00 | 德清新市谷门村沈家兜尚一煤球厂废气污染附近农户。 | 其他违法 | 德清环保局 | null | 1 | 德清环保局 | 满意 | 1 | null | null | null | 2009-04-19 00:00:00 | null | null | null | null | null | null | null | null | 某先生 | null | null | 0 | 0 | 330521090508001 | null | null | 8 | null | 1 | null | null | 该厂为德清县新丰五金制造厂，负责人沈金龙，该厂主要生产设备为冲天炉一座，无环保审批手续，已要求该厂立即停止生产。 | 其他违法 | null | 德清新市谷门村沈家兜 |
 | null | 1 | 8 | null | [9] | null | null | null | null | 1 | null | 一般信访 | null | null | null | null | null | 1 | null | null | null | 电话 | 330521090508002 |   | null | null | null | null | null |     请高大调查处理 | 不详 | . . 废水直排 | null | 浙江省环保厅信访系统 | null | null | null | null | null | null | 来访 | 来访 | 2009-05-08 15:57:00 | null | 3 | null | null | null | null | 0 | 1 | null | null | null | 筏头河水很臭 | 2009-05-08 15:57:00 | 德清筏头渔村河水很臭，居民生活饮水困难。 | 其他违法 | 德清环保局 | null | 1 | 德清环保局 | 满意 | 1 | null | null | null | 2009-04-14 00:00:00 | null | null | null | null | null | null | null | null | 某先生 | null | null | 0 | 0 | 330521090508002 | null | null | 8 | null | 1 | null | null | 经调查投诉人反映的地方在筏头乡渔村的方位，有一家德清县信诺食品有限公司，该公司主要生产水煮笋，每天污水处理量40吨左右，设有一套污水处理设施，运行正常，但污水处理池底部有渗漏现象，已要求该公司采取有效措施确保废水达标排放，但现在是竹笋加工的生产的旺季，因此不能停产，故等到生产期过后，对污水池进行维修。 | 其他违法 | null | 德清筏头渔村 |
 
-## AI 解读（数字已核对）
-
-这份数据最要紧的问题是字段说明完全缺失，声明的列数与实际字段严重不符，各代码类字段含义无从查证。这意味着使用者若照现有说明取数，很容易误读代码、错用字段。建议使用前先向数据提供方索取完整字段说明，并用样例行逐项核对后再加工。
-
 ## 证据
 
-- detail.json SHA-256：`2b90e7825fd048679a3ec7939f1fc43422115f2d104ae770aacf4d9d2b7a2d1e`
-- preview.json SHA-256：`28566cd5c12ca403bc8e7d200c0dbceb78e93de94017f4b86fbe5dfca2ea1faa`
+- detail.json SHA-256：`9c3b2729981150a37f6858354921fa1d5ddccf0d5b85bb6f7b79dd54aef55376`
+- preview.json SHA-256：`fc7f1028eb014545566d6516349a4e3f6e0b29108b4d65f392da4fb708e29af7`
 
 > 哈希对应抓取时点的原始响应字节，可重新计算核对。

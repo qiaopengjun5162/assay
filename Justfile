@@ -128,6 +128,12 @@ web:
 api:
     cargo run -p assay-api
 
+# 10) 把一次跑批灌进查询库（幂等，同一天重跑会覆盖）
+#     用法：just api-ingest 2026-11-18          默认读 out-full
+#           just api-ingest 2026-11-18 out-full
+api-ingest date out="out-full":
+    cargo run -p assay-api -- ingest --out {{out}} --captured-at {{date}}
+
 # 全流水线：体检 → 榜单 → 解释 → 证据 → 证明 → 报告 → 导出 → 前端
 all: audit report explain evidence prove reports export web
     echo "完成：just serve 预览"

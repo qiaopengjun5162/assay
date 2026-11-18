@@ -196,12 +196,12 @@ fn write_split(rows: &[Value], full: &Value, out_path: &str, shards: usize) -> R
     fs::create_dir_all(&shard_dir)?;
 
     let mut buckets: Vec<Vec<Value>> = vec![Vec::new(); shards];
-    let mut index_rows: Vec<Value> = Vec::with_capacity(rows.len());
+    let mut index_rows_out: Vec<Value> = Vec::with_capacity(rows.len());
 
     for v in rows {
         let id = v["id"].as_str().unwrap_or_default();
         let n = shard_of(id, shards);
-        index_rows.push(light_row(v, n));
+        index_rows_out.push(light_row(v, Some(n)));
         buckets[n].push(v.clone());
     }
 
@@ -218,7 +218,7 @@ fn write_split(rows: &[Value], full: &Value, out_path: &str, shards: usize) -> R
         "summary": full["summary"],
         "total": full["total"],
         "shards": { "count": shards, "dir": "shards" },
-        "datasets": index_rows,
+        "datasets": index_rows_out,
     });
     fs::write(dir.join("index.json"), serde_json::to_string(&index)?)?;
     Ok(shards)
@@ -228,14 +228,71 @@ fn write_split(rows: &[Value], full: &Value, out_path: &str, shards: usize) -> R
 ///
 /// `hasProof` / `shard` 是派生字段：前者来自 `proof` 是否存在（列表上有个
 /// 「已证」标记），后者是分片号。两者都进索引，前端就不必自己推导。
-fn light_row(v: &Value, shard: usize) -> Value {
+fn light_row(v: &Value, shard: Option<usize>) -> Value {
     let mut obj = serde_json::Map::with_capacity(INDEX_FIELDS.len() + 2);
     for k in INDEX_FIELDS {
         obj.insert(k.to_string(), v[k].clone());
     }
     obj.insert("hasProof".into(), json!(!v["proof"].is_null()));
-    obj.insert("shard".into(), json!(shard));
+    if let Some(n) = shard {
+        obj.insert("shard".into(), json!(n));
+    }
     Value::Object(obj)
+}
+
+/// 供 `assay ingest` 复用：算出与 `index.json` 单行同形的行（不带 `shard`）。
+///
+/// 为什么不另写一份：字段分类（`scoring::classify`）、评分（`scoring::score`）、
+/// 停更判定（`STOPPED_CYCLES`）、部门取末段这些规则一旦在「导出静态文件」和
+/// 「写数据库」两处各写一遍，迟早分叉——而分叉后表现是前端和接口对同一条数据
+/// 给出不同分数，最难查。所以这里直接走 `row()` + `light_row()`。
+///
+/// 返回顺序与 `export` 一致（问题分降序），调用方不必再排。
+pub fn index_rows(
+    items_path: &str,
+    catalog_path: Option<&str>,
+    proofs_path: Option<&str>,
+) -> Result<Vec<Value>> {
+    let items = crate::audit::read_items(items_path)?;
+
+    let mut proof_by_id: HashMap<String, ProofEntry> = HashMap::new();
+    if let Some(p) = proofs_path.and_then(|p| read_json(p).ok().flatten()) {
+        if let Ok(list) = serde_json::from_value::<Vec<ProofEntry>>(p) {
+            for e in list {
+                if !e.sha256.is_empty() {
+                    proof_by_id.insert(e.id.clone(), e);
+                }
+            }
+        }
+    }
+
+    let catalog: HashMap<String, String> = match catalog_path {
+        Some(p) => load_catalog(p)?
+            .into_iter()
+            .filter_map(|r| r.update_time.map(|t| (r.id, t)))
+            .collect(),
+        None => HashMap::new(),
+    };
+
+    let no_evidence: HashMap<String, EvidenceEntry> = HashMap::new();
+    let no_explain: HashMap<String, Explanation> = HashMap::new();
+    let mut rows: Vec<Value> = items
+        .iter()
+        .map(|d| {
+            light_row(
+                &row(d, &catalog, &proof_by_id, &no_evidence, &no_explain, None),
+                None,
+            )
+        })
+        .collect();
+    rows.sort_by(|a, b| {
+        b["score"]
+            .as_f64()
+            .unwrap_or(0.0)
+            .partial_cmp(&a["score"].as_f64().unwrap_or(0.0))
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+    Ok(rows)
 }
 
 fn row(
@@ -425,6 +482,82 @@ mod tests {
             index_ids.iter().all(|i| shard_ids.contains(*i)),
             "分片丢了索引里的某些 id"
         );
+
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn index_rows_matches_index_json_rows() {
+        // ingest 写库的字段必须与 index.json 逐字段同形。两者都从 `row()` 派生，
+        // 但只要有人改了 INDEX_FIELDS 却忘了另一边，这里立刻红——这正是
+        // 「字段分类只有一处实现」在跨产物上的落点。
+        let dir = std::env::temp_dir().join("assay-index-rows-test");
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir).unwrap();
+
+        let items_path = dir.join("items.jsonl");
+        let mut body = String::new();
+        for i in 0..5 {
+            let d = Dataset {
+                id: format!("id/{i}"),
+                name: format!("数据集 {i}"),
+                dept: Some("省交通运输厅/子处".into()),
+                declared_cols: 7,
+                sample_cols: if i % 2 == 0 { 7 } else { 9 },
+                empty_rate: (i as f64) / 10.0,
+                has_preview: 1,
+                update_cycle: Some(serde_json::json!(30)),
+                ..Default::default()
+            };
+            body.push_str(&serde_json::to_string(&d).unwrap());
+            body.push('\n');
+        }
+        fs::write(&items_path, body).unwrap();
+
+        let summary_path = dir.join("summary.json");
+        fs::write(&summary_path, r#"{"audited":5}"#).unwrap();
+        let out_path = dir.join("data.json");
+        export(&ExportOptions {
+            items_path: items_path.to_str().unwrap(),
+            summary_path: summary_path.to_str().unwrap(),
+            proofs_path: None,
+            catalog_path: None,
+            evidence_path: None,
+            explanations_path: None,
+            reports_dir: None,
+            out_path: out_path.to_str().unwrap(),
+            limit: 5,
+            shards: Some(2),
+        })
+        .unwrap();
+
+        let index: Value =
+            serde_json::from_slice(&fs::read(dir.join("index.json")).unwrap()).unwrap();
+        let exported: std::collections::HashMap<String, Value> = index["datasets"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|r| (r["id"].as_str().unwrap().to_string(), r.clone()))
+            .collect();
+
+        let rows = index_rows(items_path.to_str().unwrap(), None, None).unwrap();
+        assert_eq!(rows.len(), 5);
+        for r in &rows {
+            let id = r["id"].as_str().unwrap();
+            let want = exported
+                .get(id)
+                .unwrap_or_else(|| panic!("导出侧没有 {id}"));
+            assert!(
+                r.get("shard").is_none(),
+                "ingest 行不该带分片号，那是静态分片专用的"
+            );
+            for k in INDEX_FIELDS.iter().chain(["hasProof"].iter()) {
+                assert_eq!(&r[*k], &want[*k], "字段 {k} 两侧不一致（id={id}）");
+            }
+        }
+
+        // 顺序也必须一致，否则「榜单前 N」在接口与静态站会不同
+        assert_eq!(rows[0]["id"], index["datasets"][0]["id"]);
 
         let _ = fs::remove_dir_all(&dir);
     }

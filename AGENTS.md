@@ -42,6 +42,9 @@
 8. **基线只在漂移 PR 合并时前进**：`baseline/summary.json` 是「上次人工确认过的常态」。
    跑批被判不可信（`assay drift` 退出码 2）时绝不写基线——脏数据进对照系，之后所有对比全废。
    见 `docs/DECISIONS.md` D19。
+9. **榜单行只有一个来源**（`export::row` → `light_row`）：静态 `index.json`、灌库写入的
+   `observation`、接口返回的 `DatasetRow` 三者必须逐字段同形。有单测跨两侧比对，
+   改名或加字段会当场红。见 `docs/DECISIONS.md` D21。
 
 ## 分层边界
 
@@ -49,6 +52,8 @@
 - IO 通过 `CatalogSource` trait 与显式路径参数注入，CI 用 `tests/pipeline.rs` 的假平台。
 - `crates/cli/src/main.rs` 只解析参数、编排调用；业务逻辑落在 core。
 - `crates/web` 只 GET 静态文件。新增前端字段时同步 `export.rs` 与 `model.rs`。
+- `crates/api` 依赖 core，反向不成立。它对外**只读**；唯一的写路径是 `ingest` CLI，
+  不监听端口——写库只需要一个人，查询才需要服务。
 
 ## 常用验证
 

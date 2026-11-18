@@ -205,7 +205,20 @@ pub fn export(opts: &ExportOptions) -> Result<ExportOutcome>;
 - 按 `score` 降序，`limit` 截断。
 - `reports_dir` 下存在 `safe_id`.md 的行输出 `report: true`，前端据此渲染下载链接。
 
-### 3.10 `crates/web`
+### 3.10 `drift.rs`
+
+```rust
+pub fn compare(baseline: &Summary, current: &Summary, opts: &DriftOptions) -> DriftReport;
+```
+
+- 纯函数：只吃两份 `summary.json`，不碰网络、不碰文件。读写在 `cli` 层。
+- 先判**跑批健康度**再看指标：`withPreview / audited` 跌 >5pp，或目录条目减 >20%，
+  直接判 `Suspect`，其余指标一概不作数。
+- 再逐项比指标，超阈值记 `Drifted`，否则 `Normal`。`audited` 数量变化只记录不告警。
+- 结论映射成退出码：`Normal → 0`、`Drifted → 1`、`Suspect → 2`。
+- 基线快照里保留 `commit` 与 `capturedAt`，报告能追到「跟哪一次跑的比」。
+
+### 3.11 `crates/web`
 
 - Leptos 0.7 CSR，trunk 打包；hash 路由：`#/`、`#/detail/<urlencoded id>`、`#/proof/<id>`。
 - 数据只读 `data.json`；不做任何写操作、不调平台接口。
@@ -226,6 +239,8 @@ pub fn export(opts: &ExportOptions) -> Result<ExportOutcome>;
 | `reports/<safe_id>.md` | single | 浏览器 / Pages | 可重生成 |
 | `web/data.json` | export | 前端 | 可重生成 |
 | `crates/web/dist` | trunk | 浏览器 / Pages | 可重生成 |
+| `baseline/summary.json` | drift（`--write-baseline`） | drift | **对照系，只随 PR 合并前进** |
+| `docs/audit/latest.md` | drift（`--md-out`） | 周度巡检 PR 正文 | 可重生成 |
 
 ## 5. 不变量（改动时最容易踩坏）
 
@@ -237,6 +252,8 @@ pub fn export(opts: &ExportOptions) -> Result<ExportOutcome>;
 6. **模型不参与取数、不参与算数**：解释层的输入只有事实字典，输出必须过 `guard::check`。
 7. **前端零写入**：WASM 只 GET，不 POST；断网也要能看已加载的数据。
 8. **CI 不访问政府网站**：CI 只跑单测与黄金文件（`fixtures/expected.lean`）。
+9. **基线只在漂移 PR 合并时前进**：`baseline/summary.json` 代表「上次人工确认过的常态」。
+   跑批被判不可信（退出码 2）时绝不写基线——脏数据一进对照系，之后所有漂移判断全废。
 
 ## 6. 构建与部署
 

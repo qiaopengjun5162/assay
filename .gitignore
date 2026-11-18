@@ -30,3 +30,6 @@ vendor/
 lcov.info
 target/llvm-cov/
 target/llvm-cov-target/
+
+# AI 协作工具的工作目录（含会话记忆，属本地数据不入库）
+.workbuddy/

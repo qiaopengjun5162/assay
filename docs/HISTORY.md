@@ -1,6 +1,6 @@
 # 项目演进史（HISTORY）
 
-> 给所有想了解「数证 DataProof 是怎么来的」的人。
+> 给所有想了解「数验 Assay 是怎么来的」的人。
 > 这不是产品介绍，是完整的过程记录：最初怎么想的、中途怎么错的、每一步怎么走到今天。
 > 配套材料：`docs/REQUIREMENTS.md`（口径）、`docs/ARCHITECTURE.md`（架构）、
 > `docs/DECISIONS.md`（D1–D15 决策）、`docs/PLAN.md`（进度）。

@@ -102,7 +102,7 @@ pub fn App() -> impl IntoView {
     view! {
         <div class="wrap">
             <header class="topbar">
-                <div class="brand"><span class="mark">"数证"</span>" DataProof"</div>
+                <div class="brand"><span class="mark">"数验"</span>" Assay"</div>
                 <div class="top-meta">"可机器复核的数据体检报告"</div>
                 <nav class="top-nav">
                     <a href="#/" on:click=move |_| { route.set(Route::List); }>"榜单"</a>

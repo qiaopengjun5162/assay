@@ -1,4 +1,4 @@
-# 数证 DataProof · 项目说明
+# 数验 Assay · 项目说明
 
 赛道：AI 基础设施与可信数据 · 第五元素 AI × 数据创新赛（杭州，2026-12-04~08）
 
@@ -117,7 +117,7 @@ just tamper  # 改一位数字，Lean 内核当场拒绝
 
 ## 演示与代码
 
-- 在线：https://qiaopengjun5162.github.io/dataproof/
+- 在线：https://qiaopengjun5162.github.io/assay/
 - 代码：https://github.com/qiaopengjun5162/dataproof
 - 6 分钟讲稿：`docs/PITCH.md`
 - 新队友上手：`docs/TEAM_DAY_ONE.md`

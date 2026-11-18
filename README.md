@@ -1,4 +1,4 @@
-# 数证 DataProof
+# 数验 Assay
 
 [![CI](https://github.com/qiaopengjun5162/dataproof/actions/workflows/ci.yml/badge.svg)](https://github.com/qiaopengjun5162/dataproof/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -8,7 +8,7 @@
 **一个 Rust 工作区**：采集、规则、证明生成、静态导出都在 Rust；前端是 Leptos + WASM；
 验证器是 Lean 4 内核；模型只在「写人话解释」这一层出现，且输出受数字护栏约束。
 
-> 在线演示：**https://qiaopengjun5162.github.io/dataproof/**（静态站，无后端）
+> 在线演示：**https://qiaopengjun5162.github.io/assay/**（静态站，无后端）
 > 本地：`just serve` → http://127.0.0.1:8080
 > 比赛：第五元素 · 杭州 2026 AI × 数据创新赛｜赛道 02 AI 基础设施与可信数据
 

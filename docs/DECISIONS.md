@@ -2,6 +2,44 @@
 
 > 只记「当时为什么这么选」。每条都能在文章里展开成一段。
 
+## D25 第二平台先不接：挡路的不是代码，是数据授权
+
+**背景**：`docs/ARCHITECTURE.md` 一直写着「换平台只实现 `CatalogSource`」。这句话当时
+**不成立**：`audit` 里还在读 `detail["result"]["columnList"]`、`hasPreviewData`、
+`dopSourceInfo.description`，样例读 `result.data`——都是浙江的形状。trait 只抽了方法名，
+没抽数据形状。真要接第二家，得同时改 `audit`、`proof` 和测试。
+
+**决定一（本次做掉）：把形状从边界上清掉。**
+`CatalogSource` 现在只交归一化数据：`DatasetMeta { columns, has_preview, description_len }`
+和 `Vec<Vec<String>>` 表格（第一行表头）。浙江的解析收进 `meta_from_zj` /
+`preview_rows`，只被 `impl CatalogSource for Client` 调用。新增 `rows_from_raw`，
+让「解析已存证的快照」也归适配器管——证明必须针对快照（D20），但怎么读快照是平台的私事。
+`tests/pipeline.rs` 的 `FixtureSource` 改成只返回字段名和行，一个字节的平台 JSON 都没有；
+它跑通就是这条抽象成立的证据。
+
+**决定二（本次不做，附实测）：第二家暂时接不了。**
+
+| 平台 | 实测 | 结论 |
+|---|---|---|
+| 上海 data.sh.gov.cn | `/`、`/api/`、`/api/search` 全部 **HTTP 412**，返回带 `$_ts` 的混淆脚本 | 瑞数类动态防护，整站挡，连接口路径都进不去 |
+| 江苏 data.jiangsu.gov.cn | 主页 403，换 UA 后 504 | 不稳定，不可依赖 |
+| 深圳 opendata.sz.gov.cn | 页面 200；`/data/api/{selectDataApiByResId,getPreviewApiItem,getPreviewApi}` 存在，裸调返回空 | 需实名注册领 APPKEY，属授权问题 |
+| 山东 data.sd.gov.cn | `/portal/api/` 是接口目录页，服务端渲染 HTML；接口详情页也是 HTML | 要解析页面 + 逐个申请 |
+| 北京 data.beijing.gov.cn | 搜索是 `/cms/web/search/index.jsp`，服务端渲染 HTML | 同上 |
+| 成都 / 广州 | 连接超时 | 不可达 |
+
+**为什么这值得记一笔**：把「接第二个平台」当成编码任务排进队列，是最容易自我欺骗的一种
+排期——代码两天能写完，数据权限两个月都未必下来。真正的瓶颈是「拿到可机器读取的目录 +
+字段定义 + 样例」，而多数省级平台要么上动态防护、要么要求实名申请接口密钥。
+所以队列里这一项应当被标成**外部依赖**，而不是待办。
+
+**下一步要接谁**：深圳。它的目录与预览接口形态最接近浙江（POST + JSON + 表头/行），
+只差一个 APPKEY；注册免费、需实名。拿到 key 之后要写的只是 `SzClient` 一个 impl 加
+一次 `--source sz` 的参数化。
+
+**边界**：本次没有改动任何抓取行为。小样本回归（12 条真实记录 × 12 个字段）与既有产物
+逐字段一致，证明重构对现值零影响。
+
 ## D24 模型端点、模型名、代理都可配，配置对不对一条命令验
 
 **背景**：`call_model` 把 `https://api.deepseek.com/anthropic/v1/messages` 写死在函数里，

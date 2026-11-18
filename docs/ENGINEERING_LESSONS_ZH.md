@@ -167,3 +167,33 @@ rustc 1.88），1.88.0 通过。据此把 `rust-version` 定为 1.88，并加 `m
 不要先怀疑「测试变少了」。
 
 **证据：** `scripts/coverage.sh` 的清理步骤；本次测量前后的 `--summary-only` 输出对比。
+
+### serial 主键跳号，不等于时间顺序
+
+**现象：** 查询接口「取最近一次体检」写成 `select max(id) from run`，本地单元测试
+（只有一条 run）全过。接上真实数据后，重灌一次旧日期就会让默认榜单悄悄退回旧版本——
+不报错、不告警，只是数字变了。
+
+**根因：** `run.id` 是 `bigserial`，而灌库用的是 `insert ... on conflict (platform_id, captured_at)
+do update`。**upsert 命中冲突也会消耗序列**：同一天重灌两次，表里行数不变，序列已经 +2。
+所以 `id` 的大小关系不再等于 `captured_at` 的先后关系。实测灌完两周后重灌第一周，
+得到的 id 序列是 1、3、4，而日期是 11-18、11-25、11-01。
+
+**修复：** 按业务时间取，别按代理键取：
+
+```sql
+select id from run where platform_id = $1 order by captured_at desc limit 1
+```
+
+`captured_at` 存 ISO 文本（D20 那条决策的副产品），字符串排序即时间排序，不需要额外索引。
+
+**防复发：** 任何 `max(id)` / `order by id desc` 都在假设「代理键单调对应业务时间」。
+这个假设在 upsert、批量导入、回填历史、跨库迁移之后都不成立。写完就问一句：
+这条记录的时间是按什么排的？
+
+**顺带修的另一处：** 同一函数里用了 `.fetch_one()` 配 `Option<i64>`，空表时返回的是
+`RowNotFound` 错误而不是 `None`，被映射成 500「内部错误」。本意是给「还没有体检记录」，
+实际给的是「服务坏了」。取「可能没有」的单行一律用 `fetch_optional()`。
+
+**证据：** `crates/api/src/lib.rs` 的 `latest_run_id`；本次实测插入 `id=4, captured_at='2026-11-01'`
+后，接口仍正确返回 `run 3 / 2026-11-25`。

@@ -105,7 +105,9 @@ dependencies = [
 name = "assay-api"
 version = "0.2.0"
 dependencies = [
+ "assay-core",
  "axum",
+ "clap",
  "serde",
  "serde_json",
  "sqlx",

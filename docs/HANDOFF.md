@@ -54,6 +54,17 @@
 - **尚未做**：任务提交、审计包签发、账号体系，以及对 `assay-api` 的覆盖率门禁
   （`scripts/coverage.sh` 目前只统计 core 与 cli）
 
+已完成（2026-11-18 · 灌库闭环）：
+
+- `assay-api ingest`：把一次跑批灌进库，**CLI 而非 HTTP 写接口**（见 D21）
+- 行来自 `export::index_rows`，与静态 `index.json` 同一个 `row()` 派生，有单测逐字段比对
+- 整批一次传 JSON（`jsonb_to_recordset`）：**24,322 条 3.4 秒**，幂等（同日重跑 run_id 不变）
+- 修掉一个真缺陷：`/v1/datasets` 取「最近一次」原来用 `max(id)`，而 upsert 冲突会消耗
+  序列、id 顺序不等于日期顺序——重灌一次旧日期会让默认榜单悄悄退版本。改按 `captured_at`
+- 顺带修：空库时原来返回 500（`fetch_one` 的 `RowNotFound`），现在是 404「还没跑过体检」
+- 实测跨两周历史：造 3 条变化，`/history` 正确返回两点，分数 9.0 → 7.5、分类
+  「列数不一致」→「字段集合不一致」都能看见
+
 现场离线预案（已实测 2026-11-15）：
 
 ```bash
@@ -103,7 +114,7 @@ just serve        # 本地预览 crates/web/dist
 
 首次克隆后必跑 `just hooks`（装 commit-msg 钩子）。
 
-单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just export-split`、`just web`、`just tamper`、`just drift`、`just api`。
+单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just export-split`、`just web`、`just tamper`、`just drift`、`just api`、`just api-ingest`。
 
 查询后端（可选，不影响前面的静态链路）：
 
@@ -111,7 +122,12 @@ just serve        # 本地预览 crates/web/dist
 docker compose up -d db        # 或本机 postgres 建库，用 .env.example 里的 DATABASE_URL
 just api                       # 启动时自动跑 migrations，监听 127.0.0.1:8081
 curl localhost:8081/health
+
+just api-ingest 2026-11-18     # 把 out-full 灌进库（幂等，同一天重跑会覆盖）
 ```
+
+灌库是 CLI，不是 HTTP 接口（见 D21）。实测 24,322 条 **3.4 秒**，且重复 id 会在入口
+被挡下并计数——一条脏数据不会让整批失败。
 
 ## 4. 硬规则
 

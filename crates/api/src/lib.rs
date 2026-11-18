@@ -4,9 +4,13 @@
 //! 浏览器/买方可以直接下载、离线校验。这个服务只回答「哪一次体检、每条多少分、
 //! 随时间怎么变」——也就是静态站装不下的那部分（见 D20）。
 //!
-//! 所以整个 crate 目前只有四个 GET，没有写接口、没有账号、没有任务队列。
-//! 加写接口之前先想清楚：写进来的东西要不要也进证据链？如果要，先设计签名。
+//! 所以对外只有四个 GET，没有写接口、没有账号、没有任务队列。
+//! 加 HTTP 写接口之前先想清楚：写进来的东西要不要也进证据链？如果要，先设计签名。
+//!
+//! 唯一的写路径是 [`ingest`]：把一次跑批的产物灌进库。它是**运维/CI 用的 CLI**，
+//! 不监听端口、不接受网络请求——「谁能写库」只需要一个人，「谁能查询」才需要一个服务。
 
+pub mod ingest;
 pub mod query;
 
 use axum::extract::{Path, Query, State};
@@ -237,10 +241,18 @@ async fn dataset_history(
 }
 
 async fn latest_run_id(pool: &PgPool) -> Result<i64, ApiError> {
-    let id: Option<i64> = sqlx::query_scalar("select max(id) from run where platform_id = $1")
-        .bind(PLATFORM_ZJ)
-        .fetch_one(pool)
-        .await?;
+    // 按 captured_at 取最近一次，**不用 max(id)**：`run.id` 是 serial，
+    // 而 upsert 冲突（同一天重灌）也会消耗序列，所以 id 顺序不等于日期顺序。
+    // 重灌一次旧日期就会让 max(id) 指到旧数据上，接口默认返回的榜单会悄悄退版本。
+    // captured_at 是 ISO 文本，字符串排序即时间排序。
+    let id: Option<i64> = sqlx::query_scalar(
+        "select id from run where platform_id = $1 order by captured_at desc limit 1",
+    )
+    .bind(PLATFORM_ZJ)
+    // 必须 fetch_optional：fetch_one 在空表时返回 RowNotFound，
+    // 会被映射成 500「内部错误」，而这里该给的是「还没跑过体检」。
+    .fetch_optional(pool)
+    .await?;
     id.ok_or_else(|| ApiError::NotFound("还没有任何体检记录，先跑一次 assay audit".into()))
 }
 

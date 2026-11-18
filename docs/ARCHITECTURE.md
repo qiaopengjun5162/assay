@@ -15,6 +15,7 @@
 ┌───────────────────────────┴──────────────────────────────────┐
 │  crates/api   只读查询服务（axum + sqlx/Postgres）            │
 │  /health /v1/runs /v1/datasets /v1/datasets/{id}/history      │
+│  ingest（CLI）：读 out-*/ 产物灌库，不开 HTTP 写接口            │
 │  **只存索引，不存证据**：证据仍是静态对象，服务挂了也能验       │
 └───────────────────────────▲──────────────────────────────────┘
                             │
@@ -237,17 +238,24 @@ pub fn compare(baseline: &Summary, current: &Summary, opts: &DriftOptions) -> Dr
 ### 3.12 `crates/api`
 
 ```text
+assay-api                                    # 起服务（等价于 assay-api serve）
+assay-api ingest --out out-full --captured-at 2026-11-18 [--commit SHA]
+
 GET /health
 GET /v1/runs?platform=zj
 GET /v1/datasets?run=&q=&dept=&sort=score|empty|lag&stopped=&mismatch=&minEmpty=&page=&size=
 GET /v1/datasets/{ext_id}/history
 ```
 
-- **只读**。没有写接口、没有账号、没有任务队列。加写接口之前先想清楚：
+- **对外只读**。没有 HTTP 写接口、没有账号、没有任务队列。加写接口之前先想清楚：
   写进来的东西要不要也进证据链？如果要，先设计签名。
+- **唯一的写路径是 `ingest` CLI**，不监听端口。理由见 D21：写库只需要一个人，
+  查询才需要服务；而且 CLI 能在 CI 里跑，服务挂了不影响跑批。
 - **不存证据**。原始响应、哈希、Lean 证明都是静态对象；库里只有
   `platform / run / dataset / observation` 四张表。证据要是依赖服务在线才能验，
   「可复核」就退化成「相信我们」。
+- `ingest` 的行来自 `export::index_rows`——与静态 `index.json` 同一个 `row()` 派生，
+  所以接口和静态站不会对同一条数据给出不同分数。有单测逐字段比对两侧。
 - `DatasetRow` 的字段集与 `web/index.json` 单行**完全一致**：前端从读静态文件切成
   调接口时，只需改 fetch，`Row` 结构体不动。有一条单测锁住字段名。
 - 过滤条件全部走可空参数（`$2 is null or ...`），排序键是三个固定字符串的
@@ -257,6 +265,9 @@ GET /v1/datasets/{ext_id}/history
 - `captured_at` 存 ISO 文本（`YYYY-MM-DD`）而不是 `date`：ISO 日期按字符串排序
   即按时间排序，为此引一个时间库不值得——`chrono` 已被 RUSTSEC-2026-0543 判
   unmaintained，core 里的公历换算本来就是自己写的（`util::days_from_civil`）。
+- **「最近一次 run」按 `captured_at` 取，不用 `max(id)`**：`run.id` 是 serial，
+  同一天重灌（upsert 冲突）也会消耗序列，所以 id 顺序不等于日期顺序。按 id 取会让
+  重灌一次旧日期之后，接口默认返回的榜单悄悄退版本。
 - 启动时自动跑 `migrations/`。单实例、无状态、可随时重建，这是「零运维」
   在后端仍然保留的那部分。
 

@@ -92,7 +92,7 @@ is false
 
 > 一句话：**AI 时代最缺的不是更多数据，是能证明数据没被改过的证据。**
 > 我们交付的是这个证据链的最小可用版本：24,322 个数据集、2,355 条定理、100 份可下载的原始响应。
-> 代码已开源在 github.com/qiaopengjun5162/dataproof，一条命令能复现：`just check`。
+> 代码已开源在 github.com/qiaopengjun5162/assay，一条命令能复现：`just check`。
 
 ---
 

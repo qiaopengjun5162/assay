@@ -48,7 +48,7 @@ impl Client {
     pub fn new() -> Self {
         let agent = ureq::AgentBuilder::new()
             .timeout(TIMEOUT)
-            .user_agent("Mozilla/5.0 dataproof/0.2")
+            .user_agent("Mozilla/5.0 assay/0.2")
             .build();
         Self { agent }
     }

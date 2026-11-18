@@ -44,7 +44,7 @@ def countEmpty (rs : List (List Nat)) (col : Nat) : Nat :=
 /// 拼出完整模块：头注释 + 计数函数 + 数据块 + 定理。
 pub fn module(blocks: &[String], theorems: &[String]) -> String {
     format!(
-        "/-\n  自动生成 by dataproof\n  平台: 浙江省公共数据开放平台\n  说明: 1 = 空值；每行对应一条真实样例记录。改动任何数字，内核报错。\n-/\n\n{}\n\n{}\n\n{}\n",
+        "/-\n  自动生成 by assay\n  平台: 浙江省公共数据开放平台\n  说明: 1 = 空值；每行对应一条真实样例记录。改动任何数字，内核报错。\n-/\n\n{}\n\n{}\n\n{}\n",
         COUNT_EMPTY_FN,
         blocks.join("\n\n"),
         theorems.join("\n")

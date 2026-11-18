@@ -1,7 +1,7 @@
 [build]
 target = "index.html"
 dist = "dist"
-# 相对路径：GitHub Pages 是 /dataproof/ 子路径，绝对路径会 404
+# 相对路径：GitHub Pages 是 /assay/ 子路径，绝对路径会 404
 public_url = "./"
 
 [serve]

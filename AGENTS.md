@@ -61,7 +61,7 @@ just smoke        # 联网，200 条，产物进 out-smoke/
 ## 平台与环境的已知坑
 
 - **代理**：crates.io / GitHub 需 `HTTPS_PROXY=http://127.0.0.1:7890`。
-- **trunk 必须保留 `public_url = "./"`**：GitHub Pages 在 `/dataproof/` 子路径，绝对路径会 404 白屏。
+- **trunk 必须保留 `public_url = "./"`**：GitHub Pages 在 `/assay/` 子路径，绝对路径会 404 白屏。
 - **`strip = true` 不能开**：wasm-bindgen 读不到 `target_features` 段。
 - **平台脏数据**：存在 `2025-07-30 09:70:21` 这类非法时间戳，校验时分秒后跳过。
 - **平台分页**：只认 `current`/`size`；`page` 被静默忽略并返回第一页。

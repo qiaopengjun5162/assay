@@ -1,5 +1,5 @@
 /-
-  自动生成 by dataproof-core
+  自动生成 by assay-core
   平台: 浙江省公共数据开放平台
   快照 SHA-256: fixture-not-a-real-hash
   说明: 1 = 空值。改动任何数字，内核将报错。

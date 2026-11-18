@@ -2,7 +2,7 @@
 
 > 第五元素 · 杭州 2026 AI × 数据创新赛｜赛道 02 AI 基础设施与可信数据
 > 报名：2026-11-25 截止｜比赛：2026-12-04 ~ 12-08
-> 本文件是施工图，不是介绍文。介绍文见 `notes/tech/ai/2026-11-14-dataproof-idea.md`。
+> 本文件是施工图，不是介绍文。介绍文见 `notes/tech/ai/2026-11-14-assay-idea.md`。
 >
 > **状态（2026-11-15）：已上线，全 Rust。** 线上 https://qiaopengjun5162.github.io/assay/
 > 本文件下方的目录树与 CI 表已按 Rust 工作区更新；需求见 `REQUIREMENTS.md`，架构见 `ARCHITECTURE.md`，
@@ -86,7 +86,7 @@
 ## 4. 仓库结构
 
 ```
-dataproof/
+assay/
 ├── Cargo.toml                # workspace（Milestone 2 拆 crate）
 ├── Justfile                  # 唯一入口：audit / verify / web / check / fmt
 ├── rust-toolchain.toml       # 固定工具链，CI 与本机一致
@@ -100,9 +100,9 @@ dataproof/
 │   ├── core/                 # 纯逻辑 + IO，无 UI、无 clap
 │   │   └── src/{api,audit,scoring,matrix,lean,proof,evidence,
 │   │            aggregate,export,explain,guard,config,model,util}.rs
-│   ├── cli/                  # dataproof 二进制（audit/report/explain/…/serve/tamper）
+│   ├── cli/                  # assay 二进制（audit/report/explain/…/serve/tamper）
 │   └── web/                  # Leptos 0.7 CSR + trunk → WASM
-├── dataproof check-proofs        # 拒绝 sorry / admit，只接受内核 PASS
+├── assay check-proofs        # 拒绝 sorry / admit，只接受内核 PASS
 ├── fixtures/expected.lean    # 黄金文件（CI 不联网）
 ├── crates/core/tests/pipeline.rs  # 内存假平台，离线跑完 audit → aggregate
 ├── web/                      # 前端数据源（data.json / evidence / TopProofs.lean）
@@ -122,7 +122,7 @@ dataproof/
 | job | 内容 | 为什么必须有 |
 |---|---|---|
 | `rust` | `cargo fmt --check` / `clippy -D warnings` / `cargo test` / `cargo build --release` | 主干质量；clippy 零容忍（抄 moonpub） |
-| `lean` | 装 elan → `dataproof check-proofs fixtures/expected.lean`（拒绝 sorry / admit） | 证明是本项目的差异点，它坏了等于产品坏了 |
+| `lean` | 装 elan → `assay check-proofs fixtures/expected.lean`（拒绝 sorry / admit） | 证明是本项目的差异点，它坏了等于产品坏了 |
 | `secret-scan` | gitleaks（fetch-depth: 0） | 脚本要读 API key，防止误提交 |
 | `wasm` | wasm32 目标 + trunk 0.22.1 + `clippy -D warnings` + `trunk build --release` + 产物自检 | 前端也是交付物，别只测后端 |
 
@@ -167,7 +167,7 @@ dataproof/
 |---|---|---|
 | 纯逻辑 | `src/lib.rs` 单测：空值矩阵、定理字符串、字段一致性分类 | 无 |
 | 黄金文件 | `fixtures/snapshot.json` → 生成 Lean → 与 `fixtures/expected.lean` 逐字比对 | 无 |
-| 证明 | CI 跑 `lean fixtures/expected.lean` + `dataproof check-proofs`（拒 `sorry`、审公理） | 无 |
+| 证明 | CI 跑 `lean fixtures/expected.lean` + `assay check-proofs`（拒 `sorry`、审公理） | 无 |
 | 采集 | 手工冒烟：`--limit 20`，断言 0 失败 | 有（不进 CI） |
 
 **原则**：CI 永不访问政府网站。数据快照进仓库，只存脱敏后的 5 行样例。
@@ -194,7 +194,7 @@ dataproof/
 文档：README（怎么跑）、PLAN（怎么想）、DECISIONS（为什么这么选）
 数据：out-full/items.jsonl + summary.json + leaderboard.md
 证明：TopProofs.lean + VERIFY.txt + proofs.md
-文章素材：notes/tech/ai/2026-11-14-dataproof-build-log.md（全过程留痕）
+文章素材：notes/tech/ai/2026-11-14-assay-build-log.md（全过程留痕）
 ```
 
 ## 完成状态（2026-11-14）

@@ -3,9 +3,9 @@
 //! 意义：`CatalogSource` 这一层抽象真的能换掉平台；CI 不需要访问政府网站，
 //! 也能验证「取数 → 分类 → 聚合」整条链路的数字。
 
-use dataproof_core::api::{preview_rows, CatalogSource};
-use dataproof_core::audit::{audit, AuditOptions};
-use dataproof_core::{aggregate, model::CatalogRecord};
+use assay_core::api::{preview_rows, CatalogSource};
+use assay_core::audit::{audit, AuditOptions};
+use assay_core::{aggregate, model::CatalogRecord};
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -23,7 +23,7 @@ impl CatalogSource for FixtureSource {
     fn catalog_page(
         &self,
         current: usize,
-    ) -> dataproof_core::Result<(usize, usize, Vec<CatalogRecord>)> {
+    ) -> assay_core::Result<(usize, usize, Vec<CatalogRecord>)> {
         let page = if current == 1 {
             self.catalog.clone()
         } else {
@@ -31,19 +31,19 @@ impl CatalogSource for FixtureSource {
         };
         Ok((self.catalog.len(), 1, page))
     }
-    fn catalog_all(&self, _threads: usize) -> dataproof_core::Result<Vec<CatalogRecord>> {
+    fn catalog_all(&self, _threads: usize) -> assay_core::Result<Vec<CatalogRecord>> {
         Ok(self.catalog.clone())
     }
-    fn detail(&self, id: &str) -> dataproof_core::Result<Value> {
+    fn detail(&self, id: &str) -> assay_core::Result<Value> {
         Ok(self.detail[id].clone())
     }
-    fn preview(&self, id: &str, _size: usize) -> dataproof_core::Result<Value> {
+    fn preview(&self, id: &str, _size: usize) -> assay_core::Result<Value> {
         Ok(self.preview[id].clone())
     }
-    fn detail_raw(&self, id: &str) -> dataproof_core::Result<Vec<u8>> {
+    fn detail_raw(&self, id: &str) -> assay_core::Result<Vec<u8>> {
         Ok(serde_json::to_vec(&self.detail[id])?)
     }
-    fn preview_raw(&self, id: &str, _size: usize) -> dataproof_core::Result<Vec<u8>> {
+    fn preview_raw(&self, id: &str, _size: usize) -> assay_core::Result<Vec<u8>> {
         Ok(serde_json::to_vec(&self.preview[id])?)
     }
 }
@@ -122,7 +122,7 @@ fn fixture() -> FixtureSource {
 
 #[test]
 fn audit_and_report_run_offline() {
-    let dir: PathBuf = std::env::temp_dir().join(format!("dataproof-e2e-{}", std::process::id()));
+    let dir: PathBuf = std::env::temp_dir().join(format!("assay-e2e-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).unwrap();
     let out = dir.to_string_lossy().to_string();
@@ -140,7 +140,7 @@ fn audit_and_report_run_offline() {
     assert_eq!(outcome.audited, 3);
     assert_eq!(outcome.failed, 0);
 
-    let items = dataproof_core::audit::read_items(&format!("{out}/items.jsonl")).unwrap();
+    let items = assay_core::audit::read_items(&format!("{out}/items.jsonl")).unwrap();
     assert_eq!(items.len(), 3);
     let a = items.iter().find(|d| d.id == "a").unwrap();
     assert_eq!(a.declared_cols, 3);
@@ -157,8 +157,8 @@ fn audit_and_report_run_offline() {
 
     let c = items.iter().find(|d| d.id == "c").unwrap();
     assert_eq!(
-        dataproof_core::scoring::classify(c),
-        dataproof_core::scoring::SchemaKind::NamingOnly
+        assay_core::scoring::classify(c),
+        assay_core::scoring::SchemaKind::NamingOnly
     );
 
     let summary = aggregate::aggregate(
@@ -179,19 +179,19 @@ fn audit_and_report_run_offline() {
     let dest = format!("{out}/reports");
     let explanations = HashMap::new();
     let rendered =
-        dataproof_core::single::render_top(&items, 10, &out, &dest, &explanations).unwrap();
+        assay_core::single::render_top(&items, 10, &out, &dest, &explanations).unwrap();
     assert_eq!(rendered.written, 3);
     let top = items
         .iter()
         .max_by(|a, b| {
-            dataproof_core::scoring::score(a)
-                .partial_cmp(&dataproof_core::scoring::score(b))
+            assay_core::scoring::score(a)
+                .partial_cmp(&assay_core::scoring::score(b))
                 .unwrap()
         })
         .unwrap();
     let md = std::fs::read_to_string(format!(
         "{dest}/{}.md",
-        dataproof_core::util::safe_id(&top.id)
+        assay_core::util::safe_id(&top.id)
     ))
     .unwrap();
     assert!(md.contains(&top.name));

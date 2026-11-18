@@ -5,4 +5,4 @@ rustflags = ["-C", "target-cpu=native"]
 
 [alias]
 # 前端也在门禁内
-wasm-clippy = "clippy -p dataproof-web --target wasm32-unknown-unknown --all-features -- -D warnings"
+wasm-clippy = "clippy -p assay-web --target wasm32-unknown-unknown --all-features -- -D warnings"

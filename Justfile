@@ -9,7 +9,7 @@ default:
 
 # 编译（core + cli）
 build:
-    cargo build --release -p dataproof-core -p dataproof
+    cargo build --release -p assay-core -p assay
 
 # 格式化（Rust + TOML）
 fmt:
@@ -55,19 +55,19 @@ clippy-wasm:
 
 # 单元 + 集成测试
 test:
-    cargo nextest run -p dataproof-core -p dataproof --all-features
+    cargo nextest run -p assay-core -p assay --all-features
 
 # 测试 + 覆盖率
 coverage:
-    cargo llvm-cov nextest -p dataproof-core -p dataproof --all-features --html
+    cargo llvm-cov nextest -p assay-core -p assay --all-features --html
 
 # 证明门禁：拒绝 sorry，内核必须 PASS
 proofs file="fixtures/expected.lean":
-    cargo run --release -q -p dataproof -- check-proofs {{file}}
+    cargo run --release -q -p assay -- check-proofs {{file}}
 
 # 证据门禁：逐份重算 SHA-256，改一个字节就红（跑入库的站点证据，CI 可用）
 verify-evidence:
-    cargo run --release -q -p dataproof -- verify-evidence web/data.json web/evidence
+    cargo run --release -q -p assay -- verify-evidence web/data.json web/evidence
 
 # 本地完整检查（提交前跑这个）
 check: fmt-check clippy test deny verify-evidence proofs
@@ -75,31 +75,31 @@ check: fmt-check clippy test deny verify-evidence proofs
 
 # 1) 全量体检（真实网络，约 12 分钟；limit=0 表示全部）
 audit threads="8" limit="0":
-    cargo run --release -p dataproof -- --out {{out}} audit --threads {{threads}} --limit {{limit}}
+    cargo run --release -p assay -- --out {{out}} audit --threads {{threads}} --limit {{limit}}
 
 # 2) 聚合榜单
 report:
-    cargo run --release -p dataproof -- --out {{out}} report
+    cargo run --release -p assay -- --out {{out}} report
 
 # 3) 解释层：模型写人话，数字必须过护栏
 explain top="100" threads="4":
-    cargo run --release -p dataproof -- --out {{out}} explain --top {{top}} --threads {{threads}}
+    cargo run --release -p assay -- --out {{out}} explain --top {{top}} --threads {{threads}}
 
 # 4) 证据包：落盘接口原始响应并算哈希
 evidence top="100" threads="4":
-    cargo run --release -p dataproof -- --out {{out}} evidence --top {{top}} --threads {{threads}}
+    cargo run --release -p assay -- --out {{out}} evidence --top {{top}} --threads {{threads}}
 
 # 5) 生成 Lean 定理并跑内核
 prove top="100":
-    cargo run --release -p dataproof -- --out {{out}} prove --top {{top}}
+    cargo run --release -p assay -- --out {{out}} prove --top {{top}}
 
 # 6) 单数据集报告（前 N 名 → Markdown，随站点发布）
 reports top="100" dest="web/reports":
-    cargo run --release -p dataproof -- --out {{out}} reports --top {{top}} --dest {{dest}}
+    cargo run --release -p assay -- --out {{out}} reports --top {{top}} --dest {{dest}}
 
 # 7) 导出静态站数据（报告目录由 dest 同级决定）
 export limit="500" dest="web/data.json":
-    cargo run --release -p dataproof -- --out {{out}} export --limit {{limit}} --dest {{dest}}
+    cargo run --release -p assay -- --out {{out}} export --limit {{limit}} --dest {{dest}}
 
 # 8) 构建 WASM 前端（trunk → crates/web/dist）
 web:
@@ -122,8 +122,8 @@ smoke:
 
 # 篡改演示：改一位数字，让内核当场拒绝
 tamper:
-    cargo run --release -p dataproof -- --out {{out}} tamper
+    cargo run --release -p assay -- --out {{out}} tamper
 
 # 本地预览（Rust 静态服务）
 serve port="8080":
-    cargo run --release -p dataproof -- serve --dir crates/web/dist --port {{port}}
+    cargo run --release -p assay -- serve --dir crates/web/dist --port {{port}}

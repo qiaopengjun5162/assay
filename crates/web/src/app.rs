@@ -370,7 +370,10 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
             "完整性",
             "GB/T 36344 02",
             format!("{:.1}%", r.fill_pct()),
-            format!("非空比例 · 样例 {} 行 × {} 列", r.sample_rows, r.sample_cols),
+            format!(
+                "非空比例 · 样例 {} 行 × {} 列",
+                r.sample_rows, r.sample_cols
+            ),
         ),
         (
             "一致性",

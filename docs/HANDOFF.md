@@ -6,10 +6,10 @@
 ## 0. 项目位置
 
 ```
-/Users/qiaopengjun/Code/dataproof
+/Users/qiaopengjun/Code/assay
 ```
 
-远程：`https://github.com/qiaopengjun5162/dataproof`
+远程：`https://github.com/qiaopengjun5162/assay`
 
 ## 1. 当前状态（重要）
 
@@ -40,13 +40,13 @@
 cargo vendor vendor
 
 # cargo 配置（可临时用 --config，避免把绝对路径写进仓库）
-cargo build --release --offline -p dataproof \
+cargo build --release --offline -p assay \
   --config 'source.crates-io.replace-with="vendored-sources"' \
   --config 'source.vendored-sources.directory="vendor"'
 # 实测：30 秒完成，exit 0
 
 # wasm 也要离线时：同样加 --offline，wasm32 目标提前装好
-cargo build -p dataproof-web --target wasm32-unknown-unknown --release --offline ...
+cargo build -p assay-web --target wasm32-unknown-unknown --release --offline ...
 # 注意：trunk build 会去下载 wasm-bindgen CLI，离线前先装一次：
 cargo install wasm-bindgen-cli --version <与 Cargo.lock 一致>
 ```
@@ -64,7 +64,7 @@ cargo install wasm-bindgen-cli --version <与 Cargo.lock 一致>
 `CatalogSource` trait 已经就位，换平台只需新增一个实现（见待办 1）。
 
 另一个已经踩过的坑：
-**trunk 默认生成绝对路径**（`/dataproof-web-*.js`），项目站点在 `/dataproof/` 子路径下会 404、页面空白。
+**trunk 默认生成绝对路径**（`/assay-web-*.js`），项目站点在 `/assay/` 子路径下会 404、页面空白。
 `Trunk.toml` 里 `public_url = "./"` 不能删。更多见 `docs/ENGINEERING_LESSONS_ZH.md`。
 
 ## 3. 必跑命令
@@ -136,7 +136,7 @@ just serve        # 本地预览 crates/web/dist
 ```bash
 # 口径：拿冻结的明细重算，逐字段对比
 mkdir -p /tmp/dp-parity && cp out-full/items.jsonl out-full/catalog_snapshot.json /tmp/dp-parity/
-./target/release/dataproof --out /tmp/dp-parity report
+./target/release/assay --out /tmp/dp-parity report
 # 期望：/tmp/dp-parity/summary.json 与 out-full/summary.json 完全一致（标量 + byDept）
 
 # 证明：哈希与顺序（100 条，首条哈希与改动前一致，除非确实改了取数口径）

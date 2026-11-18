@@ -1,5 +1,5 @@
 [package]
-name = "dataproof-web"
+name = "assay-web"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

@@ -1,6 +1,6 @@
 # 数验 Assay
 
-[![CI](https://github.com/qiaopengjun5162/dataproof/actions/workflows/ci.yml/badge.svg)](https://github.com/qiaopengjun5162/dataproof/actions/workflows/ci.yml)
+[![CI](https://github.com/qiaopengjun5162/assay/actions/workflows/ci.yml/badge.svg)](https://github.com/qiaopengjun5162/assay/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 给政府开放数据做体检，并让每一条数值结论都能被机器独立复核。
@@ -84,7 +84,7 @@ just tamper         # 篡改演示：内核必须拒绝
 ## 目录结构
 
 ```
-dataproof/
+assay/
 ├── Cargo.toml               # workspace：core / cli / web
 ├── Justfile                 # 唯一入口，本地与 CI 跑同一套命令
 ├── crates/
@@ -104,7 +104,7 @@ dataproof/
 │   │   ├── config.rs        #   模型 key 读取（不落盘、不打印）
 │   │   ├── model.rs         #   数据模型（serde camelCase）
 │   │   └── util.rs          #   日期、四舍五入、文件名安全化
-│   ├── cli/                 # 二进制 dataproof（audit/report/…/reports/…/serve/tamper）
+│   ├── cli/                 # 二进制 assay（audit/report/…/reports/…/serve/tamper）
 │   └── web/                 # Leptos + WASM 前端（trunk 打包）
 ├── web/                     # 数据产物：data.json / evidence/ / reports/ / TopProofs.lean
 ├── data/                    # 聚合结果快照（可离线核对）

@@ -439,7 +439,7 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
 
 /// 浏览器内复核：把两个原始文件取回来，在本地算 SHA-256，和索引里的值逐字符对照。
 ///
-/// 等于把 `dataproof verify-evidence` 跑在页面里——评委不用装 Rust、不用开终端，
+/// 等于把 `assay verify-evidence` 跑在页面里——评委不用装 Rust、不用开终端，
 /// 只用看页面自己的结果。取值必须走原始字节（`binary()`），转成文本再算会漂。
 #[component]
 fn VerifyButton(sha256: String, files: Vec<String>) -> impl IntoView {
@@ -492,7 +492,7 @@ enum State {
 
 /// 与 `evidence::capture_one` 同一字节顺序：detail ‖ "\n--split--\n" ‖ preview。
 ///
-/// 只依赖 `sha2`，不引 `dataproof-core`——core 拖着 ureq/rustls，进 wasm 不值当。
+/// 只依赖 `sha2`，不引 `assay-core`——core 拖着 ureq/rustls，进 wasm 不值当。
 async fn recompute(files: &[String]) -> Result<String, String> {
     let [detail_url, preview_url] = files else {
         return Err(format!("证据条目只给了 {} 个文件", files.len()));

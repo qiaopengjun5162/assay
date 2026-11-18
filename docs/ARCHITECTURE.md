@@ -12,7 +12,7 @@
 └───────────────────────────▲──────────────────────────────────┘
                             │ web/data.json（静态文件）
 ┌───────────────────────────┴──────────────────────────────────┐
-│  crates/cli   dataproof <audit|report|explain|evidence|      │
+│  crates/cli   assay <audit|report|explain|evidence|      │
 │            prove|reports|report-one|export|serve|tamper>     │
 └───────────────────────────▲──────────────────────────────────┘
                             │ 直接调用库函数
@@ -146,7 +146,7 @@ theorem empty_0_3 : countEmpty rows_0 3 = 2 := by decide
 pub fn capture_top(items, top, out_dir, client, threads) -> Result<EvidenceOutcome>;
 pub fn hex(bytes: &[u8]) -> String;
 
-// CLI: dataproof verify-evidence <索引> <证据目录>
+// CLI: assay verify-evidence <索引> <证据目录>
 // 索引支持 evidence.json（items[]）与 data.json（datasets[].evidence），逐份重算哈希比对
 ```
 
@@ -241,12 +241,12 @@ pub fn export(opts: &ExportOptions) -> Result<ExportOutcome>;
 ## 6. 构建与部署
 
 ```bash
-cargo build --release -p dataproof-core -p dataproof   # CLI
+cargo build --release -p assay-core -p assay   # CLI
 cd crates/web && trunk build --release                 # WASM → crates/web/dist
 ```
 
 - GitHub Pages：`pages.yml` 在 CI 里装 trunk、构建 dist、上传 artifact、部署。
-- 本地预览：`dataproof serve --dir crates/web/dist --port 8080`（Rust 静态服务，替代 `python -m http.server`）。
+- 本地预览：`assay serve --dir crates/web/dist --port 8080`（Rust 静态服务，替代 `python -m http.server`）。
 - 离线演示：`dist/` 里已含 `data.json`、`evidence/`、`TopProofs.lean`，不依赖网络。
 
 ## 7. 失败模式与处置

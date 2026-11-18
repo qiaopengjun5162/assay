@@ -47,7 +47,7 @@
   <text x="60" y="466" font-size="14" font-weight="700" fill="#14161a">静态前端（无后端，断网可演示）</text>
   <text x="60" y="488" font-size="12" fill="#4d5462">榜单 500 条 · 详情六维 · 证据包 · 证明页 PASS</text>
   <text x="60" y="510" font-size="12" fill="#4d5462">web/data.json 662KB，纯静态部署</text>
-  <text x="600" y="488" font-size="12" fill="#14161a">在线：qiaopengjun5162.github.io/dataproof</text>
+  <text x="600" y="488" font-size="12" fill="#14161a">在线：qiaopengjun5162.github.io/assay</text>
   <text x="600" y="510" font-size="12" fill="#4d5462">本地：just serve → :8080</text>
 
   <!-- 7 底部边界 -->

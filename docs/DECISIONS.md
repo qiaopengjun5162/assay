@@ -6,7 +6,7 @@
 
 **背景**：哈希一直在，但只有生成方向。想验一份证据得自己拼 `cat detail.json` + 分隔符 + `cat preview.json`
 再喂给 `shasum`，拼错了还不知道错在哪。评委或买方拿到审计包，实际没法验。
-**决定**：加 `dataproof verify-evidence <索引> <目录>`，用与 `capture_top` 完全相同的字节顺序重算并比对，
+**决定**：加 `assay verify-evidence <索引> <目录>`，用与 `capture_top` 完全相同的字节顺序重算并比对，
 任何一份不符退出码 1。进 `just check` 与 CI。网站详情页把等价的 `shasum -a 256` 命令直接印在证据面板上。
 **代价**：每次 `just check` 多 0.6 秒（100 份）。
 **为什么值**：哈希如果只有写没有读，「可复核」就只是一句话。实测：改一个字节 → 退出码 1、报告哪一条不符；
@@ -117,7 +117,7 @@
 
 ## D7 原型阶段允许 Rust 里重复 `post/enc`
 
-**背景**：`dataproof-core` 与 `full_audit` 各有一份 HTTP 封装。
+**背景**：`assay-core` 与 `full_audit` 各有一份 HTTP 封装。
 **决定**：先不抽 lib，等前端跑通再重构。
 **代价**：改一处要改两处。
 **触发条件**：出现第三次改动时立刻抽 `lib::http`。

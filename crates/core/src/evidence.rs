@@ -240,8 +240,7 @@ mod tests {
     }
 
     fn tmp(name: &str) -> std::path::PathBuf {
-        let p =
-            std::env::temp_dir().join(format!("dataproof-evidence-{name}-{}", std::process::id()));
+        let p = std::env::temp_dir().join(format!("assay-evidence-{name}-{}", std::process::id()));
         let _ = fs::remove_dir_all(&p);
         fs::create_dir_all(&p).unwrap();
         p

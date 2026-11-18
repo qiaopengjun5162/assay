@@ -50,6 +50,6 @@
 
 - 全 Rust 工作区 + Leptos WASM 前端 (#1)
 - **core**：抽出 CatalogSource trait，加离线端到端测试
-- 证明门禁搬进 Rust CLI（dataproof check-proofs）
+- 证明门禁搬进 Rust CLI（assay check-proofs）
 
 <!-- 由 git-cliff 生成，请勿手改 -->

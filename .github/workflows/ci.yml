@@ -37,10 +37,10 @@ jobs:
         run: taplo fmt --check
 
       - name: Clippy（零容忍）
-        run: cargo clippy -p dataproof-core -p dataproof --all-targets --all-features -- -D warnings
+        run: cargo clippy -p assay-core -p assay --all-targets --all-features -- -D warnings
 
       - name: Test（nextest）
-        run: cargo nextest run -p dataproof-core -p dataproof --all-features
+        run: cargo nextest run -p assay-core -p assay --all-features
 
       - name: 依赖审计（许可证 + 漏洞）
         run: cargo deny check
@@ -55,10 +55,10 @@ jobs:
           fi
 
       - name: 证据复核（入库的 100 份，逐份重算 SHA-256）
-        run: cargo run --release -q -p dataproof -- verify-evidence web/data.json web/evidence
+        run: cargo run --release -q -p assay -- verify-evidence web/data.json web/evidence
 
       - name: Build release
-        run: cargo build --release --locked -p dataproof
+        run: cargo build --release --locked -p assay
 
   wasm:
     name: wasm · Leptos 前端构建
@@ -84,7 +84,7 @@ jobs:
           trunk --version
 
       - name: Clippy（wasm 目标，零容忍）
-        run: cargo clippy -p dataproof-web --target wasm32-unknown-unknown --all-features -- -D warnings
+        run: cargo clippy -p assay-web --target wasm32-unknown-unknown --all-features -- -D warnings
 
       - name: Build dist
         working-directory: crates/web
@@ -130,7 +130,7 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
 
       - name: 内核校验（拒绝 sorry / admit）
-        run: cargo run --release -p dataproof -- check-proofs fixtures/expected.lean
+        run: cargo run --release -p assay -- check-proofs fixtures/expected.lean
 
   secret-scan:
     name: 密钥扫描

@@ -66,9 +66,9 @@
 
 ### trunk 默认绝对路径导致子路径部署白屏
 
-**现象：** GitHub Pages 部署后页面全白，控制台 404 找 `/dataproof-web-*.js`。
+**现象：** GitHub Pages 部署后页面全白，控制台 404 找 `/assay-web-*.js`。
 
-**根因：** 站点在 `/dataproof/` 子路径下，trunk 默认生成根绝对路径。
+**根因：** 站点在 `/assay/` 子路径下，trunk 默认生成根绝对路径。
 
 **修复：** `crates/web/Trunk.toml` 设 `public_url = "./"`。
 

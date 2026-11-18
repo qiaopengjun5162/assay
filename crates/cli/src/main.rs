@@ -1,15 +1,15 @@
-//! dataproof CLI：体检、聚合、解释、证据、证明、导出、本地服务。
+//! assay CLI：体检、聚合、解释、证据、证明、导出、本地服务。
 //!
 //! 所有子命令共享 `--out` 目录约定（默认 `out-full`），产物与旧版脚本一一对应。
 
+use assay_core::api::Client;
+use assay_core::{aggregate, audit, evidence, explain, export, proof};
 use clap::{Parser, Subcommand};
-use dataproof_core::api::Client;
-use dataproof_core::{aggregate, audit, evidence, explain, export, proof};
 use std::path::Path;
 
 #[derive(Parser, Debug)]
 #[command(
-    name = "dataproof",
+    name = "assay",
     version,
     about = "给公共开放数据做体检，并让结论可被机器复核"
 )]
@@ -113,7 +113,7 @@ fn main() {
     }
 }
 
-fn run(cli: Cli) -> dataproof_core::Result<()> {
+fn run(cli: Cli) -> assay_core::Result<()> {
     let out = cli.out;
     match cli.command {
         Command::Audit { threads, limit } => {
@@ -208,20 +208,20 @@ fn run(cli: Cli) -> dataproof_core::Result<()> {
             );
         }
         Command::Reports { top, dest } => {
-            let items = dataproof_core::audit::read_items(&format!("{out}/items.jsonl"))?;
-            let explanations = dataproof_core::single::load_explanations(&out);
-            let o = dataproof_core::single::render_top(&items, top, &out, &dest, &explanations)?;
+            let items = assay_core::audit::read_items(&format!("{out}/items.jsonl"))?;
+            let explanations = assay_core::single::load_explanations(&out);
+            let o = assay_core::single::render_top(&items, top, &out, &dest, &explanations)?;
             println!("报告: {} 条 → {dest}", o.written);
         }
         Command::ReportOne { id, to } => {
-            let items = dataproof_core::audit::read_items(&format!("{out}/items.jsonl"))?;
+            let items = assay_core::audit::read_items(&format!("{out}/items.jsonl"))?;
             let d = items
                 .iter()
                 .find(|d| d.id == id)
-                .ok_or_else(|| dataproof_core::Error::Other(format!("未找到数据集 {id}")))?;
-            let (ev, rows) = dataproof_core::single::load_evidence(&out, &id);
-            let explain = dataproof_core::single::load_explanations(&out);
-            let md = dataproof_core::single::render(
+                .ok_or_else(|| assay_core::Error::Other(format!("未找到数据集 {id}")))?;
+            let (ev, rows) = assay_core::single::load_evidence(&out, &id);
+            let explain = assay_core::single::load_explanations(&out);
+            let md = assay_core::single::render(
                 d,
                 d.lag_days,
                 ev.as_ref(),
@@ -257,7 +257,7 @@ fn run(cli: Cli) -> dataproof_core::Result<()> {
 /// 证据复核：逻辑在 `evidence::verify_index`，这里只打结果与给退出码。
 /// 索引里一条都没识别出来也算失败——空跑不能当通过。
 fn verify_evidence(index: &str, evidence_dir: &str) -> i32 {
-    let report = match dataproof_core::evidence::verify_index(
+    let report = match assay_core::evidence::verify_index(
         std::path::Path::new(index),
         std::path::Path::new(evidence_dir),
     ) {
@@ -325,7 +325,7 @@ fn check_proofs(files: &[String]) -> i32 {
     fail
 }
 
-fn tamper(path: &str) -> dataproof_core::Result<()> {
+fn tamper(path: &str) -> assay_core::Result<()> {
     use std::io::Write;
     let text = std::fs::read_to_string(path)?;
     let mut changed: Option<(String, usize, usize)> = None;
@@ -358,9 +358,9 @@ fn tamper(path: &str) -> dataproof_core::Result<()> {
         out.push('\n');
     }
     let Some((_t, old, new)) = changed else {
-        return Err(dataproof_core::Error::Other("没找到可篡改的定理".into()));
+        return Err(assay_core::Error::Other("没找到可篡改的定理".into()));
     };
-    let tmp = std::env::temp_dir().join(format!("dataproof-tamper-{}.lean", std::process::id()));
+    let tmp = std::env::temp_dir().join(format!("assay-tamper-{}.lean", std::process::id()));
     std::fs::File::create(&tmp)?.write_all(out.as_bytes())?;
     println!("篡改: 空值数 {old} → {new}（{}）", tmp.display());
     let res = std::process::Command::new("lean").arg(&tmp).output()?;
@@ -371,7 +371,7 @@ fn tamper(path: &str) -> dataproof_core::Result<()> {
     }
     let _ = std::fs::remove_file(&tmp);
     if res.status.success() {
-        return Err(dataproof_core::Error::Other(
+        return Err(assay_core::Error::Other(
             "篡改后仍然通过，证明没有约束力".into(),
         ));
     }
@@ -380,7 +380,7 @@ fn tamper(path: &str) -> dataproof_core::Result<()> {
 }
 
 /// 极简静态服务器：只读文件、固定 MIME、拒绝路径穿越。
-fn serve(dir: &str, port: u16) -> dataproof_core::Result<()> {
+fn serve(dir: &str, port: u16) -> assay_core::Result<()> {
     use std::io::{Read, Write};
     use std::net::TcpListener;
 

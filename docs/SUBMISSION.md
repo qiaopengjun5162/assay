@@ -118,6 +118,6 @@ just tamper  # 改一位数字，Lean 内核当场拒绝
 ## 演示与代码
 
 - 在线：https://qiaopengjun5162.github.io/assay/
-- 代码：https://github.com/qiaopengjun5162/dataproof
+- 代码：https://github.com/qiaopengjun5162/assay
 - 6 分钟讲稿：`docs/PITCH.md`
 - 新队友上手：`docs/TEAM_DAY_ONE.md`

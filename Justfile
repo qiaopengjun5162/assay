@@ -57,9 +57,13 @@ clippy-wasm:
 test:
     cargo nextest run -p assay-core -p assay --all-features
 
-# 测试 + 覆盖率
+# 测试 + 覆盖率（带地板；CI 的 coverage job 跑同一条命令）
 coverage:
-    cargo llvm-cov nextest -p assay-core -p assay --all-features --html
+    ./scripts/coverage.sh
+
+# 覆盖率 + HTML 报告（本地看哪个分支没测到）
+coverage-html:
+    ./scripts/coverage.sh --html
 
 # 证明门禁：拒绝 sorry，内核必须 PASS
 proofs file="fixtures/expected.lean":
@@ -80,6 +84,14 @@ audit threads="8" limit="0":
 # 2) 聚合榜单
 report:
     cargo run --release -p assay -- --out {{out}} report
+
+# 周度漂移对比：拿基线比本轮 summary.json（0 正常 / 1 漂移 / 2 跑批不可信）
+drift:
+    cargo run --release -p assay -- drift --current {{out}}/summary.json
+
+# 周度巡检：全量体检 + 漂移判定（只预览，不写基线；写基线由 CI 的 PR 完成）
+audit-weekly: (audit "8" "0")
+    cargo run --release -p assay -- drift --current {{out}}/summary.json || true
 
 # 3) 解释层：模型写人话，数字必须过护栏
 explain top="100" threads="4":

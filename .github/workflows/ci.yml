@@ -2,7 +2,7 @@ name: ci
 
 on:
   push:
-    branches: [main, refactor/rust]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -11,6 +11,12 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
+  # `.cargo/config.toml` 给本机加了 `-C target-cpu=native`（macOS 上编得快）。
+  # 但 GitHub runner 不保证「编译这台」和「运行这台」是同一代 CPU，rust-cache
+  # 还会把 target/ 跨代缓存下来；一旦命中不同代际的 runner，产物会在运行时
+  # SIGILL。2026-10-29 在 moonpub 上踩过：rustc 直接死掉。
+  # 环境变量优先于 config，空串同样生效 —— CI 一律用默认目标 CPU。
+  RUSTFLAGS: ""
 
 jobs:
   rust:
@@ -59,6 +65,54 @@ jobs:
 
       - name: Build release
         run: cargo build --release --locked -p assay
+
+  # README 曾写「Rust 1.85+」，但没人验证过。实测：1.86 直接过不了
+  # （icu_* 2.4 要求 1.88），1.88.0 通过。`rust-version` 写进 Cargo.toml
+  # 只表示「我声明」，不表示「CI 在测」——声明不测等于没声明。
+  # `--locked` 是关键：查的是我们真正发布的那套依赖，而不是让老工具链
+  # 自己解析出另一套更旧的。
+  msrv:
+    name: msrv · 1.88 真编一次
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.88.0"
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: msrv
+
+      - name: 最低支持版本检查
+        run: cargo check --locked -p assay-core -p assay --all-features
+
+  # 地板存在的意义：让「能自动验证的那部分」不会悄悄烂掉。
+  # 它刻意低于实测值（54.16% → 52），吸收 macOS 与 Ubuntu 的 cfg 差异。
+  # 只升不降：新代码没测试就该让这里红。
+  coverage:
+    name: coverage · 行覆盖率地板
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: coverage
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest,cargo-llvm-cov
+
+      - name: 覆盖率地板
+        run: |
+          chmod +x scripts/coverage.sh
+          ./scripts/coverage.sh
 
   wasm:
     name: wasm · Leptos 前端构建
@@ -146,6 +200,25 @@ jobs:
         run: |
           curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz | tar -xz gitleaks
           ./gitleaks detect --source . --redact -v --exit-code=1 --log-opts="--all"
+
+  # 本地 .githooks/commit-msg 能被 --no-verify 绕过，新人也可能忘了跑 just hooks。
+  # 钩子图方便，CI 才有约束力。
+  commit-lint:
+    name: commits · Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 校验提交信息
+        run: |
+          chmod +x scripts/check-commits.sh
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./scripts/check-commits.sh "${{ github.event.pull_request.base.sha }}"
+          else
+            ./scripts/check-commits.sh "${{ github.event.before }}"
+          fi
 
   docs:
     name: docs · Markdown lint

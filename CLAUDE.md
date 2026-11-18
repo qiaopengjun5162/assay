@@ -30,7 +30,7 @@
 8. **前端只读**：WASM 只 GET 静态文件，不写、不调平台接口。
 9. **CI 不访问政府网站**：只用 `fixtures/` 与假平台（`crates/core/tests/pipeline.rs`）。
 10. **不引入 Python 运行时依赖**：脚本只允许 bash（`ci/`）。
-11. **任何 key 不进仓库/日志/聊天**：本地走 `DATAPROOF_LLM_KEY` 或 Hermes 配置。
+11. **任何 key 不进仓库/日志/聊天**：本地走 `ASSAY_LLM_KEY` 或 Hermes 配置。
 
 ## 常用命令
 

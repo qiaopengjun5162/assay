@@ -75,12 +75,14 @@ just clippy-wasm  # 前端也在门禁内
 just lint-docs    # Markdown lint
 just smoke        # 200 条端到端（联网，约 90 秒），产物进 out-smoke/，不覆盖正式产物
 just all          # 全量（联网，约 14 分钟）
+just drift        # 周度漂移对比：基线 vs 本轮 summary.json（0 正常 / 1 漂移 / 2 不可信）
+just coverage     # 行覆盖率地板 52%（实测 54.16%）
 just serve        # 本地预览 crates/web/dist
 ```
 
 首次克隆后必跑 `just hooks`（装 commit-msg 钩子）。
 
-单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just web`、`just tamper`。
+单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just web`、`just tamper`、`just drift`。
 
 ## 4. 硬规则
 
@@ -94,7 +96,7 @@ just serve        # 本地预览 crates/web/dist
    换成紧凑格式会让历史哈希全部漂移。
 7. **基准日写死** `NOW_YMD = (2026, 11, 14)`，不读系统时间。
 8. **模型不参与取数与算数。** 解释层输入只有事实字典；输出必须过 `guard::check`。
-9. **任何 key 不进仓库/日志/聊天。** 本地走 `DATAPROOF_LLM_KEY` 或 Hermes 配置。
+9. **任何 key 不进仓库/日志/聊天。** 本地走 `ASSAY_LLM_KEY` 或 Hermes 配置。
 10. **不要引入 Python 运行时依赖。** 仓库目标是全 Rust；脚本只允许 bash（`ci/`）。
 11. **前端只读。** WASM 只 GET `data.json`，不写、不调平台接口。
 12. **CI 不访问政府网站。** 只用 `fixtures/` 与单测。
@@ -115,6 +117,7 @@ just serve        # 本地预览 crates/web/dist
 | 单数据集报告 | `crates/core/src/single.rs` |
 | 解释层 / 重试 | `crates/core/src/explain.rs` |
 | 数字护栏 | `crates/core/src/guard.rs` |
+| 周度漂移 / 阈值 | `crates/core/src/drift.rs`（口径见 `docs/audit/README.md`） |
 | 命令入口 | `crates/cli/src/main.rs` |
 | 前端视图 | `crates/web/src/app.rs` |
 | 前端数据模型 | `crates/web/src/model.rs` |

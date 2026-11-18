@@ -1,0 +1,137 @@
+name: audit
+
+# 周度巡检：把「一次性体检」变成「每周体检 + 指标漂移就开 PR」。
+#
+# 三档处置（由 `assay drift` 的退出码决定，口径见 docs/audit/README.md）：
+#   0 正常   → 基线不动，job 绿。基线是「上次人工确认过的常态」，
+#              所以渐进漂移会一周周累积，直到越过阈值才报
+#   1 漂移   → 交 baseline + 报告，开 PR 让人确认「是否接受为新常态」
+#   2 不可信 → 抓取成功率骤降 / 目录条目骤减，基线**不动**，job 直接红
+#
+# 注意：开 PR 用的是 AUDIT_PAT，不是默认 GITHUB_TOKEN。
+# GitHub 防递归：GITHUB_TOKEN 建的 PR 不会触发 ci.yml，会永远卡在
+# 「Expected — waiting for status」，没法按模板合并 CI 绿了才合。
+
+on:
+  schedule:
+    # 每周一 02:00 UTC = 周一 10:00（UTC+8）
+    # 提示：仓库连续 60 天无提交时 GitHub 会自动停用 schedule，需手动重启。
+    - cron: "0 2 * * 1"
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "只体检前 N 条（0 = 全量，用于手动试跑）"
+        required: false
+        default: "0"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# 体检是联网长任务，两轮并行只会互相拖慢，还可能把同一份基线写乱
+concurrency:
+  group: audit-weekly
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  audit:
+    name: audit · 全量体检 + 漂移判定
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build
+        run: cargo build --release --locked -p assay
+
+      # 全量约 12 分钟。audit 子命令对单条失败是容错的（只计数），
+      # 整体是否可信由下一步的抓取成功率闸门判断，不靠这一步的退出码。
+      - name: 体检
+        run: |
+          ./target/release/assay --out out-audit audit \
+            --threads 8 \
+            --limit "${{ github.event.inputs.limit || '0' }}"
+
+      - name: 聚合
+        run: ./target/release/assay --out out-audit report
+
+      # 小样本手动试跑（limit > 0）只验证链路，不跑判定：
+      # 200 条相对 24,322 条必然触发「目录条目骤减」闸门，判了也是白红一次。
+      # 基线缺失时 drift 会退回「首跑」模式并 exit 0，job 会静默变绿而基线
+      # 永远进不了仓库。这条前置检查把静默失败变成显式失败。
+      - name: 基线必须存在
+        if: github.event.inputs.limit == '' || github.event.inputs.limit == '0'
+        run: |
+          if [ ! -f baseline/summary.json ]; then
+            echo "::error::baseline/summary.json 缺失。首次初始化在本地跑："
+            echo "  assay drift --current out-full/summary.json --write-baseline baseline/summary.json"
+            exit 1
+          fi
+
+      - name: 漂移判定
+        id: drift
+        if: github.event.inputs.limit == '' || github.event.inputs.limit == '0'
+        run: |
+          set +e
+          ./target/release/assay drift \
+            --baseline baseline/summary.json \
+            --current out-audit/summary.json \
+            --write-baseline baseline/summary.json \
+            --md-out docs/audit/latest.md \
+            --commit "$GITHUB_SHA" \
+            --captured-at "$(date -u +%F)"
+          code=$?
+          set -e
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          case "$code" in
+            0|1) exit 0 ;;
+            *)
+              echo "::error::跑批不健康（exit $code），基线未更新，本轮不开 PR"
+              exit 1
+              ;;
+          esac
+
+      # 产物留着查「到底是哪些数据集变了」。items.jsonl 压缩后不大，留 30 天。
+      - name: 上传产物
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-${{ github.run_id }}
+          path: |
+            out-audit/summary.json
+            out-audit/leaderboard.md
+            out-audit/items.jsonl
+            docs/audit/latest.md
+          retention-days: 30
+
+      - name: 检查 PR 凭据
+        if: steps.drift.outputs.code == '1'
+        env:
+          PAT: ${{ secrets.AUDIT_PAT }}
+        run: |
+          if [ -z "$PAT" ]; then
+            echo "::error::缺少仓库 secret AUDIT_PAT，无法开 PR；见 docs/audit/README.md"
+            exit 1
+          fi
+
+      - name: 开 PR（仅漂移）
+        if: steps.drift.outputs.code == '1'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.AUDIT_PAT }}
+          branch: chore/audit-weekly
+          base: main
+          delete-branch: true
+          add-paths: |
+            baseline/summary.json
+            docs/audit/latest.md
+          commit-message: "chore(audit): 周度体检指标漂移"
+          title: "chore(audit): 周度体检发现指标漂移"
+          body-path: docs/audit/latest.md

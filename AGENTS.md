@@ -52,6 +52,7 @@
 ```bash
 just check        # fmt + clippy(core/cli) + 单测 + 证明门禁
 just clippy-wasm  # 前端也在门禁内
+just coverage     # 行覆盖率地板 52%（实测 54.16%）
 just lint-docs
 just smoke        # 联网，200 条，产物进 out-smoke/
 ```
@@ -61,6 +62,8 @@ just smoke        # 联网，200 条，产物进 out-smoke/
 ## 平台与环境的已知坑
 
 - **代理**：crates.io / GitHub 需 `HTTPS_PROXY=http://127.0.0.1:7890`。
+- **CI 必须置空 `RUSTFLAGS`**：`.cargo/config.toml` 有 `-C target-cpu=native`，
+  异代 runner 上产物会 SIGILL。见 `docs/ENGINEERING_LESSONS_ZH.md` 与 ci.yml 顶部注释。
 - **trunk 必须保留 `public_url = "./"`**：GitHub Pages 在 `/assay/` 子路径，绝对路径会 404 白屏。
 - **`strip = true` 不能开**：wasm-bindgen 读不到 `target_features` 段。
 - **平台脏数据**：存在 `2025-07-30 09:70:21` 这类非法时间戳，校验时分秒后跳过。

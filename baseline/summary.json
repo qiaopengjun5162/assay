@@ -1,0 +1,15 @@
+{
+  "capturedAt": "2026-11-18",
+  "sourceCommit": "0cd5e57",
+  "audited": 24322,
+  "withPreview": 19830,
+  "schemaMismatch": 1284,
+  "stoppedUpdate": 8843,
+  "claimedCycleOverdue": 2940,
+  "allEmptyColumnDatasets": 3976,
+  "noColumnList": 129,
+  "emptyRateOver30": 1097,
+  "emptyRateMedian": 0.0,
+  "emptyRateP90": 0.2,
+  "lagMedianDays": 115
+}

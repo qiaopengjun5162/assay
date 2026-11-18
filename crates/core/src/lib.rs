@@ -1,7 +1,7 @@
 //! 数验 Assay 的核心库。
 //!
 //! 分层约定：
-//! - **纯函数**（`scoring` / `guard` / `matrix` / `lean`）不碰网络和文件，CI 里可全速跑；
+//! - **纯函数**（`scoring` / `guard` / `matrix` / `lean` / `drift`）不碰网络和文件，CI 里可全速跑；
 //! - **IO 层**（`api` / `aggregate` / `evidence` / `proof` / `export`）显式接收路径与客户端，
 //!   便于用固定快照做对比测试；
 //! - **解释层**（`explain`）只产出文字，数字由 `guard` 把关，模型不参与取数。
@@ -10,6 +10,7 @@ pub mod aggregate;
 pub mod api;
 pub mod audit;
 pub mod config;
+pub mod drift;
 pub mod evidence;
 pub mod explain;
 pub mod export;

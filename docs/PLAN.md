@@ -1,10 +1,10 @@
-# 数证 DataProof · 项目计划
+# 数验 Assay · 项目计划
 
 > 第五元素 · 杭州 2026 AI × 数据创新赛｜赛道 02 AI 基础设施与可信数据
 > 报名：2026-11-25 截止｜比赛：2026-12-04 ~ 12-08
 > 本文件是施工图，不是介绍文。介绍文见 `notes/tech/ai/2026-11-14-dataproof-idea.md`。
 >
-> **状态（2026-11-15）：已上线，全 Rust。** 线上 https://qiaopengjun5162.github.io/dataproof/
+> **状态（2026-11-15）：已上线，全 Rust。** 线上 https://qiaopengjun5162.github.io/assay/
 > 本文件下方的目录树与 CI 表已按 Rust 工作区更新；需求见 `REQUIREMENTS.md`，架构见 `ARCHITECTURE.md`，
 > 接手规则见 `HANDOFF.md`。
 

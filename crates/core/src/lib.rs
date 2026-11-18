@@ -1,4 +1,4 @@
-//! 数证 DataProof 的核心库。
+//! 数验 Assay 的核心库。
 //!
 //! 分层约定：
 //! - **纯函数**（`scoring` / `guard` / `matrix` / `lean`）不碰网络和文件，CI 里可全速跑；

@@ -1,4 +1,4 @@
-# CLAUDE.md · 数证 DataProof
+# CLAUDE.md · 数验 Assay
 
 给在这个仓库里工作的 AI Agent 的项目说明。全局通用规则见 `~/.claude/CLAUDE.md`，
 这里只写本项目的架构边界、口径不变量和验证方式。

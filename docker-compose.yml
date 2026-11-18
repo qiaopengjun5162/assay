@@ -1,0 +1,30 @@
+# 本地开发用的最小依赖：只有数据库。
+#
+# api 本身用 `cargo run -p assay-api` 跑在本机（改代码不用重建镜像），
+# 需要容器化再补 Dockerfile —— 现在没必要。
+#
+# 用法：
+#   docker compose up -d db
+#   DATABASE_URL=postgres://assay:assay@127.0.0.1:5432/assay cargo run -p assay-api
+#   curl localhost:8081/health
+#
+# 不用 docker 也可以：本机 postgres 建个库，migrations 启动时自动跑。
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: assay
+      POSTGRES_PASSWORD: assay
+      POSTGRES_DB: assay
+    ports:
+      - "5432:5432"
+    volumes:
+      - assay-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U assay -d assay"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  assay-pg:

@@ -1,0 +1,27 @@
+[package]
+name = "assay-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+axum = { version = "0.8", features = ["http1", "query", "tokio"] }
+tokio = { version = "1", features = [
+  "rt-multi-thread",
+  "macros",
+  "signal",
+  "net",
+] }
+sqlx = { version = "0.8", features = [
+  "postgres",
+  "runtime-tokio",
+  "tls-rustls",
+  "migrate",
+] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tower-http = { version = "0.6", features = ["trace"] }

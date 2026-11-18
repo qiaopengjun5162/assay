@@ -43,10 +43,10 @@ jobs:
         run: taplo fmt --check
 
       - name: Clippy（零容忍）
-        run: cargo clippy -p assay-core -p assay --all-targets --all-features -- -D warnings
+        run: cargo clippy -p assay-core -p assay -p assay-api --all-targets --all-features -- -D warnings
 
       - name: Test（nextest）
-        run: cargo nextest run -p assay-core -p assay --all-features
+        run: cargo nextest run -p assay-core -p assay -p assay-api --all-features
 
       - name: 依赖审计（许可证 + 漏洞）
         run: cargo deny check
@@ -86,7 +86,7 @@ jobs:
           key: msrv
 
       - name: 最低支持版本检查
-        run: cargo check --locked -p assay-core -p assay --all-features
+        run: cargo check --locked -p assay-core -p assay -p assay-api --all-features
 
   # 地板存在的意义：让「能自动验证的那部分」不会悄悄烂掉。
   # 它刻意低于实测值（54.16% → 52），吸收 macOS 与 Ubuntu 的 cfg 差异。

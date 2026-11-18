@@ -7,7 +7,12 @@ license.workspace = true
 
 [dependencies]
 axum = { version = "0.8", features = ["http1", "query", "tokio"] }
-tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal", "net"] }
+tokio = { version = "1", features = [
+  "rt-multi-thread",
+  "macros",
+  "signal",
+  "net",
+] }
 sqlx = { version = "0.8", features = [
   "postgres",
   "runtime-tokio",

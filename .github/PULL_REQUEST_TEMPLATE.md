@@ -1,5 +1,9 @@
 # Pull Request
 
+> **标题遵循 Conventional Commits**（例：`feat(cli): add drift subcommand`）。
+> `commit-lint` 校验的是分支上的提交；PR 标题不过钩子，但如果以后切成 squash
+> merge，标题会原样成为 `main` 上的提交信息。
+
 ## 改动类型
 
 - [ ] feat：新功能

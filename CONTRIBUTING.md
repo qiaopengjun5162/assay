@@ -5,19 +5,24 @@
 ```bash
 rustup target add wasm32-unknown-unknown
 cargo install cargo-nextest cargo-deny taplo-cli typos-cli just
+cargo install cargo-llvm-cov        # 覆盖率门禁要用
 ./scripts/install-git-hooks.sh     # Conventional Commits 校验
 ```
 
 本机访问 crates.io 需代理：`export HTTPS_PROXY=http://127.0.0.1:7890`。
+
+需要 **Rust 1.88+**（实际下限，`icu_*` 依赖要求；CI 会用 1.88.0 真跑一次）。
 
 ## 提交前必须全绿
 
 ```bash
 just check        # fmt(Rust+TOML) + clippy + nextest + cargo-deny + 证明门禁
 just clippy-wasm  # 前端也在门禁内
+just coverage     # 行覆盖率地板 52%（实测 54%）
 ```
 
 `just check` 红了不要提交，也不要为了让测试过而改断言——先判断是实现错了还是口径本就该变。
+覆盖率地板红了也别调低地板：补测试，或者明确说明为什么这段测不了。
 
 ## 口径改动
 

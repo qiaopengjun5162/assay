@@ -1,12 +1,13 @@
 [workspace]
 members = ["crates/core", "crates/cli", "crates/web"]
 resolver = "2"
-# 旧的原型包，重构完成前保留，避免 Cargo 把它当成员
-exclude = ["rust-core"]
 
 [workspace.package]
 version = "0.2.0"
 edition = "2021"
+# 实测下限，不是声明：1.86 过不了（icu_* 2.4 要求 1.88），1.88.0 通过。
+# CI 的 msrv job 会用这个版本真跑一次 --locked，别只改这里。
+rust-version = "1.88"
 license = "MIT"
 repository = "https://github.com/qiaopengjun5162/assay"
 authors = ["Paxon Qiao <qiaopengjun0@gmail.com>"]

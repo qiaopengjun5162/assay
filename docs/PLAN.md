@@ -126,7 +126,11 @@ assay/
 | `secret-scan` | gitleaks（fetch-depth: 0） | 脚本要读 API key，防止误提交 |
 | `wasm` | wasm32 目标 + trunk 0.22.1 + `clippy -D warnings` + `trunk build --release` + 产物自检 | 前端也是交付物，别只测后端 |
 
-**不做**：MSRV（单人项目，工具链固定）、覆盖率地板（5 天内收益低）、Windows 冒烟（现场是 macOS）。
+**冲刺期不做（2026-11-18 已补前两项）**：MSRV、覆盖率地板、Windows 冒烟（现场是 macOS，仍不做）。
+
+- **MSRV**：当初理由是「单人项目、工具链固定」，但这个理由不成立——README 声称 1.85+，
+  实测 1.86 就编不过（`icu_*` 2.4 要求 1.88）。已加 `rust-version = "1.88"` 与 `msrv` job。
+- **覆盖率地板**：冲刺期砍掉，现已补回。实测 54.16% 行覆盖，地板 52%（`scripts/coverage.sh`）。
 
 ### `release.yml`（打 tag 时）
 

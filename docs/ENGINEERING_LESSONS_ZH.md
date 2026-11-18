@@ -116,3 +116,54 @@
 **防复发：** 不要换回 action；仓库重建后确认根提交不会让扫描范围塌陷。
 
 **证据：** `.github/workflows/ci.yml` 里的注释。
+
+### `target-cpu=native` 会做出「只能在编译机那一代 CPU 上跑」的产物
+
+**现象：** 本机编译一切正常，CI 里偶发 `SIGILL`（Illegal instruction），而且不是每次都有，
+报错位置也不固定——看着像随机崩溃。
+
+**根因：** `.cargo/config.toml` 给所有非 wasm 目标加了 `-C target-cpu=native`。GitHub runner
+不保证「编译这一台」和「运行这一台」是同一代 CPU，`rust-cache` 又把 `target/` 跨代缓存下来；
+一旦命中不同代际的 runner，产物就会用本期 CPU 不支持的指令集。
+
+**修复：** CI 里设置空的 `RUSTFLAGS`（环境变量优先于 config，空串同样生效），强制用默认目标 CPU。
+本地保留 native——本机编译和本机运行永远是同一颗 CPU。
+
+**防复发：** 新增 CI job 时确认它继承了 workflow 级 `env: RUSTFLAGS: ""`；跨机构建或分发二进制时
+不能用 `native`。
+
+**证据：** `.github/workflows/ci.yml` 顶部 `env` 注释；同一个坑 2026-10-29 在 `moonpub` 上
+真崩过一次（rustc 直接死）。
+
+### 「声明 MSRV」不等于「测过 MSRV」
+
+**现象：** README 写「Rust 1.85+」，README/CI 都这么用了很久，从没人验证。
+
+**根因：** `rust-version` 只是给 Cargo 的一个提示（影响 MSRV-aware resolver），编译器不会拿它
+做任何检查；CI 一直用 `stable`，永远测不到下限。
+
+**修复：** 用真工具链实测：1.86 直接编不过（`icu_collections` / `icu_provider` 等 2.4.0 要求
+rustc 1.88），1.88.0 通过。据此把 `rust-version` 定为 1.88，并加 `msrv` job 用 1.88.0 +
+`--locked` 真跑一次。
+
+**防复发：** 改依赖后 MSRV 可能被静默抬高——`msrv` job 会当场红。别用「删掉 job」来修它。
+`--locked` 必须留着：否则老工具链会自己解析出另一套更旧的依赖，测的就不是我们发布的东西。
+
+**证据：** `cargo +1.86.0 check --locked` 的报错清单；`.github/workflows/ci.yml` 的 `msrv` job。
+
+### 改了项目路径后，llvm-cov 会把旧产物算进来
+
+**现象：** 项目从 `dataproof` 改名到 `assay` 后跑覆盖率，报告里同时出现 `dataproof/crates/...`（全 0%）
+和 `assay/crates/...` 两套路径，总数比实际低十几到二十几个百分点。
+
+**根因：** `target/llvm-cov-target` 里存着旧构建的 `.profraw` 与 instrumented 产物，
+`cargo llvm-cov report` 会把目录下**所有** profraw 合并进来。`cargo llvm-cov clean --workspace`
+没清干净（实测残留 427MB / 2849 个文件）。
+
+**修复：** `cargo clean --target-dir target/llvm-cov-target` 彻底清，再重测：33.63% → **54.16%**。
+`scripts/coverage.sh` 每次测量前先 `cargo llvm-cov clean --workspace`。
+
+**防复发：** 覆盖率数字突然大幅下降、或出现两条不同前缀的同一文件时，先怀疑旧 profraw，
+不要先怀疑「测试变少了」。
+
+**证据：** `scripts/coverage.sh` 的清理步骤；本次测量前后的 `--summary-only` 输出对比。

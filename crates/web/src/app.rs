@@ -235,8 +235,9 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             <div class="stat"><div class="num">{s.lag_median_days.unwrap_or(0)}</div><div class="lbl">"更新滞后中位数（天）"</div></div>
         </section>
         <p class="coverage">
-            "覆盖：已证 "<b>{s.proof_count}</b>" 条 · 证据包 "<b>{s.evidence_count}</b>" 份 · AI 解读 "<b>{s.explain_count}</b>" 条"
-            "（解读与证明都只覆盖问题最多的前 100 名）"
+            "榜上 "<b>{s.evidence_count}</b>" 条全部有证据包（点开就能自己重算哈希）· 其中 "
+            <b>{s.proof_count}</b>" 条有机器证明 · AI 解读 "<b>{s.explain_count}</b>" 条"
+            <span class="hint">"（剩下那些是平台只给了表头、没有数据行，没有可证的命题）"</span>
         </p>
 
         <section class="deptboard">
@@ -335,6 +336,24 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
     let id_for_proof = r.id.clone();
     let bad = r.declared_cols != r.sample_cols || r.all_empty_cols > 0 || r.stopped();
     let verdict = if bad { "问题较多" } else { "基本可用" };
+    // 判定「问题较多」的依据要写在脸上：只给结论不给理由，读者只能猜。
+    let mut reasons: Vec<String> = Vec::new();
+    if r.declared_cols != r.sample_cols {
+        reasons.push(format!(
+            "声明 {} 列、实际 {} 列",
+            r.declared_cols, r.sample_cols
+        ));
+    }
+    if r.all_empty_cols > 0 {
+        reasons.push(format!("{} 列整列全空", r.all_empty_cols));
+    }
+    if r.stopped() {
+        reasons.push(format!(
+            "平台标了停更，距上次更新 {} 天",
+            r.lag_days.unwrap_or(0)
+        ));
+    }
+    let why = reasons.join("；");
     let dims = vec![
         (
             "规范性",
@@ -350,8 +369,8 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
         (
             "完整性",
             "GB/T 36344 02",
-            format!("{:.1}%", r.empty_pct()),
-            format!("样例 {} 行 × {} 列", r.sample_rows, r.sample_cols),
+            format!("{:.1}%", r.fill_pct()),
+            format!("非空比例 · 样例 {} 行 × {} 列", r.sample_rows, r.sample_cols),
         ),
         (
             "一致性",
@@ -403,7 +422,9 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
             {report.then(|| view! { <span class="chip ok">"有书面报告"</span> })}
         </div>
         <div class=format!("verdict{}", if bad { " bad" } else { "" })>
-            <b>{verdict}</b>" · 问题分只用于排序，不是科学指标。准确性不在评价范围内。"
+            <b>{verdict}</b>
+            {(!why.is_empty()).then(|| view! { <span>"：" {why.clone()}</span> })}
+            " · 问题分只用于排序，不是科学指标。准确性不在评价范围内。"
             {report.then(|| view! {
                 <a class="btn" href=report_href.clone() download>"下载体检报告（Markdown）"</a>
             })}

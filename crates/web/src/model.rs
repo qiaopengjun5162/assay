@@ -180,6 +180,15 @@ impl Row {
         self.empty_rate * 100.0
     }
 
+    /// 非空比例，给「完整性」维度用。
+    ///
+    /// 不能把 `empty_pct()` 挂到完整性下面：空值率 100% 的数据集会显示成
+    /// 「完整性 100.0%」，把最差的说成最好的。这个 bug 在页面上安静地显示，
+    /// 只有对着同一条的报告（写的是「样例空值率 100.00%」）才看得出矛盾。
+    pub fn fill_pct(&self) -> f64 {
+        (1.0 - self.empty_rate) * 100.0
+    }
+
     /// 报告文件名：与后端 `util::safe_id` 同一映射（非 `[A-Za-z0-9_-]` 一律换成 `_`，截 64）。
     pub fn report_path(&self) -> String {
         let name: String = self

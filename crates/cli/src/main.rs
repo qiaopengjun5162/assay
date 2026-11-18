@@ -2,9 +2,9 @@
 //!
 //! 所有子命令共享 `--out` 目录约定（默认 `out-full`），产物与旧版脚本一一对应。
 
-use clap::{Parser, Subcommand};
 use assay_core::api::Client;
 use assay_core::{aggregate, audit, evidence, explain, export, proof};
+use clap::{Parser, Subcommand};
 use std::path::Path;
 
 #[derive(Parser, Debug)]

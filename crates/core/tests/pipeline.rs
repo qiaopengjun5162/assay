@@ -178,8 +178,7 @@ fn audit_and_report_run_offline() {
     // 报告：与证明同一选择口径，只覆盖有样例的数据集；文件名走 safe_id
     let dest = format!("{out}/reports");
     let explanations = HashMap::new();
-    let rendered =
-        assay_core::single::render_top(&items, 10, &out, &dest, &explanations).unwrap();
+    let rendered = assay_core::single::render_top(&items, 10, &out, &dest, &explanations).unwrap();
     assert_eq!(rendered.written, 3);
     let top = items
         .iter()
@@ -189,11 +188,8 @@ fn audit_and_report_run_offline() {
                 .unwrap()
         })
         .unwrap();
-    let md = std::fs::read_to_string(format!(
-        "{dest}/{}.md",
-        assay_core::util::safe_id(&top.id)
-    ))
-    .unwrap();
+    let md = std::fs::read_to_string(format!("{dest}/{}.md", assay_core::util::safe_id(&top.id)))
+        .unwrap();
     assert!(md.contains(&top.name));
     assert!(md.contains("## 体检结论"));
 

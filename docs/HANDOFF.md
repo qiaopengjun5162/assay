@@ -91,7 +91,7 @@ just serve        # 本地预览 crates/web/dist
 
 首次克隆后必跑 `just hooks`（装 commit-msg 钩子）。
 
-单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just web`、`just tamper`、`just drift`。
+单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just export-split`、`just web`、`just tamper`、`just drift`。
 
 ## 4. 硬规则
 

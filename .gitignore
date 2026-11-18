@@ -31,5 +31,11 @@ lcov.info
 target/llvm-cov/
 target/llvm-cov-target/
 
+# 分层导出产物（全量：index 7.3MB + shards 12MB）
+# 现在前端还不读它们，先不入库以免误提交 19MB。前端切过去时再决定：
+# 要么进 Pages 构建，要么等查询后端上线直接走 API。
+web/index.json
+web/shards/
+
 # AI 协作工具的工作目录（含会话记忆，属本地数据不入库）
 .workbuddy/

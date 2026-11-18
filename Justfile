@@ -113,6 +113,12 @@ reports top="100" dest="web/reports":
 export limit="500" dest="web/data.json":
     cargo run --release -p assay -- --out {{out}} export --limit {{limit}} --dest {{dest}}
 
+# 7b) 数据分层：data.json 之外再产 index.json（全量）+ shards/（详情分片）
+#     实测全量：index 7.3MB / shards 12MB（24 片，每片约 500KB）
+#     —— 解决「初次加载全量详情」，但解决不了「历史累积进 git」，那是后端的事
+export-split limit="500" dest="web/data.json" shards="24":
+    cargo run --release -p assay -- --out {{out}} export --limit {{limit}} --dest {{dest}} --split --shards {{shards}}
+
 # 8) 构建 WASM 前端（trunk → crates/web/dist）
 web:
     cd crates/web && trunk build --release

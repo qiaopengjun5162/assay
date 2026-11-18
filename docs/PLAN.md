@@ -167,7 +167,7 @@ dataproof/
 |---|---|---|
 | 纯逻辑 | `src/lib.rs` 单测：空值矩阵、定理字符串、字段一致性分类 | 无 |
 | 黄金文件 | `fixtures/snapshot.json` → 生成 Lean → 与 `fixtures/expected.lean` 逐字比对 | 无 |
-| 证明 | CI 跑 `lean fixtures/expected.lean` + `check_proofs.sh`（拒 `sorry`、审公理） | 无 |
+| 证明 | CI 跑 `lean fixtures/expected.lean` + `dataproof check-proofs`（拒 `sorry`、审公理） | 无 |
 | 采集 | 手工冒烟：`--limit 20`，断言 0 失败 | 有（不进 CI） |
 
 **原则**：CI 永不访问政府网站。数据快照进仓库，只存脱敏后的 5 行样例。

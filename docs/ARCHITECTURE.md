@@ -145,12 +145,17 @@ theorem empty_0_3 : countEmpty rows_0 3 = 2 := by decide
 ```rust
 pub fn capture_top(items, top, out_dir, client, threads) -> Result<EvidenceOutcome>;
 pub fn hex(bytes: &[u8]) -> String;
+
+// CLI: dataproof verify-evidence <索引> <证据目录>
+// 索引支持 evidence.json（items[]）与 data.json（datasets[].evidence），逐份重算哈希比对
 ```
 
 - 每条存 `detail.json`、`preview.json`（原始字节，不做任何转换）。
 - SHA-256 = `sha256(detail || "\n--split--\n" || preview)`。
 - 目录名 = `safe_id(id)`：只保留字母数字与 `- _`，长度 ≤ 64。
 - 线程并发，索引按原顺序落盘。
+- `verify-evidence` 是这个哈希的**逆操作**，进 `just check` 与 CI：改证据里一个字节就红。
+  网站详情页把等价命令（`shasum -a 256`）直接印在证据面板上，评委不用装任何东西就能自己验。
 
 ### 3.6 `aggregate.rs`
 

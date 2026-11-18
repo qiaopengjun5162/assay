@@ -354,7 +354,12 @@ cd crates/web && trunk build --release                 # WASM → crates/web/dis
 
 ## 8. 扩展点
 
-- **换平台**：`api.rs` 抽 `Trait CatalogSource`，把三个端点参数化；`audit` 不感知具体平台。
+- **换平台**：`api.rs` 的 `CatalogSource` 是唯一入口，且跨边界的只有归一化数据
+  （`DatasetMeta` + `Vec<Vec<String>>` 表格 + 两份原始字节）。新平台要写七个方法：
+  目录分页 / 目录全量 / `meta` / `rows` / `rows_from_raw` / `detail_raw` / `preview_raw`。
+  **不要在 `meta`、`rows` 之外把平台原始 JSON 递出去**——那等于让 `audit` 重新认识
+  一家平台的结构，抽象就白抽了。`tests/pipeline.rs` 里的 `FixtureSource` 只返回
+  字段名和行、完全不带任何平台的 JSON，它跑通就说明下游确实没耦合（D25）。
 - **加指标**：在 `Dataset` 增加字段 → `audit` 计算 → `aggregate` 统计 → `export` 透出 → 前端展示。
 - **扩证明**：`prove --top N`。实测（2026-11-18，M2 Pro，D23）：
   500 条 → 4,970 定理 / 19.7s / 421K，其中 **391 个数据集可证**——另 109 个平台只返回表头、

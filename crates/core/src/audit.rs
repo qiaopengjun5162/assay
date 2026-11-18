@@ -6,7 +6,7 @@
 //!
 //! 只落 items 不落目录快照，是新环境跑 `report` 时时效性整块为空的原因。
 
-use crate::api::{preview_rows, CatalogSource};
+use crate::api::CatalogSource;
 use crate::matrix;
 use crate::model::{CatalogRecord, Dataset};
 use crate::{Error, Result};
@@ -137,48 +137,29 @@ fn audit_one(
         ..Default::default()
     };
 
-    let detail = match client.detail(&rec.id) {
-        Ok(v) => v,
+    let meta = match client.meta(&rec.id) {
+        Ok(m) => m,
         Err(e) => {
             failed.fetch_add(1, Ordering::SeqCst);
             d.detail_error = Some(e.to_string());
             return d;
         }
     };
-    let r = &detail["result"];
-    let cols: Vec<String> = r["columnList"]
-        .as_array()
-        .map(|a| {
-            a.iter()
-                .map(|c| {
-                    c["colNameCn"]
-                        .as_str()
-                        .or_else(|| c["colName"].as_str())
-                        .unwrap_or("")
-                        .to_string()
-                })
-                .collect()
-        })
-        .unwrap_or_default();
+    let cols = meta.columns;
     d.declared_cols = cols.len();
-    d.has_preview = r["hasPreviewData"].as_i64().unwrap_or(0);
-    d.desc_len = r["dopSourceInfo"]["description"]
-        .as_str()
-        .unwrap_or("")
-        .chars()
-        .count();
+    d.has_preview = if meta.has_preview { 1 } else { 0 };
+    d.desc_len = meta.description_len;
 
     if d.has_preview != 1 {
         return d;
     }
-    let preview = match client.preview(&rec.id, 10) {
-        Ok(v) => v,
+    let table = match client.rows(&rec.id, 10) {
+        Ok(t) => t,
         Err(e) => {
             d.preview_error = Some(e.to_string());
             return d;
         }
     };
-    let table = preview_rows(&preview);
     if table.is_empty() {
         return d;
     }

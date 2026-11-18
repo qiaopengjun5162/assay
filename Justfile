@@ -26,6 +26,10 @@ typos:
     @command -v typos >/dev/null || { echo "未安装 typos：brew install typos-cli（或 cargo install typos-cli）"; exit 1; }
     typos
 
+# 第二平台探针：深圳的目录能不能枚举、接口要什么授权（只读，不需账号）
+probe-sz key="":
+    ./scripts/sz-probe.sh {{key}}
+
 # 依赖审计（许可证 + 漏洞 + 供应链）
 deny:
     cargo deny check

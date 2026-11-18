@@ -101,12 +101,16 @@ cargo install wasm-bindgen-cli --version <与 Cargo.lock 一致>
 1. **第二个平台**（原定上海，2026-11-18 实测被挡，见 D25）：
    上海 `data.sh.gov.cn` 的 `/`、`/api/`、`/api/search` 全部返回 **HTTP 412** + 混淆 JS，
    是瑞数类动态防护，连接口路径都进不去；江苏 403/504；山东、北京的目录页是服务端渲染 HTML。
-   **改候选为深圳**（`opendata.sz.gov.cn`）：目录与预览接口形态最接近浙江（POST + JSON +
-   表头/行），但要实名注册领 APPKEY，属外部依赖而非编码任务。
-   拿到 key 后按这三步确认：
-   a) 列表请求的 URL 与分页参数（浙江是 `current/size`，`page` 会被静默忽略）
-   b) 详情与预览两个端点，id 是否需要 URL 编码（浙江是 base64，含 `+ / =`）
-   c) `curl` 打一次，确认「声明字段」与「样例行」分别在哪一层
+   **改候选为深圳**（`opendata.sz.gov.cn`）：勘察已做完，见 `docs/audit/SHENZHEN.md`。
+   两件事已经明确：目录 `POST /data/api/findPageByParams` **匿名**返回 2,791 条接口
+   （带字段数、数据量、更新周期），所以「停更」今天就能算；但**样例行要 appKey**，
+   而 appKey 不是注册就有，要提交一个「应用成果」（选 web 应用，我们已有站点）
+   并逐个接口订阅。
+   拿到 key 后只剩三步：
+   a) `./scripts/sz-probe.sh <appKey>` 打一次，确认返回是表头/行还是别的形状
+   b) 把 `resId` 的斜杠换成下划线（写成斜杠会得到 200 + HTML，不报错）
+   c) 定字段口径：深圳返回拼音缩写（`NF`/`NMCZRKS`），平台声明是中文，
+      直接沿用浙江的「字段集合不一致」会把 2,791 条全标成问题
    然后写一个 `CatalogSource` 实现：七个方法（目录分页 / 目录全量 / `meta` / `rows` /
    `rows_from_raw` / `detail_raw` / `preview_raw`）。
    **核心库其余模块不需要改**——平台形状从 trait 边界上清掉了（D25），

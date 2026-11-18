@@ -100,8 +100,12 @@ audit-weekly: (audit "8" "0")
     cargo run --release -p assay -- drift --current {{out}}/summary.json || true
 
 # 3) 解释层：模型写人话，数字必须过护栏
-explain top="100" threads="4":
+explain top="500" threads="4":
     cargo run --release -p assay -- --out {{out}} explain --top {{top}} --threads {{threads}}
+
+# 3b) 只验配置：端点 / 模型 / key / 代理，一条命令
+probe:
+    cargo run --release -p assay -- --out {{out}} explain --probe
 
 # 4) 证据包：落盘接口原始响应并算哈希
 evidence top="100" threads="4":

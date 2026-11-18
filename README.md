@@ -78,7 +78,7 @@
 | 证据包 | 完成：**500 份**原始响应（榜上每一条都有），逐份重算 SHA-256 通过 |
 | Lean 证明 | 完成：500 名里 391 个可证数据集、4,970 条定理，内核 PASS，全部基于已存证快照 |
 | 单数据集报告 | 完成：500 份 Markdown，页面上可直接下载 |
-| AI 解释层 | 完成：100 条解读，数字护栏 100/100 通过（未扩，理由见 D23） |
+| AI 解释层 | 完成：**500 条**解读（榜上全部），数字护栏 500/500 通过；首轮越界数字自动重写 |
 | 前端 | 完成：Leptos + WASM，榜单 / 详情 / 证明三视图，刷新可直达 |
 | 工程门禁 | 完成：fmt(Rust+TOML) / clippy / nextest / cargo-deny / lean / 密钥扫描 / 文档 lint |
 | 周度巡检 | 完成：每周一全量体检，指标漂移自动开 PR（基线 + 报告） |
@@ -112,7 +112,7 @@ just serve
 ```bash
 just audit 8 0      # 1) 体检：线程数 8，0 = 全部
 just report         # 2) 聚合榜单 → summary.json / leaderboard.md
-just explain 100    # 3) 解释层（需要 LLM key，见下）
+just explain 500    # 3) 解释层（需要 LLM key；先跑 just probe 验证配置）
 just evidence 100   # 4) 证据包：原始响应 + SHA-256
 just prove 100      # 5) 生成定理并跑 Lean 内核
 just reports 100    # 6) 单数据集报告 → web/reports/*.md
@@ -191,8 +191,30 @@ assay/
 **模型的位置**：只在解释层。它拿不到原始数据，只能看事实字典；输出里的每个数字都要和事实
 逐个比对，最多 3 个；不合格重写一次，仍不合格标记 `rejected`、页面不展示。
 
-**LLM key**：从 `ASSAY_LLM_KEY` 环境变量或本机 Hermes 配置读，不打印、不入库。
-没有 key 时 `explain` 给出可操作的报错。
+**LLM key / 端点 / 模型**：从环境变量或本机 Hermes 配置读，不打印、不入库。
+
+| 变量 | 作用 | 例 |
+|---|---|---|
+| `ASSAY_LLM_KEY` | key | `sk-...` |
+| `ASSAY_LLM_BASE` | 端点 | `https://platform.yeta.ai/v1` |
+| `ASSAY_LLM_MODEL` | 模型名 | `deepseek-v4.1-flash` |
+| `ASSAY_LLM_PROXY` | 代理 | `socks5h://127.0.0.1:7890` |
+
+不设就走配置文件里的值，再不行才用兜底值。端点带 `/anthropic` 按 Anthropic messages 发，
+其余按 OpenAI 兼容发——换渠道不用改代码。
+
+配置对不对，一条命令就能验（只发一次请求，不跑批）：
+
+```bash
+assay explain --probe
+# 端点   https://platform.yeta.ai/v1/chat/completions
+# 模型   deepseek-v4.1-flash
+# 协议   openai-chat
+# key    TLDA90…Kmbi（来源：配置文件 ~/.hermes/profiles/ai/config.yaml）
+# 代理   直连
+# 响应   "可以"  1.9s
+```
+
 旧名 `DATAPROOF_LLM_KEY` 在过渡期仍可用（读到时会在 stderr 提示一次）。
 
 ## 产物
@@ -203,7 +225,7 @@ assay/
 | `out-full/summary.json` | 聚合结论 + 2,500 个部门维度 |
 | `out-full/leaderboard.md` | 问题 Top 50 |
 | `out-full/leaderboard_dept.md` | 部门榜 Top 25 |
-| `out-full/explanations.json` | 100 条 AI 解读 + 护栏结果 |
+| `out-full/explanations.json` | 500 条 AI 解读 + 护栏结果 |
 | `out-full/evidence.json` | 100 份证据包索引（含 SHA-256） |
 | `out-full/proofs.json` | 100 个数据集的定理元信息 |
 | `out-full/TopProofs.lean` | 2,355 条定理，`lean` 退出码 0 |

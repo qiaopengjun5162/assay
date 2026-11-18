@@ -39,6 +39,9 @@ enum Command {
         top: usize,
         #[arg(long, default_value_t = 4)]
         threads: usize,
+        /// 只发一次请求自检端点 / 模型 / key / 代理，不跑批
+        #[arg(long)]
+        probe: bool,
     },
     /// 证据包：落盘接口原始响应并算 SHA-256
     Evidence {
@@ -199,7 +202,21 @@ fn run(cli: Cli) -> assay_core::Result<()> {
                 println!("{k}={}", summary[k]);
             }
         }
-        Command::Explain { top, threads } => {
+        Command::Explain {
+            top,
+            threads,
+            probe,
+        } => {
+            if probe {
+                let r = explain::probe()?;
+                println!("端点   {}", r.endpoint);
+                println!("模型   {}", r.model);
+                println!("协议   {}", r.protocol);
+                println!("key    {}（来源：{}）", r.masked_key, r.source);
+                println!("代理   {}", r.proxy.as_deref().unwrap_or("直连"));
+                println!("响应   {:?}  {:.1}s", r.reply, r.latency_secs);
+                return Ok(());
+            }
             let o = explain::explain(&explain::ExplainOptions {
                 items_path: &Path::new(&out).join("items.jsonl").to_string_lossy(),
                 catalog_path: &Path::new(&out)
@@ -210,8 +227,8 @@ fn run(cli: Cli) -> assay_core::Result<()> {
                 threads,
             })?;
             println!(
-                "解释层: {}/{} 条通过护栏，{:.1}s",
-                o.passed, o.total, o.elapsed_secs
+                "解释层: {}/{} 条通过护栏，{:.1}s（模型 {}）",
+                o.passed, o.total, o.elapsed_secs, o.model
             );
         }
         Command::Evidence { top, threads } => {

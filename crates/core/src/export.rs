@@ -147,13 +147,16 @@ pub fn export(opts: &ExportOptions<'_>) -> Result<ExportOutcome> {
 
     let total = rows.len();
     let mut summary = summary;
+    // 审计快照的日期。`summary.json` 里没有这个字段（加了会让 drift 每次都报漂移），
+    // 所以只能在这里写死，重跑审计时跟着改。改不动的根源是缺少一份 snapshot 清单。
+    const SNAPSHOT_DATE: &str = "2026-11-14";
     if let Some(m) = summary.as_object_mut() {
         m.insert("proofCount".into(), json!(proof_by_id.len()));
         m.insert("evidenceCount".into(), json!(evidence_by_id.len()));
         m.insert("explainCount".into(), json!(explain_by_id.len()));
     }
     let out = json!({
-        "generatedAt": "2026-11-14",
+        "generatedAt": SNAPSHOT_DATE,
         "source": "浙江省公共数据开放平台（data.zjzwfw.gov.cn）",
         "api": "/dopServer/dataCatalog/{dataQueryPage,catalogDetail,catalogDataPreview}",
         "summary": summary,

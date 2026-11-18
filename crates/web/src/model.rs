@@ -52,8 +52,12 @@ pub struct Summary {
 pub struct DeptRow {
     #[serde(default)]
     pub n: u64,
-    #[serde(default)]
-    pub empty_avg: f64,
+    /// 平均空值率。`None` 表示这个部门一条样例都没拿到——是「不知道」，不是 0。
+    ///
+    /// 老版本 `aggregate` 把这个 key 写成 snake_case，仓库里入库的
+    /// `web/data.json` 快照还是旧格式；两种都认，否则部门榜的空值率会静默变 0。
+    #[serde(default, alias = "empty_avg")]
+    pub empty_avg: Option<f64>,
     #[serde(default)]
     pub stopped: u64,
     #[serde(default)]

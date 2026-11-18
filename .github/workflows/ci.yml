@@ -39,9 +39,8 @@ jobs:
       - name: Clippy（零容忍）
         run: cargo clippy -p dataproof-core -p dataproof --all-targets --all-features -- -D warnings
 
-      # 临时诊断：nextest 里测试进程 SIGILL，先用裸 cargo test 对比
-      - name: Test（诊断：cargo test 对照）
-        run: cargo test -p dataproof-core -p dataproof --all-features
+      - name: Test（nextest）
+        run: cargo nextest run -p dataproof-core -p dataproof --all-features
 
       - name: 依赖审计（许可证 + 漏洞）
         run: cargo deny check

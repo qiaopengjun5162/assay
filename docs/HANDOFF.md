@@ -42,6 +42,18 @@
 - 改名残留清理完毕：环境变量改 `ASSAY_LLM_KEY` / `ASSAY_CONFIG`，旧名过渡期仍可读
 - ⚠️ **`AUDIT_PAT` 尚未配置**：漂移那一周会停在「检查 PR 凭据」并提示缺 secret
 
+已完成（2026-11-18 · 查询后端骨架）：
+
+- 新增 `crates/api`：axum 0.8 + sqlx 0.8 + Postgres，四个**只读**端点
+  （`/health`、`/v1/runs`、`/v1/datasets`、`/v1/datasets/{id}/history`）
+- 边界：**证据不进库**。库里只有 `platform / run / dataset / observation`，
+  服务挂了证据照样能离线验。理由见 `DECISIONS.md` D20
+- 本地起法：`docker compose up -d db` → `just api`（或本机 postgres 建库，
+  启动时自动跑 migrations）
+- 实测过：4 个端点、分页夹紧、两个 404 分支、中文搜索、两次 run 的历史序列
+- **尚未做**：任务提交、审计包签发、账号体系，以及对 `assay-api` 的覆盖率门禁
+  （`scripts/coverage.sh` 目前只统计 core 与 cli）
+
 现场离线预案（已实测 2026-11-15）：
 
 ```bash
@@ -91,7 +103,15 @@ just serve        # 本地预览 crates/web/dist
 
 首次克隆后必跑 `just hooks`（装 commit-msg 钩子）。
 
-单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just export-split`、`just web`、`just tamper`、`just drift`。
+单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just export-split`、`just web`、`just tamper`、`just drift`、`just api`。
+
+查询后端（可选，不影响前面的静态链路）：
+
+```bash
+docker compose up -d db        # 或本机 postgres 建库，用 .env.example 里的 DATABASE_URL
+just api                       # 启动时自动跑 migrations，监听 127.0.0.1:8081
+curl localhost:8081/health
+```
 
 ## 4. 硬规则
 

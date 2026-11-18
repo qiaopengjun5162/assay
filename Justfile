@@ -123,6 +123,11 @@ export-split limit="500" dest="web/data.json" shards="24":
 web:
     cd crates/web && trunk build --release
 
+# 9) 查询后端（只读）。先起库：docker compose up -d db
+#    证据仍是静态对象，这个服务只存索引，可随时清库重建。
+api:
+    cargo run -p assay-api
+
 # 全流水线：体检 → 榜单 → 解释 → 证据 → 证明 → 报告 → 导出 → 前端
 all: audit report explain evidence prove reports export web
     echo "完成：just serve 预览"

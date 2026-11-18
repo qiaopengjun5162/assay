@@ -8,12 +8,19 @@
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  crates/web   Leptos CSR + WASM                              │
-│  只读 data.json / evidence/* / reports/* / TopProofs.lean，不发写请求 │
+│  只读 data.json / index.json / shards/* / evidence/* /        │
+│  reports/* / TopProofs.lean，不发写请求                       │
 └───────────────────────────▲──────────────────────────────────┘
-                            │ web/data.json（静态文件）
+                            │ 静态文件（Pages）或 GET /v1/*
+┌───────────────────────────┴──────────────────────────────────┐
+│  crates/api   只读查询服务（axum + sqlx/Postgres）            │
+│  /health /v1/runs /v1/datasets /v1/datasets/{id}/history      │
+│  **只存索引，不存证据**：证据仍是静态对象，服务挂了也能验       │
+└───────────────────────────▲──────────────────────────────────┘
+                            │
 ┌───────────────────────────┴──────────────────────────────────┐
 │  crates/cli   assay <audit|report|explain|evidence|      │
-│            prove|reports|report-one|export|serve|tamper>     │
+│            prove|reports|report-one|export|serve|tamper|drift>│
 └───────────────────────────▲──────────────────────────────────┘
                             │ 直接调用库函数
 ┌───────────────────────────┴──────────────────────────────────┐
@@ -24,6 +31,7 @@
 │    matrix   空值位图 / 列计数 / 空值率                        │
 │    guard    数字护栏                                          │
 │    lean     Lean 文本生成                                     │
+│    drift    两次体检的指标对比与三档判定                       │
 │    util     日期 / 舍入 / 文件名                              │
 │                                                               │
 │  IO 层（显式接收路径与客户端，便于固定快照测试）                │
@@ -32,14 +40,15 @@
 │    evidence 原始响应存证                                      │
 │    proof    快照 → 定理 → 调 lean                             │
 │    aggregate 聚合                                             │
-│    export   前端数据                                          │
+│    export   前端数据（含 --split 分层）                        │
 │    explain  模型调用 + 护栏                                   │
 │    single   单数据集报告渲染                                  │
 │    config   key 读取                                          │
 └──────────────────────────────────────────────────────────────┘
 ```
 
-依赖只能向下：`web → cli → core`。core 不依赖 cli/web，纯函数不 import IO 层。
+依赖只能向下：`web → cli → core`、`api → core`。core 不依赖 cli/web/api，
+纯函数不 import IO 层。
 
 ## 2. 数据流
 
@@ -224,6 +233,32 @@ pub fn compare(baseline: &Summary, current: &Summary, opts: &DriftOptions) -> Dr
 - 数据只读 `data.json`；不做任何写操作、不调平台接口。
 - 三个视图：榜单（搜索/部门/排序/三个筛选）、详情（六维 + 字段差异 + AI 解读 + 证据 + 证明入口 + 报告下载）、证明（PASS、哈希、定理示例、下载）。
 - 浏览器前进/后退通过 `hashchange` 监听同步。
+
+### 3.12 `crates/api`
+
+```text
+GET /health
+GET /v1/runs?platform=zj
+GET /v1/datasets?run=&q=&dept=&sort=score|empty|lag&stopped=&mismatch=&minEmpty=&page=&size=
+GET /v1/datasets/{ext_id}/history
+```
+
+- **只读**。没有写接口、没有账号、没有任务队列。加写接口之前先想清楚：
+  写进来的东西要不要也进证据链？如果要，先设计签名。
+- **不存证据**。原始响应、哈希、Lean 证明都是静态对象；库里只有
+  `platform / run / dataset / observation` 四张表。证据要是依赖服务在线才能验，
+  「可复核」就退化成「相信我们」。
+- `DatasetRow` 的字段集与 `web/index.json` 单行**完全一致**：前端从读静态文件切成
+  调接口时，只需改 fetch，`Row` 结构体不动。有一条单测锁住字段名。
+- 过滤条件全部走可空参数（`$2 is null or ...`），排序键是三个固定字符串的
+  `match` 白名单。**不做动态拼 SQL**——这是全项目唯一可能被注入的地方，
+  而它换来的灵活性这里用不上。参数归一化（空搜索词、页码、页大小、非法下限）
+  是纯函数，在 CI 里跑，不需要 Postgres。
+- `captured_at` 存 ISO 文本（`YYYY-MM-DD`）而不是 `date`：ISO 日期按字符串排序
+  即按时间排序，为此引一个时间库不值得——`chrono` 已被 RUSTSEC-2026-0543 判
+  unmaintained，core 里的公历换算本来就是自己写的（`util::days_from_civil`）。
+- 启动时自动跑 `migrations/`。单实例、无状态、可随时重建，这是「零运维」
+  在后端仍然保留的那部分。
 
 ## 4. 产物契约
 

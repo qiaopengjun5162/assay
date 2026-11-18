@@ -289,6 +289,7 @@ GET /v1/datasets/{ext_id}/history
 | `crates/web/dist` | trunk | 浏览器 / Pages | 可重生成 |
 | `baseline/summary.json` | drift（`--write-baseline`） | drift | **对照系，只随 PR 合并前进** |
 | `docs/audit/latest.md` | drift（`--md-out`） | 周度巡检 PR 正文 | 可重生成 |
+| `dist/assay-audit-<日期>.tar.gz` | pack | 交付给买方 / 评审 | **可重现：同输入字节一致**，含 `MANIFEST.sha256` |
 
 **为什么要有 `--split`（2026-11-18 实测）**：全量 24,322 条下，`data.json` 只带 500 条
 （732KB）；全量索引 `index.json` 是 **7.3MB**（每行 276 字节），详情分片合计 **12MB**。
@@ -298,6 +299,20 @@ GET /v1/datasets/{ext_id}/history
 **但分层解决不了历史**：每周存一份全量是 19MB，只存索引也要 7.3MB，一年 380MB 进 git。
 「时间序列」这件事静态托管天生装不下——它是后续引入查询后端的硬理由，
 而不是「项目变大了所以要后端」这种模糊说法。
+
+**审计包（`assay pack`）**：把一次跑批的产物压成单个 `.tar.gz`，包内自带 `VERIFY.md`
+与标准 `shasum` 格式的 `MANIFEST.sha256`。买方解压后一条系统命令验完全部文件，
+不需要安装本工具——这是 `SUBMISSION.md` 第一优先的落地物。
+
+包里有两级哈希，**不要混为一谈**：
+
+- **单文件哈希**（`MANIFEST.sha256`）：证明「这个文件没被改」。
+- **组合指纹**（`MANIFEST.json` 的 `entries[].sha256` = `H(detail ‖ "\n--split--\n" ‖ preview)`）：
+  证明「同一条数据的两个响应来自同一次抓取」。单文件哈希证明不了这件事——把别人家的
+  两个响应拼在一起，单文件哈希照样全对。
+
+包是**可重现**的：mtime/uid/gid 全固定 0，文件顺序排序，两次打包字节一致
+（实测 `c6f4c23b…`）。所以包哈希本身也能当批次指纹，不入库也不会丢信息。
 
 ## 5. 不变量（改动时最容易踩坏）
 

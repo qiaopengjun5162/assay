@@ -2,6 +2,24 @@
 
 > 只记「当时为什么这么选」。每条都能在文章里展开成一段。
 
+## D22 审计包用 tar.gz，且必须可重现
+
+**背景**：`SUBMISSION.md` 第一优先是「验的人不需要装我们的东西」，但证据一直是散在
+`out-full/evidence/` 里的 200 个文件。没有「一个可以交出去的物」，这句话就只是口号。
+**决定**：`assay pack` 打 `.tar.gz`，包内自带 `VERIFY.md` + 标准 `shasum` 格式的
+`MANIFEST.sha256`。实测 100 条证据：3.6MB → **0.4MB**，206 条校验全部 OK。
+**为什么 tar.gz 而不是 zip**：`tar` + `flate2` 的依赖树比 `zip` crate 小，且 flate2
+默认走 miniz_oxide（纯 Rust，无 C 依赖——这一点在多平台打包时不添麻烦）。
+macOS/Linux 双击可解，Windows 10+ 也原生支持。
+**为什么 mtime/uid/gid 全固定 0**：否则同样输入打两次字节都不同，「包的哈希」就不能
+当批次指纹用。固定之后实测两次都是 `c6f4c23b…`。这条同时让「不入库」变得无害——
+重打一遍就能得到逐字节相同的文件。
+**为什么保留两级哈希**：单文件哈希只证明「文件没被改」，证明不了「同一条数据的
+detail 与 preview 来自同一次抓取」。后者要靠组合指纹
+`H(detail ‖ "\n--split--\n" ‖ preview)`，与 `evidence.json` 同口径、原样搬运不重算。
+**边界**：包里的证据是**样例级**（受 `just evidence N` 限制），指标来自目录全量元数据。
+`MANIFEST.json` 的 `scope` 字段与 `VERIFY.md` 都写死了这一点，不允许把样例说成全量。
+
 ## D21 灌库走 CLI 一次传 JSON，不开 HTTP 写接口
 
 **背景**：D20 建了库，但没人往里写——PR #8 只能用临时 SQL seed 验证端点，那能测不能运维。

@@ -76,9 +76,20 @@ just export 500     # 7) 导出 web/data.json
 just web            # 8) 构建 WASM 前端 → crates/web/dist
 just tamper         # 篡改演示：内核必须拒绝
 just drift          # 周度漂移对比：拿基线比本轮 summary.json
+just pack 2026-11-18  # 审计包：打成交付用单文件（含 shasum 清单）
 ```
 
 `out-full/` 不入库（全量明细 8.7MB），换目录跑批用变量覆盖：`just out=out-smoke audit 8 200`。
+
+**审计包**（`just pack <日期>`）产出 `dist/assay-audit-<日期>.tar.gz`，包内自带
+`VERIFY.md` 与标准 `MANIFEST.sha256`。对方解压后一条命令验完全部文件，不需要装本工具：
+
+```bash
+tar xzf assay-audit-2026-11-18.tar.gz && cd assay-audit-2026-11-18
+shasum -a 256 -c MANIFEST.sha256
+```
+
+同样输入两次打包字节一致，所以包本身可以当批次指纹；`dist/` 因此不入库。
 
 周度巡检由 `.github/workflows/audit.yml` 每周一自动跑一遍全量体检，指标漂移就开 PR
 （基线 + 报告），口径与阈值见 [docs/audit/README.md](docs/audit/README.md)。

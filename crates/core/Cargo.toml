@@ -13,6 +13,10 @@ serde_json = { workspace = true }
 sha2 = { workspace = true }
 thiserror = { workspace = true }
 ureq = { workspace = true }
+# 审计包：tar 归档 + gzip 压缩。选这两个而不是 zip crate，
+# 是因为 tar/flate2 的依赖树小且稳定（flate2 默认 miniz_oxide，纯 Rust）。
+tar = "0.4"
+flate2 = "1"
 
 [dev-dependencies]
 serde_json = { workspace = true }

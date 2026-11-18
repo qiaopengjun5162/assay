@@ -65,6 +65,19 @@
 - 实测跨两周历史：造 3 条变化，`/history` 正确返回两点，分数 9.0 → 7.5、分类
   「列数不一致」→「字段集合不一致」都能看见
 
+已完成（2026-11-18 · 审计包）：
+
+- `assay pack --captured-at <日期>` → `dist/assay-audit-<日期>.tar.gz`
+- 包内自带 `VERIFY.md` + 标准 shasum 格式的 `MANIFEST.sha256`：对方解压后
+  `shasum -a 256 -c MANIFEST.sha256` 一条命令验完，**不需要装本工具**
+- 实测 100 条证据：3.6MB → **0.4MB**，206 条校验全 OK
+- 篡改演示：改一个字节 → 只报那一个 FAILED；改 `MANIFEST.json` 把 `sample`
+  改成 `full` → 清单自身 FAILED（连「把样例说成全量」都能抓住）
+- **可重现**：mtime/uid/gid 固定 0，两次打包 sha256 一致（`c6f4c23b…`），
+  所以 `dist/` 不入库也不丢信息
+- 两级哈希并存：单文件哈希证明「没被改」，组合指纹
+  `H(detail ‖ --split-- ‖ preview)` 证明「两个响应来自同一次抓取」（D22）
+
 现场离线预案（已实测 2026-11-15）：
 
 ```bash
@@ -114,7 +127,7 @@ just serve        # 本地预览 crates/web/dist
 
 首次克隆后必跑 `just hooks`（装 commit-msg 钩子）。
 
-单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just export-split`、`just web`、`just tamper`、`just drift`、`just api`、`just api-ingest`。
+单独跑：`just audit 8 0`、`just report`、`just explain 100`、`just evidence 100`、`just prove 100`、`just reports 100`、`just export 500`、`just export-split`、`just web`、`just tamper`、`just drift`、`just pack`、`just api`、`just api-ingest`。
 
 查询后端（可选，不影响前面的静态链路）：
 

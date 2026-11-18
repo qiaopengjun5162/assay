@@ -89,6 +89,12 @@ report:
 drift:
     cargo run --release -p assay -- drift --current {{out}}/summary.json
 
+# 审计包：打成可交付单文件。包内自带 VERIFY.md 与 shasum 清单，
+# 对方解压后一条 `shasum -a 256 -c MANIFEST.sha256` 就能验，不需要装我们任何东西。
+# 用法：just pack 2026-11-18  （可选第二个参数传 commit）
+pack date commit="":
+    cargo run --release -p assay -- --out {{out}} pack --captured-at {{date}} {{ if commit != "" { "--commit " + commit } else { "" } }}
+
 # 周度巡检：全量体检 + 漂移判定（只预览，不写基线；写基线由 CI 的 PR 完成）
 audit-weekly: (audit "8" "0")
     cargo run --release -p assay -- drift --current {{out}}/summary.json || true

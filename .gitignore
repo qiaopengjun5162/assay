@@ -37,5 +37,9 @@ target/llvm-cov-target/
 web/index.json
 web/shards/
 
+# 审计包（交付物，随批次生成；不入库，需要时 just pack 重新打）
+# 同样输入两次打包字节一致，所以「不入库」不会丢任何东西。
+dist/
+
 # AI 协作工具的工作目录（含会话记忆，属本地数据不入库）
 .workbuddy/

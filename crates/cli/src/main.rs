@@ -3,7 +3,7 @@
 //! 所有子命令共享 `--out` 目录约定（默认 `out-full`），产物与旧版脚本一一对应。
 
 use assay_core::api::Client;
-use assay_core::{aggregate, audit, drift, evidence, explain, export, proof};
+use assay_core::{aggregate, audit, drift, evidence, explain, export, pack, proof};
 use clap::{Parser, Subcommand};
 use std::path::Path;
 
@@ -136,6 +136,21 @@ enum Command {
         /// 空值率中位数阈值（0~1）
         #[arg(long)]
         empty_rate: Option<f64>,
+    },
+    /// 打审计包：把一次体检的产物压成可交付的单文件
+    ///
+    /// 包内自带 VERIFY.md 与标准 shasum 清单，解压后一条系统命令验完全部文件，
+    /// 不需要安装本工具。
+    Pack {
+        /// 输出文件；省略则 dist/assay-audit-<captured-at>.tar.gz
+        #[arg(long)]
+        dest: Option<String>,
+        /// 体检基准日 YYYY-MM-DD（写进包内目录名与清单）
+        #[arg(long)]
+        captured_at: String,
+        /// 产出这批数据的 commit，写进清单供追溯
+        #[arg(long)]
+        commit: Option<String>,
     },
     /// 本地静态服务（替代 python -m http.server）
     Serve {
@@ -406,6 +421,29 @@ fn run(cli: Cli) -> assay_core::Result<()> {
                 }
             }
             std::process::exit(report.verdict.exit_code());
+        }
+        Command::Pack {
+            dest,
+            captured_at,
+            commit,
+        } => {
+            let dest = dest.unwrap_or_else(|| format!("dist/assay-audit-{captured_at}.tar.gz"));
+            let o = pack::pack(&pack::PackOptions {
+                out_dir: &out,
+                dest: &dest,
+                captured_at: &captured_at,
+                commit: commit.as_deref(),
+            })?;
+            println!("审计包 → {dest}");
+            println!(
+                "  {} 个文件 / {} 条证据；原始 {:.1} MB → {:.1} MB",
+                o.files,
+                o.evidence_entries,
+                o.bytes_raw as f64 / 1_048_576.0,
+                o.bytes_packed as f64 / 1_048_576.0
+            );
+            // 直接把验证命令打出来：交付时这一行就是要转给对方的话。
+            println!("  验：tar xzf {dest} && cd assay-audit-{captured_at} && shasum -a 256 -c MANIFEST.sha256");
         }
         Command::Serve { dir, port } => serve(&dir, port)?,
     }

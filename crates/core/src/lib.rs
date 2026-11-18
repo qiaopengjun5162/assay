@@ -18,6 +18,7 @@ pub mod guard;
 pub mod lean;
 pub mod matrix;
 pub mod model;
+pub mod pack;
 pub mod proof;
 pub mod scoring;
 pub mod single;

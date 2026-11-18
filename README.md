@@ -93,7 +93,7 @@ cargo install trunk --locked        # 或下载预编译二进制
 cargo install cargo-nextest cargo-deny taplo-cli typos-cli just
 ./scripts/install-git-hooks.sh      # Conventional Commits 校验
 
-# 1) 本地完整检查（不联网）：格式 + clippy + 测试 + 依赖审计 + 证明门禁
+# 1) 本地完整检查（不联网）：格式 + clippy + 测试 + 依赖审计 + 拼写 + 证明门禁
 just check
 just clippy-wasm
 

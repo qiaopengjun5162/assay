@@ -22,6 +22,9 @@ pub struct ExportOptions<'a> {
     pub reports_dir: Option<&'a str>,
     pub out_path: &'a str,
     pub limit: usize,
+    /// 快照日期（写进 `generatedAt`）。`None` 时按 `run.json` → 证据时间自动推，
+    /// 都拿不到就**报错**，不猜。
+    pub snapshot_date: Option<&'a str>,
     /// `Some(n)` 时额外产出 `index.json` + `shards/NN.json`（**全量，不受 limit 影响**）。
     ///
     /// 起因：单文件 `data.json` 是全量加载的，一周涨 723KB，52 周就是 37MB。
@@ -30,6 +33,7 @@ pub struct ExportOptions<'a> {
     pub shards: Option<usize>,
 }
 
+#[derive(Debug)]
 pub struct ExportOutcome {
     pub rows: usize,
     pub total: usize,
@@ -147,16 +151,42 @@ pub fn export(opts: &ExportOptions<'_>) -> Result<ExportOutcome> {
 
     let total = rows.len();
     let mut summary = summary;
-    // 审计快照的日期。`summary.json` 里没有这个字段（加了会让 drift 每次都报漂移），
-    // 所以只能在这里写死，重跑审计时跟着改。改不动的根源是缺少一份 snapshot 清单。
-    const SNAPSHOT_DATE: &str = "2026-11-14";
+    // 快照日期必须来自这次跑批，不能写死。
+    //
+    // 这里原来是 `const SNAPSHOT_DATE = "2026-11-14"`，注释写着「重跑时跟着改」——
+    // 而事实是没人会记得改：页头写死 11-14，500 份证据每份都写着 `fetchedAt: 11-18`，
+    // 同一页两个日期。写死的日期不会报错，只会安静地变旧。
+    //
+    // 三档来源，按可信度排队：显式参数 → `run.json`（audit 开跑时写的清单）
+    // → 证据里的抓取日期。都拿不到就报错：export 没有能力知道数据是哪天的，
+    // 编一个出来只会把错误藏到页面上。
+    //
+    // 来源本身也写进产物（`generatedAtFrom`）：同样的日期，来自清单和来自
+    // 「记得传参数」是两件事，读产物的人有权知道是哪种。
+    let (snapshot_date, snapshot_from) = match opts.snapshot_date {
+        Some(s) => (Some(s.to_string()), "explicit"),
+        None => {
+            match captured_at_of(opts.items_path).and_then(|t| date_part(&t).map(str::to_string)) {
+                Some(d) => (Some(d.to_string()), "run.json"),
+                None => (snapshot_date_of_evidence(&evidence_by_id), "evidence"),
+            }
+        }
+    };
+    let snapshot_date = snapshot_date.ok_or_else(|| {
+        Error::Other(format!(
+            "无法确定快照日期：{} 旁边没有 run.json，也没有证据文件。\
+             跑一次 audit 会写 run.json，或用 --snapshot-date 显式指定。",
+            opts.items_path
+        ))
+    })?;
     if let Some(m) = summary.as_object_mut() {
         m.insert("proofCount".into(), json!(proof_by_id.len()));
         m.insert("evidenceCount".into(), json!(evidence_by_id.len()));
         m.insert("explainCount".into(), json!(explain_by_id.len()));
     }
     let out = json!({
-        "generatedAt": SNAPSHOT_DATE,
+        "generatedAt": snapshot_date,
+        "generatedAtFrom": snapshot_from,
         "source": "浙江省公共数据开放平台（data.zjzwfw.gov.cn）",
         "api": "/dopServer/dataCatalog/{dataQueryPage,catalogDetail,catalogDataPreview}",
         "summary": summary,
@@ -181,6 +211,51 @@ pub fn export(opts: &ExportOptions<'_>) -> Result<ExportOutcome> {
         explanations: explain_by_id.len(),
         shards_written,
     })
+}
+
+/// 读这次跑批的开跑时间（`audit` 写在 `items.jsonl` 旁边的 `run.json`）。
+///
+/// 为什么不做成必填参数：清单本来就躺在产物目录里，多一个「别忘了传」的参数
+/// 就多一个忘记传的地方。文件不在返回 `None`，由调用方退到下一档来源。
+fn captured_at_of(items_path: &str) -> Option<String> {
+    let dir = Path::new(items_path).parent()?;
+    let path = dir.join("run.json");
+    let v = read_json(path.to_str()?).ok().flatten()?;
+    v["capturedAt"].as_str().map(str::to_string)
+}
+
+/// 取 ISO-8601 的日期部分；形状不对就当没有。
+///
+/// 宁可让 `export` 报错，也不要写出 `2026-11` 这种半截日期——页面上它会被当成
+/// 「抓取于 2026-11」原样显示出来，比缺字段更难发现。
+fn date_part(ts: &str) -> Option<&str> {
+    let head = ts.get(..10)?;
+    let shaped = head.as_bytes().iter().enumerate().all(|(i, b)| match i {
+        4 | 7 => *b == b'-',
+        _ => b.is_ascii_digit(),
+    });
+    shaped.then_some(head)
+}
+
+/// 证据里出现最多的那个日期，并列取较晚的。
+///
+/// 证据是唯一自带时间的产物：`items.jsonl` 没有时间戳，`summary.json` 也不能加
+/// （加了 `drift` 每周都会报漂移）。所以没有 `run.json` 时只能退到这一档。
+///
+/// 取众数而不是最大值：跑批跨零点时会有几条落在第二天，取最大值会把整批数据
+/// 的日期推后一天。并列取较晚的，是为了让「一半 14 号一半 18 号」这种异常
+/// 至少显示成较新的那天，而不是随机挑一个。
+pub fn snapshot_date_of_evidence(evidence: &HashMap<String, EvidenceEntry>) -> Option<String> {
+    let mut counts: HashMap<&str, usize> = HashMap::new();
+    for e in evidence.values() {
+        if let Some(d) = date_part(&e.fetched_at) {
+            *counts.entry(d).or_insert(0) += 1;
+        }
+    }
+    counts
+        .into_iter()
+        .max_by(|(da, ca), (db, cb)| ca.cmp(cb).then(da.cmp(db)))
+        .map(|(d, _)| d.to_string())
 }
 
 /// 写 `index.json` + `shards/NN.json`，返回实际分片数。
@@ -216,6 +291,7 @@ fn write_split(rows: &[Value], full: &Value, out_path: &str, shards: usize) -> R
 
     let index = json!({
         "generatedAt": full["generatedAt"],
+        "generatedAtFrom": full["generatedAtFrom"],
         "source": full["source"],
         "api": full["api"],
         "summary": full["summary"],
@@ -423,6 +499,12 @@ mod tests {
         fs::write(&items_path, body).unwrap();
         let summary_path = dir.join("summary.json");
         fs::write(&summary_path, r#"{"audited":37}"#).unwrap();
+        // 跑批清单：`generatedAt` 从这读，不写死
+        fs::write(
+            dir.join("run.json"),
+            r#"{"capturedAt":"2027-03-05T09:12:00+08:00"}"#,
+        )
+        .unwrap();
 
         let out_path = dir.join("data.json");
         let o = export(&ExportOptions {
@@ -436,6 +518,7 @@ mod tests {
             out_path: out_path.to_str().unwrap(),
             // limit 故意小于总数：索引与分片必须是全量，不受它影响
             limit: 5,
+            snapshot_date: None,
             shards: Some(4),
         })
         .unwrap();
@@ -444,8 +527,18 @@ mod tests {
         assert_eq!(o.rows, 5, "data.json 仍受 limit 约束");
         assert_eq!(o.shards_written, 4);
 
+        let data: Value = serde_json::from_slice(&fs::read(&out_path).unwrap()).unwrap();
+        assert_eq!(
+            data["generatedAt"], "2027-03-05",
+            "generatedAt 必须来自 run.json，不是写死的常量"
+        );
+        assert_eq!(data["generatedAtFrom"], "run.json", "来源也要落盘");
         let index: Value =
             serde_json::from_slice(&fs::read(dir.join("index.json")).unwrap()).unwrap();
+        assert_eq!(
+            index["generatedAt"], data["generatedAt"],
+            "index.json 与 data.json 的日期必须一致，否则分层后两页各说各话"
+        );
         let rows = index["datasets"].as_array().unwrap();
         assert_eq!(rows.len(), n, "索引必须是全量");
         assert_eq!(index["shards"]["count"], 4);
@@ -530,6 +623,7 @@ mod tests {
             reports_dir: None,
             out_path: out_path.to_str().unwrap(),
             limit: 5,
+            snapshot_date: Some("2026-01-02"),
             shards: Some(2),
         })
         .unwrap();
@@ -561,6 +655,107 @@ mod tests {
 
         // 顺序也必须一致，否则「榜单前 N」在接口与静态站会不同
         assert_eq!(rows[0]["id"], index["datasets"][0]["id"]);
+
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    fn evidence(id: &str, fetched_at: &str) -> EvidenceEntry {
+        serde_json::from_value(serde_json::json!({
+            "id": id,
+            "name": format!("数据集 {id}"),
+            "fetchedAt": fetched_at,
+            "detailBytes": 1,
+            "previewBytes": 1,
+            "sha256": "deadbeef",
+            "files": [],
+        }))
+        .unwrap()
+    }
+
+    #[test]
+    fn date_part_only_accepts_full_dates() {
+        assert_eq!(date_part("2026-11-18T14:33:46+08:00"), Some("2026-11-18"));
+        assert_eq!(date_part("2026-11-18"), Some("2026-11-18"));
+        // 半截日期不许通过：页面上会被原样显示成「抓取于 2026-11」
+        assert_eq!(date_part("2026-11"), None);
+        assert_eq!(date_part("2026/11/18"), None);
+        assert_eq!(date_part(""), None);
+    }
+
+    #[test]
+    fn evidence_date_uses_mode_not_max() {
+        // 跑批跨零点：3 条落在 14 号、2 条落在 15 号，整批属于 14 号
+        let mut ev = HashMap::new();
+        for (i, d) in ["2026-11-14", "2026-11-14", "2026-11-14"]
+            .iter()
+            .enumerate()
+        {
+            ev.insert(
+                format!("a{i}"),
+                evidence(&format!("a{i}"), &format!("{d}T23:5{i}:00+08:00")),
+            );
+        }
+        for (i, d) in ["2026-11-15", "2026-11-15"].iter().enumerate() {
+            ev.insert(
+                format!("b{i}"),
+                evidence(&format!("b{i}"), &format!("{d}T00:0{i}:00+08:00")),
+            );
+        }
+        assert_eq!(
+            snapshot_date_of_evidence(&ev).as_deref(),
+            Some("2026-11-14")
+        );
+
+        // 并列取较晚的：不能随机挑一个
+        let mut tie = HashMap::new();
+        tie.insert("x".into(), evidence("x", "2026-11-14T10:00:00+08:00"));
+        tie.insert("y".into(), evidence("y", "2026-11-18T10:00:00+08:00"));
+        assert_eq!(
+            snapshot_date_of_evidence(&tie).as_deref(),
+            Some("2026-11-18")
+        );
+
+        assert_eq!(snapshot_date_of_evidence(&HashMap::new()), None);
+    }
+
+    #[test]
+    fn export_refuses_to_invent_a_date() {
+        // 没有 run.json、也没有证据：无从知道数据是哪天的。
+        // 以前这里会静默写出写死的常量，页头于是长期显示一个错的日期。
+        let dir = std::env::temp_dir().join("assay-nodate-test");
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir).unwrap();
+        let items_path = dir.join("items.jsonl");
+        let d = Dataset {
+            id: "id/0".into(),
+            name: "数据集 0".into(),
+            ..Default::default()
+        };
+        fs::write(
+            &items_path,
+            format!("{}\n", serde_json::to_string(&d).unwrap()),
+        )
+        .unwrap();
+        let summary_path = dir.join("summary.json");
+        fs::write(&summary_path, r#"{"audited":1}"#).unwrap();
+
+        let err = export(&ExportOptions {
+            items_path: items_path.to_str().unwrap(),
+            summary_path: summary_path.to_str().unwrap(),
+            proofs_path: None,
+            catalog_path: None,
+            evidence_path: None,
+            explanations_path: None,
+            reports_dir: None,
+            out_path: dir.join("data.json").to_str().unwrap(),
+            limit: 5,
+            snapshot_date: None,
+            shards: None,
+        })
+        .unwrap_err();
+        let msg = err.to_string();
+        assert!(msg.contains("无法确定快照日期"), "错误信息要说得清：{msg}");
+        assert!(msg.contains("--snapshot-date"), "错误信息要给出出路：{msg}");
 
         let _ = fs::remove_dir_all(&dir);
     }

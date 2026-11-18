@@ -414,12 +414,15 @@ mod tests {
         assert_eq!(oa.evidence_entries, 1);
         assert!(oa.files >= 6, "至少 4 个根文件 + 2 个证据文件 + MANIFEST");
 
-        let ba = fs::read(&a).unwrap();
-        let bb = fs::read(&b).unwrap();
-        assert_eq!(ba, bb, "同样输入两次打包必须字节一致（mtime 已固定为 0）");
+        let bytes_a = fs::read(&a).unwrap();
+        let bytes_b = fs::read(&b).unwrap();
+        assert_eq!(
+            bytes_a, bytes_b,
+            "同样输入两次打包必须字节一致（mtime 已固定为 0）"
+        );
 
         // 解包核对：MANIFEST.sha256 的每一行都必须与包内实际文件对得上
-        let dec = flate2::read::GzDecoder::new(&ba[..]);
+        let dec = flate2::read::GzDecoder::new(&bytes_a[..]);
         let mut ar = tar::Archive::new(dec);
         let mut found: Vec<(String, Vec<u8>)> = Vec::new();
         for e in ar.entries().unwrap() {

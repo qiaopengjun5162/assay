@@ -71,6 +71,9 @@ enum Command {
         /// 分片数量（配合 --split）
         #[arg(long, default_value_t = 24)]
         shards: usize,
+        /// 快照日期（YYYY-MM-DD）。默认从 `<out>/run.json` 推，没有就从证据时间推
+        #[arg(long)]
+        snapshot_date: Option<String>,
     },
     /// 批量生成单数据集报告（前 N 名，Markdown，写进站点目录）
     Reports {
@@ -258,6 +261,7 @@ fn run(cli: Cli) -> assay_core::Result<()> {
             dest,
             split,
             shards,
+            snapshot_date,
         } => {
             let reports_dir = Path::new(&dest).parent().map(|p| p.join("reports"));
             let reports_dir = reports_dir
@@ -279,6 +283,7 @@ fn run(cli: Cli) -> assay_core::Result<()> {
                 reports_dir: reports_dir.as_deref(),
                 out_path: &dest,
                 limit,
+                snapshot_date: snapshot_date.as_deref(),
                 shards: split.then_some(shards),
             })?;
             println!(

@@ -21,8 +21,9 @@ fmt-check:
     cargo fmt --all -- --check
     taplo fmt --check
 
-# 拼写检查
+# 拼写检查（typos-cli）
 typos:
+    @command -v typos >/dev/null || { echo "未安装 typos：brew install typos-cli（或 cargo install typos-cli）"; exit 1; }
     typos
 
 # 依赖审计（许可证 + 漏洞 + 供应链）
@@ -74,7 +75,7 @@ verify-evidence:
     cargo run --release -q -p assay -- verify-evidence web/data.json web/evidence
 
 # 本地完整检查（提交前跑这个）
-check: fmt-check clippy test deny verify-evidence proofs
+check: fmt-check clippy typos test deny verify-evidence proofs
     echo "全部通过"
 
 # 1) 全量体检（真实网络，约 12 分钟；limit=0 表示全部）

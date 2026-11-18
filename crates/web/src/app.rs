@@ -213,7 +213,7 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
     view! {
         <section class="hero">
             <p class="kicker">
-                "浙江 · "{fmt_num(s.audited)}" 个数据集全查（"{fmt_num(s.with_preview)}" 个拿到样例）· 抓取于 "{data.generated_at.clone()}
+                "浙江 · "{fmt_num(s.audited)}" 个数据集全查（"{fmt_num(s.with_preview)}" 个拿到样例）· 体检于 "{data.generated_at.clone()}
             </p>
             <h1>"政府开放数据「货不对板」榜"</h1>
             <p class="lede">
@@ -281,7 +281,7 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             {move || filtered().into_iter().enumerate().map(|(i, r)| row_view(i, r, route)).collect_view()}
         </section>
         <footer class="site">
-            "抓取于 " {data.generated_at.clone()} " · 共 " {fmt_num(data.total as u64)} " 个数据集，展示前 " {rows.get().len()} " 个 · 数据来源 浙江省公共数据开放平台"
+            "体检于 " {data.generated_at.clone()} " · 共 " {fmt_num(data.total as u64)} " 个数据集，展示前 " {rows.get().len()} " 个 · 数据来源 浙江省公共数据开放平台"
         </footer>
     }
 }

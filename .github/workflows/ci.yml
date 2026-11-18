@@ -235,3 +235,9 @@ jobs:
           # 之前 CI 钉 0.18.1、本地跑 0.23.2，两边规则集不同 —— 会出现
           # 「本地绿 CI 红」或更糟的「CI 绿本地红」。改版本两边一起改。
           npx --yes markdownlint-cli2@0.23.2
+
+      # `just typos` 曾经一直是红的：它写在 Justfile 里，但 CI 不跑，本地也没人
+      # 顺手跑——`flate2` 被拆成 "flate"、测试里 `ba` 变量被判成 "by"。门禁不进 CI，
+      # 就等于没有门禁，只是给读 Justfile 的人一个错误的印象。
+      - name: 拼写检查（typos）
+        uses: crate-ci/typos@v1

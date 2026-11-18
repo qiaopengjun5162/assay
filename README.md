@@ -37,12 +37,13 @@
 | AI 解释层 | 完成：100 条解读，数字护栏 100/100 通过 |
 | 前端 | 完成：Leptos + WASM，榜单 / 详情 / 证明三视图，刷新可直达 |
 | 工程门禁 | 完成：fmt(Rust+TOML) / clippy / nextest / cargo-deny / lean / 密钥扫描 / 文档 lint |
+| 周度巡检 | 完成：每周一全量体检，指标漂移自动开 PR（基线 + 报告） |
 | 语言构成 | Rust 全量（CLI / 库 / WASM 前端），Python 已移除；线上为 WASM 版 |
 
 ## 快速开始
 
 ```bash
-# 0) 环境：Rust 1.85+、Lean 4（elan）、trunk
+# 0) 环境：Rust 1.88+、Lean 4（elan）、trunk
 rustup target add wasm32-unknown-unknown
 cargo install trunk --locked        # 或下载预编译二进制
 cargo install cargo-nextest cargo-deny taplo-cli typos-cli just
@@ -74,9 +75,13 @@ just reports 100    # 6) 单数据集报告 → web/reports/*.md
 just export 500     # 7) 导出 web/data.json
 just web            # 8) 构建 WASM 前端 → crates/web/dist
 just tamper         # 篡改演示：内核必须拒绝
+just drift          # 周度漂移对比：拿基线比本轮 summary.json
 ```
 
 `out-full/` 不入库（全量明细 8.7MB），换目录跑批用变量覆盖：`just out=out-smoke audit 8 200`。
+
+周度巡检由 `.github/workflows/audit.yml` 每周一自动跑一遍全量体检，指标漂移就开 PR
+（基线 + 报告），口径与阈值见 [docs/audit/README.md](docs/audit/README.md)。
 
 > **快照已冻结**：仓库里的榜单、证明、证据都对应 2026-11-14 这次抓取。
 > `just all` 会用当天数据重跑，数字会漂移；路演/引用前不要执行，除非确实要刷新时点。
@@ -131,8 +136,9 @@ assay/
 **模型的位置**：只在解释层。它拿不到原始数据，只能看事实字典；输出里的每个数字都要和事实
 逐个比对，最多 3 个；不合格重写一次，仍不合格标记 `rejected`、页面不展示。
 
-**LLM key**：从 `DATAPROOF_LLM_KEY` 环境变量或本机 Hermes 配置读，不打印、不入库。
+**LLM key**：从 `ASSAY_LLM_KEY` 环境变量或本机 Hermes 配置读，不打印、不入库。
 没有 key 时 `explain` 给出可操作的报错。
+旧名 `DATAPROOF_LLM_KEY` 在过渡期仍可用（读到时会在 stderr 提示一次）。
 
 ## 产物
 

@@ -3,9 +3,9 @@ target/
 **/*.rs.bk
 
 # 运行产物（体积大，不入库；需要时用 just audit 重新生成）
+# out-*/ 覆盖所有独立跑批目录：out-full / out-smoke / out-audit / out-日期
 out/
-out-smoke/
-out-full/
+out-*/
 *.jsonl
 
 # Python

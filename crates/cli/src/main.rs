@@ -3,7 +3,7 @@
 //! 所有子命令共享 `--out` 目录约定（默认 `out-full`），产物与旧版脚本一一对应。
 
 use assay_core::api::Client;
-use assay_core::{aggregate, audit, evidence, explain, export, proof};
+use assay_core::{aggregate, audit, drift, evidence, explain, export, proof};
 use clap::{Parser, Subcommand};
 use std::path::Path;
 
@@ -95,6 +95,38 @@ enum Command {
         /// 证明文件（默认读 --out 下的 TopProofs.lean）
         #[arg(long)]
         file: Option<String>,
+    },
+    /// 周度漂移对比：两次 summary.json 比指标，用退出码表达结论
+    ///
+    /// 退出码：0 正常 / 1 漂移（该开 PR）/ 2 跑批不可信（别更新基线）
+    Drift {
+        /// 基线文件（对照系）
+        #[arg(long, default_value = "baseline/summary.json")]
+        baseline: String,
+        /// 本次的 summary.json；省略则用 --out 下的
+        #[arg(long)]
+        current: Option<String>,
+        /// 判定为漂移时，把本轮指标写成新基线（随 PR 合并才生效）
+        #[arg(long)]
+        write_baseline: Option<String>,
+        /// 同时写出 Markdown 报告（PR 正文用）
+        #[arg(long)]
+        md_out: Option<String>,
+        /// 采集日期（YYYY-MM-DD），默认取当天
+        #[arg(long)]
+        captured_at: Option<String>,
+        /// 采集时的提交号，写进基线供追溯
+        #[arg(long)]
+        commit: Option<String>,
+        /// 比例类指标阈值（pp）
+        #[arg(long)]
+        ratio_pp: Option<f64>,
+        /// 中位滞后天数阈值（天）
+        #[arg(long)]
+        lag_days: Option<i64>,
+        /// 空值率中位数阈值（0~1）
+        #[arg(long)]
+        empty_rate: Option<f64>,
     },
     /// 本地静态服务（替代 python -m http.server）
     Serve {
@@ -249,9 +281,138 @@ fn run(cli: Cli) -> assay_core::Result<()> {
             let path = file.unwrap_or_else(|| format!("{out}/TopProofs.lean"));
             tamper(&path)?;
         }
+        Command::Drift {
+            baseline,
+            current,
+            write_baseline,
+            md_out,
+            captured_at,
+            commit,
+            ratio_pp,
+            lag_days,
+            empty_rate,
+        } => {
+            let current = current.unwrap_or_else(|| format!("{out}/summary.json"));
+            let mut th = drift::Thresholds::default();
+            if let Some(v) = ratio_pp {
+                th.ratio_pp = v;
+            }
+            if let Some(v) = lag_days {
+                th.lag_days = v;
+            }
+            if let Some(v) = empty_rate {
+                th.empty_rate = v;
+            }
+
+            let mut cur = match read_summary(&current) {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("错误: {e}");
+                    std::process::exit(2);
+                }
+            };
+            // 采集日期和提交号写进基线，以后才能回答「这条基线是哪来的」。
+            if cur.captured_at.is_none() {
+                cur.captured_at = Some(captured_at.unwrap_or_else(today));
+            }
+            if cur.source_commit.is_none() {
+                cur.source_commit = commit;
+            }
+
+            // 首跑：没有对照系就不判漂移，只落基线。
+            // 不报 Healthy——「没比过」和「比过且正常」必须能区分开。
+            if !Path::new(&baseline).exists() {
+                println!("基线 {baseline} 不存在，首跑：跳过判定");
+                match &write_baseline {
+                    Some(dest) => match cur.to_baseline_text().and_then(|t| write_text(dest, &t)) {
+                        Ok(()) => println!("已写入基线 {dest}"),
+                        Err(e) => {
+                            eprintln!("错误: {e}");
+                            std::process::exit(2);
+                        }
+                    },
+                    None => println!("提示：加 --write-baseline {baseline} 落一份基线"),
+                }
+                std::process::exit(0);
+            }
+
+            let base = match read_summary(&baseline) {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("错误: {e}");
+                    std::process::exit(2);
+                }
+            };
+            let report = drift::compare(&base, &cur, &th);
+            let md = report.to_markdown();
+
+            if let Some(dest) = &md_out {
+                if let Err(e) = write_text(dest, &md) {
+                    eprintln!("错误: {e}");
+                    std::process::exit(2);
+                }
+                println!("报告 → {dest}");
+            }
+            print!("{md}");
+
+            match &report.verdict {
+                drift::Verdict::Suspect { reason } => {
+                    eprintln!("跑批不可信：{reason}");
+                    eprintln!("基线未更新（{baseline}）——脏数据不能进对照系");
+                }
+                // 正常不动基线：基线代表「上次人工确认过的常态」。
+                // 这样渐进漂移会累积到越过阈值才报，而不是每周都跟着数据走。
+                drift::Verdict::Healthy => {
+                    if write_baseline.is_some() {
+                        println!("判定正常，基线不动（基线随漂移 PR 合并才前进）");
+                    }
+                }
+                drift::Verdict::Drifted => {
+                    if let Some(dest) = &write_baseline {
+                        match cur.to_baseline_text().and_then(|t| write_text(dest, &t)) {
+                            Ok(()) => println!("基线已更新 → {dest}（随 PR 合并才生效）"),
+                            Err(e) => {
+                                eprintln!("错误: {e}");
+                                std::process::exit(2);
+                            }
+                        }
+                    }
+                }
+            }
+            std::process::exit(report.verdict.exit_code());
+        }
         Command::Serve { dir, port } => serve(&dir, port)?,
     }
     Ok(())
+}
+
+/// 读 summary.json。基线既可能是纯指标切片，也可能是完整跑批快照，
+/// 两种形状都接受（形状判断在 `drift::Summary::from_value` 里）。
+fn read_summary(path: &str) -> assay_core::Result<drift::Summary> {
+    let text = std::fs::read_to_string(path)
+        .map_err(|e| assay_core::Error::Other(format!("读不到 {path}：{e}")))?;
+    let v: serde_json::Value = serde_json::from_str(&text)
+        .map_err(|e| assay_core::Error::Other(format!("{path} 不是合法 JSON：{e}")))?;
+    drift::Summary::from_value(v)
+}
+
+fn write_text(dest: &str, text: &str) -> assay_core::Result<()> {
+    // 报告目录可能还没建（CI 里第一次跑），这里顺手补上，
+    // 免得 workflow 依赖「目录恰好被提交过」这种隐式前提。
+    if let Some(dir) = Path::new(dest).parent() {
+        if !dir.as_os_str().is_empty() {
+            std::fs::create_dir_all(dir).map_err(|e| {
+                assay_core::Error::Other(format!("建目录 {} 失败：{e}", dir.display()))
+            })?;
+        }
+    }
+    std::fs::write(dest, text).map_err(|e| assay_core::Error::Other(format!("写不到 {dest}：{e}")))
+}
+
+/// 当天日期（UTC+8）。只用于基线元数据，不参与任何评分口径。
+fn today() -> String {
+    let s = assay_core::util::now_iso8601();
+    s.get(..10).unwrap_or(&s).to_string()
 }
 
 /// 证据复核：逻辑在 `evidence::verify_index`，这里只打结果与给退出码。

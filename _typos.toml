@@ -1,9 +1,13 @@
 [default]
+# crate 名被拆词后的误报：flate2 → "flate"
+extend-words = { flate = "flate" }
 extend-ignore-re = [
   # 证据哈希、SHA-256 摘要
   "[0-9a-f]{16,}",
   # Lean 定理里的坐标
   "empty_\\d+_\\d+",
+  # 文档里引用「那个被改名掉的变量」时写的 `ba`
+  "`ba`",
 ]
 
 # typos 1.5x 起排除规则搬到 [files]

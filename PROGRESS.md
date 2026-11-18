@@ -19,12 +19,12 @@
 | 单数据集报告 | `██████████` 100% | 100 份 Markdown，CLI 可复现，与证明同口径，页面可下载 |
 | 前端 | `█████████░` 88% | 三视图 + 部门榜 + 报告入口 + 浏览器返回正常；缺部门页与无障碍复查 |
 | 第二平台 | `░░░░░░░░░░` 0% | 上海为 0，接口未探明；`CatalogSource` 已就位 |
-| CI / 工程 | `██████████` 100% | 八关全绿：fmt(Rust+TOML)、clippy、nextest、cargo-deny、wasm clippy、lean、密钥扫描、文档 lint |
+| CI / 工程 | `██████████` 100% | 八关全绿：fmt(Rust+TOML)、clippy、nextest、cargo-deny、wasm clippy、lean、密钥扫描、文档 lint + 拼写 |
 | 文档 | `██████████` 100% | README / ARCHITECTURE / DECISIONS / HANDOFF / ROADMAP / 经验库 |
 
 ## 已验证证据（可复核）
 
-- `just check` 全绿：fmt（Rust + TOML）、clippy、25 个测试（nextest）、`cargo deny check`、`check-proofs` PASS。
+- `just check` 全绿：fmt（Rust + TOML）、clippy、测试（nextest）、`cargo deny check`、`typos`、`check-proofs` PASS。
 - `just clippy-wasm` 全绿。
 - 口径对齐：用冻结 `items.jsonl` 重算 `summary.json`，标量与 2,500 个部门全等。
 - 证明对齐：100 条定理的 SHA-256 与顺序与改动前一致，`lean` PASS，2,355 条 / 15.3 秒。
@@ -32,6 +32,9 @@
 - 报告可复现：`just reports 100` 重生成与提交版本逐字节相同。
 - 报告 / 证明 / 证据集合一致：`web/reports` 的 id 集合 == `proofs.json` 的 id 集合（100/100）。
 - 前端：榜单 500 行、搜索、详情六维、AI 解读、证据下载、证明页 PASS、报告下载 200 + `text/markdown`。
+- 日期口径：`generatedAt` 不再写死，改由 `run.json` → 证据时间推出，来源记录在 `generatedAtFrom`。
+  实测这次冻结的两批动作分别是 **11-14 17:49（体检）** 与 **11-18 16:25（证据复核）**，
+  页头因此写「体检于」而不是「抓取于」。
 
 ## 阻塞项
 

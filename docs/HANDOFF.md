@@ -123,7 +123,7 @@ cargo install wasm-bindgen-cli --version <与 Cargo.lock 一致>
 ## 3. 必跑命令
 
 ```bash
-just check        # fmt(Rust+TOML) + clippy + nextest + cargo-deny + 证明门禁，必须全绿
+just check        # fmt(Rust+TOML) + clippy + nextest + cargo-deny + typos + 证明门禁，必须全绿
 just clippy-wasm  # 前端也在门禁内
 just lint-docs    # Markdown lint
 just smoke        # 200 条端到端（联网，约 90 秒），产物进 out-smoke/，不覆盖正式产物

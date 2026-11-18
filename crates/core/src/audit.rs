@@ -1,10 +1,12 @@
 //! 全量体检：目录 → 详情 → 样例，逐条产出 `items.jsonl`。
 //!
-//! 两个产物必须一起落：
+//! 三个产物必须一起落：
 //! - `items.jsonl`：逐条体检结果（可断点续跑）
 //! - `catalog_snapshot.json`：目录全量，聚合阶段用它算「距上次更新多少天」
+//! - `run.json`：这次跑批是从什么时候开始的（`export` 的 `generatedAt` 从这读）
 //!
 //! 只落 items 不落目录快照，是新环境跑 `report` 时时效性整块为空的原因。
+//! 不落 `run.json`，是页头日期只能写死、然后和证据里的 `fetchedAt` 对不上的原因。
 
 use crate::api::CatalogSource;
 use crate::matrix;
@@ -48,13 +50,13 @@ pub fn audit(opts: &AuditOptions, client: &dyn CatalogSource) -> Result<AuditOut
     let snap_path = Path::new(&opts.out_dir).join("catalog_snapshot.json");
     fs::write(&snap_path, serde_json::to_string(&catalog)?)?;
     println!("目录快照: {}（{} 条）", snap_path.display(), catalog.len());
+    let catalog_total = catalog.len();
 
     let picked: Vec<CatalogRecord> = if opts.limit > 0 {
         catalog.into_iter().take(opts.limit).collect()
     } else {
         catalog
     };
-
     let jsonl_path = Path::new(&opts.out_dir).join("items.jsonl");
     let done_path = Path::new(&opts.out_dir).join("done.txt");
     let done_before: usize = fs::read_to_string(&done_path)
@@ -63,6 +65,20 @@ pub fn audit(opts: &AuditOptions, client: &dyn CatalogSource) -> Result<AuditOut
         .unwrap_or(0);
     if done_before > 0 {
         println!("检测到已完成 {done_before} 条，续跑");
+    }
+
+    // 快照清单：给 `export` 一个不靠人记的时间来源。
+    // 只在「新一轮」时写：续跑沿用第一次开跑的日期，否则同批数据会显示成两天。
+    let run_path = Path::new(&opts.out_dir).join("run.json");
+    if done_before == 0 || !run_path.exists() {
+        let manifest = serde_json::json!({
+            "capturedAt": crate::util::now_iso8601(),
+            "catalogTotal": catalog_total,
+            "limit": opts.limit,
+            "threads": opts.threads,
+        });
+        fs::write(&run_path, serde_json::to_string_pretty(&manifest)?)?;
+        println!("跑批清单: {}", run_path.display());
     }
 
     let t1 = Instant::now();

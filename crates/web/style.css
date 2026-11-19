@@ -37,6 +37,25 @@ html, body {
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
+/* 键盘焦点：整站只认这一套描边。以前只有下拉框和部门卡有，链接/按钮靠浏览器
+ * 默认环——在深色代码块和红色卡片上几乎看不见。 */
+a:focus-visible, button:focus-visible, [tabindex="0"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* 跳过导航：平时藏起来，键盘按到才出现。榜单 500 行，一行行 Tab 过去没人受得了。 */
+.skip {
+  position: absolute; left: 12px; top: -48px; z-index: 10;
+  background: var(--ink); color: #fff; padding: 10px 14px;
+  border-radius: 0 0 8px 8px; font-size: 14px; font-weight: 600;
+}
+.skip:focus { top: 0; text-decoration: none; }
+
+/* main 被程序化聚焦时不要画描边——跳过来是为了读内容，不是为了看框 */
+main:focus { outline: none; }
+
 .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px 64px; }
 
 /* ---------- 顶栏 ---------- */
@@ -78,7 +97,7 @@ a:hover { text-decoration: underline; }
   border: 1px solid #e9b3ad; border-radius: 999px; padding: 2px 10px;
 }
 .exhibit-dept { color: var(--muted); font-size: 13px; }
-.exhibit h3 { margin: 0 0 14px; font-size: 18px; line-height: 1.35; }
+.exhibit h2 { margin: 0 0 14px; font-size: 18px; line-height: 1.35; }
 
 .vs { display: flex; align-items: stretch; gap: 14px; flex-wrap: wrap; }
 .vs-col {
@@ -234,6 +253,8 @@ a.chip:hover { border-color: var(--accent); color: var(--accent); text-decoratio
 
 /* ---------- 详情 ---------- */
 .crumb { padding: 22px 0 6px; font-size: 14px; color: var(--muted); }
+/* 正文里夹着的链接不能只靠颜色区分：色盲和灰度屏上就看不出来了。 */
+.crumb a { text-decoration: underline; text-underline-offset: 3px; }
 .detail-title { font-size: 26px; margin: 6px 0 12px; line-height: 1.3; }
 .meta-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
 

@@ -13,10 +13,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-# 实测 54.16% 行覆盖（macOS aarch64，2026-11-18，42 个测试）。
-# 下限低 2pp，吸收 macOS 与 Ubuntu runner 之间 cfg(target_os) 的差异。
-# 只升不降：new code 没测试就该让这个门禁红。
-FLOOR="${COVERAGE_FLOOR:-52}"
+# 实测 68.46% 行覆盖（2026-11-19，70 测试，core+cli）。
+# macOS aarch64 与 Ubuntu runner 实测完全一致（纯 Rust，无 cfg(target_os) 分歧），
+# 地板仍留 ~2.5pp 余量，吸收工具链小版本差异。
+# 只升不降：new code 没测试就该让这个门禁红。历史上从 52 → 66。
+FLOOR="${COVERAGE_FLOOR:-66}"
 
 if ! command -v cargo-llvm-cov >/dev/null 2>&1; then
   echo "需要 cargo-llvm-cov：cargo install cargo-llvm-cov --locked" >&2

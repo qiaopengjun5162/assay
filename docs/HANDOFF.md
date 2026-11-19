@@ -35,7 +35,7 @@
 
 已完成（2026-11-18）：
 
-- CI 从 4 个 job 扩到 8 个：新增 `msrv`（1.88 真编）、`coverage`（地板 52%）、
+- CI 从 4 个 job 扩到 8 个：新增 `msrv`（1.88 真编）、`coverage`（地板 52%，2026-11-19 抬到 66）、
   `commit-lint`（Conventional Commits）、`docs`（markdownlint）
 - `assay drift` + `audit.yml` 周度巡检，退出码三档（见 D19、`docs/audit/README.md`）
   首份基线 `baseline/summary.json`（24,322 条 / 抓取成功率 81.53%）
@@ -133,7 +133,7 @@ just lint-docs    # Markdown lint
 just smoke        # 200 条端到端（联网，约 90 秒），产物进 out-smoke/，不覆盖正式产物
 just all          # 全量（联网，约 14 分钟）
 just drift        # 周度漂移对比：基线 vs 本轮 summary.json（0 正常 / 1 漂移 / 2 不可信）
-just coverage     # 行覆盖率地板 52%（实测 54.16%）
+just coverage     # 行覆盖率地板 66%（实测 68.46%）
 just serve        # 本地预览 crates/web/dist
 ```
 

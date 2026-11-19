@@ -349,7 +349,8 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
     view! {
         <section class="hero">
             <p class="kicker">
-                "浙江 · "{fmt_num(s.audited)}" 个数据集全查（"{fmt_num(s.with_preview)}" 个拿到样例）· 体检于 "{data.generated_at.clone()}
+                "浙江 · "{fmt_num(s.audited)}" 个数据集全查（"{fmt_num(s.with_preview)}" 个拿到样例）· 体检于 "
+                <span class="nw">{data.generated_at.clone()}</span>
             </p>
             <h1>"政府开放数据「货不对板」榜"</h1>
             <p class="lede">
@@ -477,7 +478,7 @@ fn SiteFooter(generated_at: String, total: u64, shown: usize) -> impl IntoView {
     view! {
         <footer class="site">
             <p>
-                "体检于 " {generated_at} " · 共 " {fmt_num(total)}
+                "体检于 " <span class="nw">{generated_at}</span> " · 共 " {fmt_num(total)}
                 " 个数据集，展示前 " {shown.to_string()} " 个 · 数据来源 浙江省公共数据开放平台"
             </p>
             <p class="foot-links">

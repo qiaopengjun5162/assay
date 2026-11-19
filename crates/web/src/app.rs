@@ -360,11 +360,7 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             .filter(|r| !only_empty.get() || r.empty_rate > 0.3)
             .filter(|r| !only_mismatch.get() || r.schema_kind.contains("不一致"))
             .collect();
-        match sort.get().as_str() {
-            "empty" => v.sort_by(|a, b| b.empty_rate.partial_cmp(&a.empty_rate).unwrap()),
-            "lag" => v.sort_by_key(|r| std::cmp::Reverse(r.lag_days.unwrap_or(-1))),
-            _ => v.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap()),
-        }
+        crate::sort::sort_rows(&mut v, sort.get().as_str());
         v
     };
 

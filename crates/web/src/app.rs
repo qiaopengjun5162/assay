@@ -7,6 +7,7 @@ use crate::model::{CheckRow, Data, Row};
 use crate::spark;
 use crate::verify::verify_command;
 use leptos::prelude::*;
+use leptos::wasm_bindgen::JsCast;
 use sha2::Digest;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -124,14 +125,26 @@ pub fn App() -> impl IntoView {
 
     view! {
         <div class="wrap">
+            {/* 键盘用户按 Tab 第一下就能跳过页头；榜单 500 行，一行行 Tab 过去没人受得了。
+                不能让它真的改 hash——那是路由，`#main` 会被解析成「回榜单」。 */}
+            <a class="skip" href="#main" on:click=move |e| {
+                e.prevent_default();
+                if let Some(el) = web_sys::window()
+                    .and_then(|w| w.document())
+                    .and_then(|d| d.get_element_by_id("main"))
+                {
+                    let _ = el.dyn_ref::<web_sys::HtmlElement>().map(|h| h.focus());
+                }
+            }>"跳到主要内容"</a>
             <header class="topbar">
                 <div class="brand"><span class="mark">"数验"</span>" Assay"</div>
                 <div class="top-meta">"每条结论都能自己验"</div>
-                <nav class="top-nav">
+                <nav class="top-nav" aria-label="主导航">
                     <a href="#/" on:click=move |_| { route.set(Route::List); }>"榜单"</a>
                     <a href="#/checks" on:click=move |_| { route.set(Route::Checks); }>"判定规则"</a>
                 </nav>
             </header>
+            <main id="main" tabindex="-1">
             {move || match (data.get(), route.get()) {
                 (None, _) => view! { <p class="hint">"加载中…"</p> }.into_any(),
                 (Some(d), Route::List) => list_view(d, route).into_any(),
@@ -139,6 +152,7 @@ pub fn App() -> impl IntoView {
                 (Some(d), Route::Proof(id)) => proof_view(d, &id, route).into_any(),
                 (Some(d), Route::Checks) => checks_page(d).into_any(),
             }}
+            </main>
             {move || data.get().map(|d| view! {
                 <SiteFooter
                     generated_at=d.generated_at.clone()
@@ -189,7 +203,7 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
                     <span class="tag">"最离谱的一条"</span>
                     <span class="exhibit-dept">{e.dept.clone()}</span>
                 </div>
-                <h3>{e.name.clone()}</h3>
+                <h2>{e.name.clone()}</h2>
                 <div class="vs">
                     <div class="vs-col">
                         <div class="vs-h">"页面上写着"</div>
@@ -416,10 +430,11 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             </div>
         </section>
 
-        <section class="filters">
-            <input class="search" type="search" placeholder="搜索数据集名称或部门…" prop:value=move || search.get()
+        <section class="filters" aria-label="筛选与排序">
+            <input class="search" type="search" placeholder="搜索数据集名称或部门…" aria-label="搜索数据集名称或部门"
+                prop:value=move || search.get()
                 on:input=move |e| search.set(event_target_value(&e)) />
-            <select on:change=move |e| dept.set(event_target_value(&e))>
+            <select aria-label="按部门筛选" on:change=move |e| dept.set(event_target_value(&e))>
                 <option value="" selected=move || dept.get().is_empty()>"全部部门"</option>
                 {depts.into_iter().map(|d| {
                     let val = d.clone();
@@ -432,7 +447,7 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
                     }
                 }).collect_view()}
             </select>
-            <select on:change=move |e| sort.set(event_target_value(&e))>
+            <select aria-label="排序方式" on:change=move |e| sort.set(event_target_value(&e))>
                 <option value="score" selected=move || sort.get() == "score">"按问题分"</option>
                 <option value="empty" selected=move || sort.get() == "empty">"按空值率"</option>
                 <option value="lag" selected=move || sort.get() == "lag">"按停更时长"</option>
@@ -507,7 +522,7 @@ fn checks_page(data: Data) -> impl IntoView {
     let total_checked = data.checks.first().map(|c| c.of).unwrap_or(0);
     let shown = data.datasets.len();
     view! {
-        <nav class="crumb"><a href="#/">"榜单"</a>" / 判定规则"</nav>
+        <nav class="crumb" aria-label="面包屑"><a href="#/">"榜单"</a>" / 判定规则"</nav>
         <h1 class="detail-title">"判定规则：每条结论的出处"</h1>
         <p class="lede">
             "这里列出全部检查项、阈值、命中数和它在排序里的权重。"
@@ -703,7 +718,7 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
     let report_href = r.report_path();
 
     view! {
-        <nav class="crumb"><a href="#/" on:click=move |_| route.set(Route::List)>"榜单"</a>" / 数据集详情"</nav>
+        <nav class="crumb" aria-label="面包屑"><a href="#/" on:click=move |_| route.set(Route::List)>"榜单"</a>" / 数据集详情"</nav>
         <h1 class="detail-title">{r.name.clone()}</h1>
         <div class="meta-chips">
             <a class="chip" href=format!("#/?dept={}", urlencoding(&r.dept))
@@ -790,7 +805,7 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
                         .unwrap_or_default();
                     let cmd = verify_command(&base, &e.files);
                     (!cmd.is_empty()).then(|| view! {
-                        <pre class="mono-block">{cmd.clone()}</pre>
+                        <pre class="mono-block" tabindex="0" role="region" aria-label="复核命令">{cmd.clone()}</pre>
                         <p class="verify"><CopyButton text=cmd /></p>
                         <p class="hint">"Linux 把 shasum -a 256 换成 sha256sum 即可，输出格式一致。命令里已是完整网址，复制到任意电脑的终端都能跑。"</p>
                     })
@@ -1014,13 +1029,14 @@ fn proof_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
         p.cols
     );
     view! {
-        <nav class="crumb"><a href="#/" on:click=move |_| route.set(Route::List)>"榜单"</a>" / 证明"</nav>
+        <nav class="crumb" aria-label="面包屑"><a href="#/" on:click=move |_| route.set(Route::List)>"榜单"</a>" / 证明"</nav>
+        <h1 class="detail-title">{r.name.clone()}</h1>
         <div class="pass-card">
             <div class="stamp">"PASS"</div>
             <div><b>"Lean 4 内核已复核"</b><p class="hint">"报告的每个计数都由定理证明器独立校验：改一个数字，内核立即报错。"</p></div>
         </div>
         <section class="panel">
-            <h2>{r.name.clone()}</h2>
+            <h2>"内核复核明细"</h2>
             <table class="kv">
                 <tr><th>"榜单序号"</th><td>{format!("第 {} 位", p.index + 1)}</td></tr>
                 <tr><th>"样例规模"</th><td>{format!("{} 行 × {} 列", p.rows, p.cols)}</td></tr>
@@ -1030,7 +1046,7 @@ fn proof_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
                 <tr><th>"校验命令"</th><td>"lean TopProofs.lean"</td></tr>
             </table>
             <p><a class="btn" href="TopProofs.lean" download>"下载 TopProofs.lean"</a></p>
-            <pre class="code">{theorem}</pre>
+            <pre class="code" tabindex="0" role="region" aria-label="定理示例">{theorem}</pre>
             <p class="hint">"每一行是一条真实样例记录，1 表示空值；定理断言「第 N 列恰好有 K 条空值」，由 by decide 交给内核穷举。"</p>
         </section>
     }.into_any()

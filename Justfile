@@ -89,6 +89,12 @@ verify-reports:
 check: fmt-check clippy typos test deny verify-evidence verify-reports proofs
     echo "全部通过"
 
+# 无障碍复查（axe-core + WCAG 2.1 A/AA，四个视图）
+# 不进 check：CI 的 rust job 没有浏览器，装 Chromium 会拖慢整条流水线。
+# 交付前手动跑；改前端结构（地标 / 标题层级 / 表单控件）之后必跑。
+a11y:
+    bash scripts/a11y.sh
+
 # 1) 全量体检（真实网络，约 12 分钟；limit=0 表示全部）
 audit threads="8" limit="0":
     cargo run --release -p assay -- --out {{out}} audit --threads {{threads}} --limit {{limit}}

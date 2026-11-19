@@ -244,6 +244,7 @@ just api-ingest 2026-11-18     # 把 out-full 灌进库（幂等，同一天重�
 | 前端数据模型 | `crates/web/src/model.rs` |
 | 前端样式 / 响应式断点 | `crates/web/style.css` |
 | 分享卡片 / favicon | `web/og.png`、`web/favicon.svg`（`index.html` 里 copy-file） |
+| 无障碍门禁 | `scripts/a11y.sh`（`just a11y`） |
 
 ## 6. 环境坑
 
@@ -298,6 +299,34 @@ done
 - 手机宽度（≈390–500px）下：案例卡两栏要上下堆叠，8 张数字卡两列，页面不能左右晃。
 - 分享出去：`index.html` 的 og: 标签要能在微信/Twitter 展开成卡片（改文案后重新生成 `web/og.png`）。
 
+### 无障碍复查（改前端结构后必做）
+
+```bash
+just web && just a11y
+```
+
+`scripts/a11y.sh` 会起一个临时静态服务，把四个视图塞进 iframe，用 axe-core 跑
+WCAG 2.1 A/AA + best-practice，**任一视图 `violations != 0` 就非零退出**。axe 只下一次，
+缓存在 `~/.cache/assay-axe/`。
+
+**`incomplete` 不等于通过。** axe 判不了的项目必须人工看，当前只剩两项，都是良性：
+
+| 项 | 为什么判不了 | 结论 |
+|---|---|---|
+| 榜单 `.vs-arrow`（"→"） | 元素里只有非文字字符 | 对比度规则不适用 |
+| 详情 `pre.mono-block` | 背景被其他元素部分遮挡 | 手算 #e8edf3 / #0f1216 = **15.95:1** |
+
+不进 `just check`：CI 的 rust job 没有浏览器，装 Chromium 要拖慢整条流水线。
+代价是它靠人记得跑——所以这一节和检查清单里都列了。
+
+几个容易改回去的地方：
+
+- `<main>` 包住视图、页头页脚在它外面；`main` 要带 `tabindex="-1"`，跳转链接才能把焦点送进去。
+- 两处 `<nav>` 必须各有 `aria-label`（主导航 / 面包屑），否则地标重复。
+- 下拉框和搜索框的 `aria-label` 去掉会立刻报 `select-name`（critical）。
+- 标题层级不许跳级：案例卡曾是 `h3` 紧跟在 `h1` 后面。
+- `pre` 有 `overflow-x: auto` 就必须 `tabindex="0"`，否则键盘滚不到右边。
+
 ## 8. 交付前检查清单
 
 - [ ] `just check` 全绿（含 `cargo deny check`）
@@ -307,6 +336,7 @@ done
 - [ ] `lean` PASS，`verify.txt` 为 PASS
 - [ ] 前端四视图（榜单 / 详情 / 证明 / 判定规则）可访问，浏览器返回正常
 - [ ] 窄视口（≈390px）无横向溢出，分享卡片能展开（见上一节）
+- [ ] `just a11y` 四个视图 `violations=0`，`incomplete` 项已人工确认
 - [ ] `web/reports` 覆盖导出的前 N 名；`proofs.json` 是其中有数据行的那部分（现为 500 / 391）
 - [ ] 文档更新（README / ARCHITECTURE / DECISIONS 至少一处）
 - [ ] 没有 key、没有 `out-full/` 大文件进 git

@@ -15,6 +15,7 @@ enum Route {
     List,
     Detail(String),
     Proof(String),
+    Dept(String),
     Checks,
 }
 
@@ -45,6 +46,10 @@ fn parse_route(hash: &str) -> Route {
     }
     if let Some(rest) = h.strip_prefix("proof/") {
         return Route::Proof(decode(rest.split('?').next().unwrap_or(rest)));
+    }
+    if let Some(rest) = h.strip_prefix("dept/") {
+        // 部门名里有中文和空格，链接里是 encodeURIComponent 过的
+        return Route::Dept(decode(rest.split('?').next().unwrap_or(rest)));
     }
     if h == "checks" {
         return Route::Checks;
@@ -150,6 +155,7 @@ pub fn App() -> impl IntoView {
                 (Some(d), Route::List) => list_view(d, route).into_any(),
                 (Some(d), Route::Detail(id)) => detail_view(d, &id, route).into_any(),
                 (Some(d), Route::Proof(id)) => proof_view(d, &id, route).into_any(),
+                (Some(d), Route::Dept(n)) => dept_view(d, &n, route).into_any(),
                 (Some(d), Route::Checks) => checks_page(d).into_any(),
             }}
             </main>
@@ -401,20 +407,13 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
 
         <section class="deptboard">
             <h2>"问题最多的部门"</h2>
-            <p class="hint">"按「停更数据集数量」排序，取前 12 个部门。点一下筛出这个部门的全部数据集。平均空值率来自样例（每份 5 行左右），只作参考。"</p>
+            <p class="hint">"按「停更数据集数量」排序，取前 12 个部门。点进去看这个部门的体检结论。平均空值率来自样例（每份 5 行左右），只作参考。"</p>
             <div class="deptgrid">
                 {dept_top.into_iter().map(|(name, d)| {
+                    let href = format!("#/dept/{}", urlencoding(&name));
                     let pick = name.clone();
                     view! {
-                    <button class="deptcard" on:click=move |_| {
-                        dept.set(pick.clone());
-                        if let Some(el) = web_sys::window()
-                            .and_then(|w| w.document())
-                            .and_then(|d| d.get_element_by_id("board"))
-                        {
-                            el.scroll_into_view();
-                        }
-                    }>
+                    <a class="deptcard" href=href on:click=move |_| { route.set(Route::Dept(pick.clone())); }>
                         <div class="dname">{name}</div>
                         <div class="dmeta">{format!(
                             "{} 个数据集 · 停更 {} · 字段对不上 {} · 平均空值率 {}",
@@ -425,7 +424,7 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
                                 .map(|v| format!("{:.1}%", v * 100.0))
                                 .unwrap_or_else(|| "无样例".to_string())
                         )}</div>
-                    </button>
+                    </a>
                 }}).collect_view()}
             </div>
         </section>
@@ -632,6 +631,144 @@ fn row_view(i: usize, r: Row, route: RwSignal<Route>) -> impl IntoView {
             </div>
         </a>
     }
+}
+
+/// 部门页：全量数字来自 `byDept`（覆盖全部部门），列表只能列出**榜上前 500 名**里的那几条。
+///
+/// 两个数不是一回事，必须在页面上说清：N 是全量，M 是榜上能看到的。
+/// 没进榜不等于没问题——榜单只发布前 500 名。上一轮「部门卡点进去只剩 1 条」
+/// 就是没说这句话，被读成「藏了 268 条」。
+fn dept_view(data: Data, name: &str, route: RwSignal<Route>) -> impl IntoView {
+    let Some(d) = data.summary.by_dept.get(name).cloned() else {
+        return view! {
+            <nav class="crumb" aria-label="面包屑">
+                <a href="#/" on:click=move |_| route.set(Route::List)>"榜单"</a>" / 部门"
+            </nav>
+            <section class="panel">
+                <h1 class="detail-title">"找不到这个部门"</h1>
+                <p class="hint">"部门名要和数据集登记的一致。回榜单用下拉框选，链接一定对。"</p>
+                <p class="verify"><a class="btn" href="#/">"← 回榜单"</a></p>
+            </section>
+        }
+        .into_any();
+    };
+
+    // 停更数量的名次：并列时按部门名定先后，写清楚，免得被当成「并列第 3」
+    let mut order: Vec<(&String, u64)> = data
+        .summary
+        .by_dept
+        .iter()
+        .map(|(k, v)| (k, v.stopped))
+        .collect();
+    order.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(b.0)));
+    let total_depts = order.len();
+    let rank = order
+        .iter()
+        .position(|(k, _)| k.as_str() == name)
+        .map(|i| i + 1)
+        .unwrap_or(0);
+
+    // 榜上属于这个部门的行。保留全局名次，行首数字要和榜单一致。
+    let listed: Vec<(usize, Row)> = data
+        .datasets
+        .iter()
+        .cloned()
+        .enumerate()
+        .filter(|(_, r)| r.dept == name)
+        .collect();
+    let shown = listed.len();
+    let audited = data.summary.audited;
+    let share = if audited == 0 {
+        String::new()
+    } else {
+        format!("{:.2}%", d.n as f64 / audited as f64 * 100.0)
+    };
+    let pct = |a: u64| {
+        if d.n == 0 {
+            String::new()
+        } else {
+            format!("{:.1}%", a as f64 / d.n as f64 * 100.0)
+        }
+    };
+    let empty_avg = d
+        .empty_avg
+        .map(|v| format!("{:.1}%", v * 100.0))
+        .unwrap_or_else(|| "无样例".to_string());
+    let dept_href = format!("#/?dept={}", urlencoding(name));
+    let rows_view = listed
+        .iter()
+        .map(|(i, r)| row_view(*i, r.clone(), route))
+        .collect_view();
+    let hidden = d.n.saturating_sub(shown as u64);
+
+    view! {
+        <nav class="crumb" aria-label="面包屑">
+            <a href="#/" on:click=move |_| route.set(Route::List)>"榜单"</a>" / 部门"
+        </nav>
+        <h1 class="detail-title">{name.to_string()}</h1>
+        <p class="kicker">
+            "该部门共 "{fmt_num(d.n)}" 个数据集，占全量 "{share}" · 体检于 "
+            <span class="nw">{data.generated_at.clone()}</span>
+        </p>
+
+        <section class="stats">
+            <div class="stat bad">
+                <div class="num">{fmt_num(d.stopped)}</div>
+                <div class="lbl">{format!("标了停更（占部门内 {}）", pct(d.stopped))}</div>
+            </div>
+            <div class="stat warn">
+                <div class="num">{fmt_num(d.mismatch)}</div>
+                <div class="lbl">{format!("声明列数与实际不符（占 {}）", pct(d.mismatch))}</div>
+            </div>
+            <div class="stat">
+                <div class="num">{empty_avg}</div>
+                <div class="lbl">"样例级平均空值率"</div>
+            </div>
+            <div class="stat">
+                <div class="num">{fmt_num(rank as u64)}</div>
+                <div class="lbl">{format!("停更排名（共 {} 个部门）", fmt_num(total_depts as u64))}</div>
+            </div>
+        </section>
+
+        <p class="filter-note">
+            "这些是全量统计（"{fmt_num(audited)}" 个数据集都查过）。下面只列"
+            <b>"榜上前 500 名"</b>"里属于这个部门的 "<b>{shown.to_string()}</b>" 条；"
+            {(!name.is_empty() && hidden > 0).then(|| format!(
+                "另外 {hidden} 条没进榜——榜只发布前 500 名，没进榜不代表没问题，只代表问题分没排进前 500。"
+            ))}
+            " 排名并列时按部门名定先后。"
+        </p>
+
+        {if shown == 0 {
+            view! {
+                <section class="panel">
+                    <h2>"这个部门的榜单条目"</h2>
+                    <p class="hint">
+                        "该部门的 "{fmt_num(d.n)}" 个数据集都不在前 500 名内，所以这里没有可列的条目。"
+                        "这不等于它们没问题：榜单只发布前 500 名。"
+                    </p>
+                    <p class="verify"><a class="btn" href="#/">"← 回榜单"</a></p>
+                </section>
+            }
+            .into_any()
+        } else {
+            view! {
+                <section class="board">
+                    <h2 class="section">"榜上前 500 名里的这个部门"</h2>
+                    {rows_view}
+                </section>
+                <p class="verify">
+                    <a class="btn" href=dept_href.clone()>"在榜单里只看这 "{shown.to_string()}" 条"</a>
+                    <a class="btn" href="#/">"← 回榜单"</a>
+                </p>
+            }
+            .into_any()
+        }}
+        <p class="hint">
+            "平均空值率只统计拿到样例的数据集（每份 5 行左右），拿不到样例的记作「无样例」，不是 0。"
+        </p>
+    }
+    .into_any()
 }
 
 fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
@@ -1050,4 +1187,37 @@ fn proof_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
             <p class="hint">"每一行是一条真实样例记录，1 表示空值；定理断言「第 N 列恰好有 K 条空值」，由 by decide 交给内核穷举。"</p>
         </section>
     }.into_any()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // 部门名里有中文和空格，链接是 encodeURIComponent 过的。
+    // 这条路径一旦解析错，页面上会显示一串 %E5%AE%81…，而且不报错。
+    #[test]
+    fn dept_route_decodes_percent_escapes() {
+        assert_eq!(
+            parse_route("#/dept/%E5%AE%81%E6%B3%A2%E5%B8%82%E7%BB%9F%E8%AE%A1%E5%B1%80"),
+            Route::Dept("宁波市统计局".into())
+        );
+    }
+
+    #[test]
+    fn dept_route_drops_query_string() {
+        assert_eq!(parse_route("#/dept/foo?x=1"), Route::Dept("foo".into()));
+    }
+
+    // `dept/` 与 `detail/` 都以 d 开头，改前缀顺序时容易互相吃掉。
+    #[test]
+    fn detail_route_still_wins_over_dept() {
+        assert_eq!(parse_route("#/detail/abc"), Route::Detail("abc".into()));
+        assert_eq!(parse_route("#/proof/abc"), Route::Proof("abc".into()));
+    }
+
+    #[test]
+    fn dept_without_slash_is_not_a_dept_page() {
+        assert_eq!(parse_route("#/dept"), Route::List);
+        assert_eq!(parse_route(""), Route::List);
+    }
 }

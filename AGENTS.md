@@ -68,12 +68,16 @@
 ## 常用验证
 
 ```bash
-just check        # fmt + clippy(core/cli) + 全量单测（core/cli/api/web）+ 证明门禁
+just check        # fmt + clippy(core/cli) + 全量单测（core/cli/api/web）+ 证据/报告门禁 + 证明门禁
 just clippy-wasm  # 前端也在门禁内
 just coverage     # 两组数：core+cli 地板 74%（实测 76.88%）/ 含 api 地板 72%（实测 73.81%）
 just lint-docs
 just smoke        # 联网，200 条，产物进 out-smoke/
 ```
+
+`verify-evidence` 查「`data.json` 记的哈希 == 证据文件」，`verify-reports` 查
+「**报告里印的**哈希 == 证据文件」——后者防的是「用错 `--out` 补报告」：
+跨批次生成时每份报告看着都完整，读者逐份核对却全部失败。
 
 改动统计口径时额外跑 `docs/HANDOFF.md` 第 7 节的对齐检查。
 

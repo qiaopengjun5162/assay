@@ -722,9 +722,13 @@ fn proof_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
         return view! { <section class="panel"><h2>"找不到这份证明"</h2></section> }.into_any();
     };
     let Some(p) = r.proof.clone() else {
+        // 数字不写死：证明覆盖面是随跑批变的，写死一个「前 100」就是下一条要分叉的口径。
+        let done = data.summary.proof_count;
         return view! {
-            <section class="panel"><h2>"证明尚未生成"</h2>
-            <p class="hint">"当前只为问题最多的前 100 个数据集生成证明。"</p></section>
+            <section class="panel"><h2>"这条没有证明"</h2>
+            <p class="hint">{format!(
+                "证明覆盖榜上能证的 {done} 条：这条要么排在覆盖范围之外，要么平台只给了表头、没有数据行——没有可证的命题。"
+            )}</p></section>
         }
         .into_any();
     };

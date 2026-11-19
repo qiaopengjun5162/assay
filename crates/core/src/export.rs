@@ -197,19 +197,9 @@ pub fn export(opts: &ExportOptions<'_>) -> Result<ExportOutcome> {
         crate::checks::tally(items.iter().map(|d| {
             crate::checks::Facts::with_catalog(d, catalog.get(&d.id).map(|s| s.as_str()))
         }));
-    let checks_json: Vec<Value> = tally
+    let checks_json: Vec<crate::checks::CheckRow> = tally
         .iter()
-        .map(|(c, hits)| {
-            json!({
-                "id": c.id,
-                "title": c.title,
-                "dim": c.dim,
-                "weight": c.weight,
-                "note": c.note,
-                "hits": hits,
-                "of": total,
-            })
-        })
+        .map(|(c, hits)| crate::checks::CheckRow::new(c, *hits, total))
         .collect();
     // 曲线数据：只读日志。日志坏了就让导出失败——静默当成空数组会在页面上
     // 表现成「历史被清空」，而人往往先看到图、后去查原因。

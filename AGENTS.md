@@ -68,7 +68,7 @@
 ## 常用验证
 
 ```bash
-just check        # fmt + clippy(core/cli) + 单测（142，含 api）+ 证明门禁
+just check        # fmt + clippy(core/cli) + 全量单测（core/cli/api/web）+ 证明门禁
 just clippy-wasm  # 前端也在门禁内
 just coverage     # 两组数：core+cli 地板 74%（实测 76.88%）/ 含 api 地板 72%（实测 73.81%）
 just lint-docs

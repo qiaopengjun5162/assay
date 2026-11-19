@@ -68,7 +68,7 @@ audit.rs ──► out/items.jsonl            每条 = 一个 Dataset
                     ├─► evidence.rs ───► evidence/<id>/{detail,preview}.json
                     │                     evidence.json（SHA-256 索引）
                     │
-                    └─► proof.rs ──────► TopProofs.lean（2,355 条定理）
+                    └─► proof.rs ──────► TopProofs.lean（4,970 条定理 / 391 个数据集）
                                           │ lean（外部进程）
                                           ▼
                                         verify.txt + proofs.json
@@ -164,7 +164,7 @@ theorem empty_0_3 : countEmpty rows_0 3 = 2 := by decide
 - 数据以 `List (List Nat)` 嵌入，1 = 空值。
 - `proofs.json` 的 `sha256` 是**样例行**的哈希，格式必须与
   `json.dumps(rows, ensure_ascii=False)` 一致（分隔符带空格），否则历史哈希全变。
-- 定理数 = 每个数据集列数之和（当前 2,355）。
+- 定理数 = 每个数据集列数之和（当前 4,970，覆盖 391 个可证数据集）。
 
 ### 3.5 `evidence.rs`
 
@@ -243,6 +243,21 @@ pub fn compare(baseline: &Summary, current: &Summary, opts: &DriftOptions) -> Dr
 - 再逐项比指标，超阈值记 `Drifted`，否则 `Normal`。`audited` 数量变化只记录不告警。
 - 结论映射成退出码：`Normal → 0`、`Drifted → 1`、`Suspect → 2`。
 - 基线快照里保留 `commit` 与 `capturedAt`，报告能追到「跟哪一次跑的比」。
+
+### 3.10a `history.rs`
+
+```rust
+pub struct Point { date, audited, with_preview, lag_over90, mismatch, all_empty, stopped, empty_over30 }
+pub fn from_summary(date: &str, summary: &Value) -> Option<Point>;
+pub fn merge(existing: Vec<Point>, new: Point) -> Vec<Point>;
+pub fn append(path: &str, point: Point) -> Result<Vec<Point>>;
+```
+
+- 只收**原始计数**：问题分随权重变，进了曲线就没法回答「你们是不是调过权重」（D31）。
+- `from_summary` 缺任何字段返回 `None`，调用方整条不记——补 0 会在曲线上画出假的好消息。
+- `merge` 同日期**替换**（重跑修正当天的数，不画两个点），按日期升序，只留最近 260 条。
+- 日志是 git 里的 `history/summary.json`；`export` 只读它并嵌进 `data.json` 的 `history`，
+  写入只发生在 `assay history` 一处。日志坏了让导出失败，不静默当空。
 
 ### 3.11 `crates/web`
 

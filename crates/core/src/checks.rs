@@ -74,6 +74,46 @@ pub struct Check {
     pub kind: Kind,
 }
 
+/// `data.json` 里 `checks` 数组的一行：一条检查项 + 本批命中数。
+///
+/// 单独定义，而不是在 `export` 里手写 `json!({...})`。手写的话，`Check` 加字段时
+/// 导出不会跟着变——产物会悄悄少一个键，**而且没有任何编译错误**，只有读者
+/// 拿到 `undefined`。有了结构体，键名由 derive 决定，`tests/artifact_parity.rs`
+/// 再拿入库的 `web/data.json` 比对一次，两处都堵上。
+///
+/// 只导出**会被读者看到的**字段：`kind` 是内部判定分派用的，不进产物；
+/// `Check::kind` 与 `id` 一一对应，前端也不需要它来判断什么。
+#[derive(Debug, Clone, Copy, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CheckRow {
+    pub id: &'static str,
+    pub title: &'static str,
+    pub dim: &'static str,
+    /// 命中后对问题分的贡献。0 表示只标注、不参与排序。
+    pub weight: f64,
+    pub note: &'static str,
+    /// 本批这条检查命中了多少条数据集。
+    pub hits: usize,
+    /// 分母：本批体检了多少条。与 `hits` 同屏显示才读得出比例。
+    pub of: usize,
+}
+
+impl CheckRow {
+    /// 从 `tally()` 的一项构造。`of` 是本批体检总数（`hits` 的分母）。
+    #[must_use]
+    pub fn new(c: &'static Check, hits: usize, of: usize) -> Self {
+        Self {
+            id: c.id,
+            title: c.title,
+            dim: c.dim,
+            weight: c.weight,
+            note: c.note,
+            hits,
+            of,
+        }
+    }
+}
+
 /// 判定一条数据需要看的全部输入。
 ///
 /// `update_time` 来自目录快照而不是 `Dataset` 本身——所以「逾期」这条检查

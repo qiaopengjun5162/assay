@@ -17,7 +17,8 @@
 
 已经验证过的事（不要重复怀疑，除非你有新证据）：
 
-- `just check` 全绿（fmt / clippy core+cli / 142 个单测，含 api 14 / 证明门禁）
+- `just check` 全绿（fmt / clippy core+cli / 单测全过（core 113 + cli 2 + api 14 + web 16，
+  实测 145 @ 2026-11-19）/ 证明门禁）
 - `just clippy-wasm` 全绿
 - 口径对齐：用旧 `out-full/items.jsonl` 重算，`summary.json` 标量与 **2,500 个部门全部一致**
 - 证明对齐：391 个可证数据集的 **SHA-256 与顺序全部一致**，`lean` PASS，4,970 条定理，39.5 秒

@@ -40,6 +40,31 @@
 
 **证据：** `docs/DECISIONS.md` D12 / D13。
 
+### 入库产物与代码的字段名会静默漂移
+
+**现象：** `web/data.json` 里 2,500 个部门的平均空值率键名是 `empty_avg`，而当前
+`aggregate::dept_object` 输出的是 `emptyAvg`。站点显示正常，部门榜空值率也是真数字，
+所以肉眼查不出来。
+
+**根因：** `web/data.json` 是 `assay export` 生成后**提交进仓库**的快照，不在编译路径上。
+代码后来把 key 改成 `emptyAvg`（并给 `DeptStat.empty_avg` 加了 `skip_serializing`），
+没人重跑导出，也没有任何检查比对两者。前端 `DeptRow` 上那行 `alias = "empty_avg"`
+让症状消失——**兜底代码会把「契约不一致」变成静默状态**，比直接报错更难发现。
+发现路径也值得记：不是读代码看出来的，是拿冻结明细重算对账时，
+「归一化字段名后 0 差异、只剩键名不同」暴露出来的。
+
+**修复：** 重跑 `just report && just export 500 web/data.json` 对齐 2,500 个部门；
+`dept_object` 提为 `pub`；新增 `crates/core/tests/artifact_parity.rs`，
+拿**入库的** `data.json` 与当前代码输出的键集合逐一比对。
+
+**防复发：** 凡「代码生成、仓库入库」的产物（`data.json`、报告、证明文件），
+其接口形状都要有测试当场比对，且必须验证过「注入一处漂移会红」——
+没验过会红的门禁等于没有门禁。`serde(alias)` 只能用于兼容外部旧数据，
+不许用来掩盖产物没重跑；写 alias 时注释要说清「在为谁兼容」。
+
+**证据：** PR #25，`crates/core/tests/artifact_parity.rs`，
+`crates/core/src/aggregate.rs::dept_object` 的文档注释。
+
 ### 浮点缩放取整让 0.15535 少了一位
 
 **现象：** 迁移到 Rust 后，一个空值率与旧产物差 0.0001，榜单名次随之变化。

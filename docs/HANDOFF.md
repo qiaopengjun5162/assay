@@ -57,6 +57,15 @@
   （「不知道」不是「最差」，不能抢榜首）。5 条单测，含同分保持输入顺序——
   首屏第一张卡是讲稿点名的，同分若随构建漂移就对不上。
 
+已完成（2026-11-19 · 产物与代码对齐）：
+
+- 入库的 `web/data.json` 里 2,500 个部门仍用旧键名 `empty_avg`，而代码早已输出
+  `emptyAvg`；前端靠 `alias` 兜住，所以一直没人发现。已重跑 `report` + `export` 对齐，
+  并新增 `crates/core/tests/artifact_parity.rs`——拿入库产物与当前代码比键集合，
+  注入一处漂移就会红（验过）。经验记入 `docs/ENGINEERING_LESSONS_ZH.md`。
+- 待观察：`proc-macro-error2 v2.0.1`（经 `leptos_macro 0.7.9`）有 future-incompat
+  （`pub use proc_macro` 将来变 hard error），上游问题，升级 leptos 才治得了。
+
 已完成（2026-11-19 · 历史曲线 + 口径修正）：
 
 - 新增 `crates/core/src/history.rs` + `assay history` + `history/summary.json`（D31）：

@@ -188,4 +188,80 @@ mod tests {
         let (ok, _) = check("这份数据长期未更新，字段说明也缺失。", &facts(), 3);
         assert!(ok);
     }
+
+    /// 事实字典是「模型只写字不碰数」的边界：模型看不到这里没有的数字，
+    /// 护栏才拦得住编造。钉住字段清单与 6 个字段的截断规则。
+    #[test]
+    fn dataset_facts_carries_all_and_only_allowed_numbers() {
+        use crate::model::Dataset;
+        use serde_json::json;
+        use std::collections::HashMap;
+
+        let d = Dataset {
+            name: "示例数据".into(),
+            declared_cols: 5,
+            sample_cols: 4,
+            sample_rows: 5,
+            empty_rate: 0.1256,
+            all_empty_cols: 1,
+            update_cycle: Some(json!(7)),
+            desc_len: 20,
+            missing_fields: ["a", "b", "c", "d", "e", "f", "g"]
+                .into_iter()
+                .map(String::from)
+                .collect(),
+            extra_fields: vec!["x".into(), "y".into()],
+            ..Default::default()
+        };
+
+        let m: HashMap<&str, String> = dataset_facts(&d, Some(30), "某局").into_iter().collect();
+        assert_eq!(m["数据集"], "示例数据");
+        assert_eq!(m["部门"], "某局");
+        assert_eq!(m["声明列数"], "5");
+        assert_eq!(m["实际样例列数"], "4");
+        assert_eq!(m["样例行数"], "5");
+        assert_eq!(m["样例空值率"], "12.56%");
+        assert_eq!(m["整列为空的列数"], "1");
+        assert_eq!(m["更新频率"], "每周");
+        assert_eq!(m["字段说明字数"], "20");
+        assert_eq!(m["距上次更新天数"], "30");
+        assert_eq!(m["声明有但样例没有的字段"], "a、b、c、d、e、f");
+        assert_eq!(m["样例有但声明没有的字段"], "x、y");
+        assert!(m.contains_key("字段一致性"));
+    }
+
+    /// 没有的可选事实必须整个不出现，而不是填空串——空串会让护栏
+    /// 把「未知」当成「有值 0」。
+    #[test]
+    fn dataset_facts_omits_absent_options() {
+        use crate::model::Dataset;
+
+        let f = dataset_facts(&Dataset::default(), None, "");
+        let keys: Vec<&str> = f.iter().map(|(k, _)| *k).collect();
+        assert!(!keys.contains(&"部门"));
+        assert!(!keys.contains(&"距上次更新天数"));
+        assert!(!keys.contains(&"声明有但样例没有的字段"));
+        assert!(!keys.contains(&"样例有但声明没有的字段"));
+        assert!(keys.contains(&"样例空值率"));
+    }
+
+    #[test]
+    fn cycle_label_covers_platform_vocabulary() {
+        assert_eq!(cycle_label("1"), "每日");
+        assert_eq!(cycle_label("7"), "每周");
+        assert_eq!(cycle_label("30"), "每月");
+        assert_eq!(cycle_label("365"), "每年");
+        assert_eq!(cycle_label("-1"), "停更");
+        assert_eq!(cycle_label("不更新"), "停更");
+        assert_eq!(cycle_label("999"), "停更");
+        assert_eq!(cycle_label(""), "未知");
+        assert_eq!(cycle_label("按季度"), "按季度");
+    }
+
+    #[test]
+    fn round2_keeps_two_decimals() {
+        assert_eq!(round2(0.1256), 0.13);
+        assert_eq!(round2(12.56), 12.56);
+        assert_eq!(round2(0.0), 0.0);
+    }
 }

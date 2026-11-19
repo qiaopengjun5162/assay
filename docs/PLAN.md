@@ -123,7 +123,7 @@ assay/
 |---|---|---|
 | `rust` | `cargo fmt --check` / `clippy -D warnings` / `cargo test` / `cargo build --release` | 主干质量；clippy 零容忍（抄 moonpub） |
 | `msrv` | 1.88.0 + `--locked` 真编一次 | 声明不测等于没声明 |
-| `coverage` | `scripts/coverage.sh`，行覆盖地板 66%（2026-11-19 从 52 抬升） | 让「能自动验证的那部分」不会悄悄烂掉 |
+| `coverage` | `scripts/coverage.sh`，行覆盖地板 74%（2026-11-19 两次抬升：52 → 66 → 74） | 让「能自动验证的那部分」不会悄悄烂掉 |
 | `commit-lint` | `scripts/check-commits.sh` 查 Conventional Commits | 本地钩子能被 `--no-verify` 绕过 |
 | `lean` | 装 elan → `assay check-proofs fixtures/expected.lean`（拒绝 sorry / admit） | 证明是本项目的差异点，它坏了等于产品坏了 |
 | `secret-scan` | gitleaks（fetch-depth: 0） | 脚本要读 API key，防止误提交 |
@@ -135,7 +135,8 @@ assay/
 - **MSRV**：当初理由是「单人项目、工具链固定」，但这个理由不成立——README 声称 1.85+，
   实测 1.86 就编不过（`icu_*` 2.4 要求 1.88）。已加 `rust-version = "1.88"` 与 `msrv` job。
 - **覆盖率地板**：冲刺期砍掉，现已补回。2026-11-18 实测 54.16% / 地板 52%；
-  2026-11-19 补测试后实测 68.46%，地板同步抬到 66（`scripts/coverage.sh`）。
+  2026-11-19 补测试后实测 68.46%，地板抬到 66；同日再补 explain/api/guard/proof
+  的纯逻辑测试，实测 76.72%，地板抬到 74，两次都是只升不降（`scripts/coverage.sh`）。
 
 ### `audit.yml`（每周一 10:00 + 手动触发）
 

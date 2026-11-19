@@ -60,7 +60,7 @@
 ```bash
 just check        # fmt + clippy(core/cli) + 单测 + 证明门禁
 just clippy-wasm  # 前端也在门禁内
-just coverage     # 行覆盖率地板 52%（实测 54.16%）
+just coverage     # 行覆盖率地板 74%（实测 76.72%）
 just lint-docs
 just smoke        # 联网，200 条，产物进 out-smoke/
 ```

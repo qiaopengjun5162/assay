@@ -139,17 +139,7 @@ impl Client {
                 "order": "", "orderFiled": ""
             }),
         )?;
-        let total = v["result"]["total"].as_u64().unwrap_or(0) as usize;
-        let pages = v["result"]["pages"].as_u64().unwrap_or(0) as usize;
-        let recs: Vec<CatalogRecord> = v["result"]["records"]
-            .as_array()
-            .map(|a| {
-                a.iter()
-                    .filter_map(|r| serde_json::from_value(r.clone()).ok())
-                    .collect()
-            })
-            .unwrap_or_default();
-        Ok((total, pages, recs))
+        Ok(parse_catalog_page(&v))
     }
 
     /// 全量目录，按原顺序返回。
@@ -195,6 +185,25 @@ impl Client {
             &json!({"current": 1, "size": size}),
         )
     }
+}
+
+/// 目录页解析：平台响应的 `result` 里取分页与记录。
+///
+/// 抽成纯函数不是为了复用，是为了钉住两个口径：
+/// - 分页字段缺失按 0 处理，不把「平台没给」变成 panic；
+/// - 单条记录形状不对就跳过，不把整页 100 条一起丢掉（平台脏数据是常态）。
+fn parse_catalog_page(v: &Value) -> (usize, usize, Vec<CatalogRecord>) {
+    let total = v["result"]["total"].as_u64().unwrap_or(0) as usize;
+    let pages = v["result"]["pages"].as_u64().unwrap_or(0) as usize;
+    let recs: Vec<CatalogRecord> = v["result"]["records"]
+        .as_array()
+        .map(|a| {
+            a.iter()
+                .filter_map(|r| serde_json::from_value(r.clone()).ok())
+                .collect()
+        })
+        .unwrap_or_default();
+    (total, pages, recs)
 }
 
 impl CatalogSource for Client {
@@ -343,5 +352,52 @@ mod tests {
             .rows_from_raw(br#"{"result":{"data":[["h"],["v"]]}}"#)
             .unwrap();
         assert_eq!(rows.len(), 2);
+    }
+
+    /// id 是 base64，`+ / =` 三个字符在 URL 路径里有特殊含义。
+    /// 漏掉一个，平台会返回 200 + 空数据而不是报错——静默丢数据。
+    #[test]
+    fn enc_codes_all_reserved_chars_and_leaves_others() {
+        assert_eq!(enc("ab+cd/ef=gh"), "ab%2Bcd%2Fef%3Dgh");
+        assert_eq!(enc("a_b-c.d"), "a_b-c.d");
+        assert_eq!(enc(""), "");
+    }
+
+    #[test]
+    fn parse_catalog_page_skips_malformed_records() {
+        let v = json!({"result": {
+            "total": 24322,
+            "pages": 244,
+            "records": [
+                {"id": "a", "sourceName": "甲"},
+                {"id": 123, "sourceName": "类型错了"},
+                {"id": "c", "updateTime": "2025-06-09 08:27:49"}
+            ]
+        }});
+        let (total, pages, recs) = parse_catalog_page(&v);
+        assert_eq!((total, pages), (24322, 244));
+        assert_eq!(recs.len(), 2, "坏记录跳过，不能让整页消失");
+        assert_eq!(recs[0].id, "a");
+        assert_eq!(recs[1].update_time.as_deref(), Some("2025-06-09 08:27:49"));
+    }
+
+    /// 平台偶尔返回字符串数字或缺 result。解析要给出 0，不 panic。
+    #[test]
+    fn parse_catalog_page_defaults_to_zero() {
+        let (total, pages, recs) = parse_catalog_page(&json!({}));
+        assert_eq!((total, pages), (0, 0));
+        assert!(recs.is_empty());
+        let v = json!({"result": {"total": "24322", "pages": null, "records": {}}});
+        let (total, pages, recs) = parse_catalog_page(&v);
+        assert_eq!((total, pages), (0, 0));
+        assert!(recs.is_empty());
+    }
+
+    #[test]
+    fn preview_rows_stringifies_non_string_cells() {
+        let v = json!({"result": {"data": [[true, 1.5, {"a": 1}, [1, 2]]]}});
+        let rows = preview_rows(&v);
+        assert_eq!(rows[0], vec!["true", "1.5", "{\"a\":1}", "[1,2]"]);
+        assert!(preview_rows(&json!({})).is_empty());
     }
 }

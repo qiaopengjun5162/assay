@@ -110,6 +110,18 @@ enum Command {
         /// 证据根目录
         evidence_dir: String,
     },
+    /// 报告复核：报告里印的 SHA-256 必须等于证据文件重算的结果
+    ///
+    /// 报告和证据必须来自同一次抓取。用错 `--out` 补报告，会生成一批哈希指向
+    /// 别处的报告——每份都看着完整，读者逐份核对却全部失败。
+    VerifyReports {
+        /// 索引文件：data.json（按 datasets[].evidence 判断哪些该有报告）
+        index: String,
+        /// 报告目录（`<safe_id>.md`）
+        reports_dir: String,
+        /// 证据根目录
+        evidence_dir: String,
+    },
     /// 篡改演示：把一条定理的计数 +1，确认内核会拒绝
     Tamper {
         /// 证明文件（默认读 --out 下的 TopProofs.lean）
@@ -377,6 +389,13 @@ fn run(cli: Cli) -> assay_core::Result<()> {
             evidence_dir,
         } => {
             std::process::exit(verify_evidence(&index, &evidence_dir));
+        }
+        Command::VerifyReports {
+            index,
+            reports_dir,
+            evidence_dir,
+        } => {
+            std::process::exit(verify_reports(&index, &reports_dir, &evidence_dir));
         }
         Command::Tamper { file } => {
             let path = file.unwrap_or_else(|| format!("{out}/TopProofs.lean"));
@@ -736,8 +755,38 @@ fn verify_evidence(index: &str, evidence_dir: &str) -> i32 {
     }
 }
 
-/// 篡改演示。内核拒绝是预期结果：返回 Ok 表示「证明确实有约束力」。
-/// 证明门禁：等价于原 ci/check_proofs.sh，但用 Rust 实现。
+/// 报告复核：逻辑在 `single::verify_reports`，这里只打结果与给退出码。
+///
+/// 成功的**不逐条打**——500 份全 OK 的日志会淹掉真正的失败。
+/// 失败逐条打，带具体是哪个哈希对不上。一份都没复核也算失败：空跑不能当通过。
+fn verify_reports(index: &str, reports_dir: &str, evidence_dir: &str) -> i32 {
+    let checks = match assay_core::single::verify_reports(
+        std::path::Path::new(index),
+        std::path::Path::new(reports_dir),
+        std::path::Path::new(evidence_dir),
+    ) {
+        Ok(c) => c,
+        Err(e) => {
+            println!("FAIL 复核不了 {index}：{e}");
+            return 1;
+        }
+    };
+    if checks.is_empty() {
+        println!("FAIL 一份报告都没复核：{index} 里没有带证据的数据集？");
+        return 1;
+    }
+    let mut bad = 0usize;
+    for c in &checks {
+        if let Some(p) = &c.problem {
+            println!("   FAIL {}：{p}", c.name);
+            bad += 1;
+        }
+    }
+    println!("== {} / {} 份一致", checks.len() - bad, checks.len());
+    i32::from(bad > 0)
+}
+
+/// 篡改演示。内核拒绝是预期结果：返回 Ok 表示「证明确实有约束力」。/// 证明门禁：等价于原 ci/check_proofs.sh，但用 Rust 实现。
 /// 规则：拒绝 sorry/admit；只有 lean 退出码 0 才算 PASS。
 fn check_proofs(files: &[String]) -> i32 {
     let mut fail = 0;

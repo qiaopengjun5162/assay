@@ -80,8 +80,13 @@ proofs file="fixtures/expected.lean":
 verify-evidence:
     cargo run --release -q -p assay -- verify-evidence web/data.json web/evidence
 
+# 报告门禁：报告里印的 SHA-256 必须等于证据文件重算结果（同一次抓取）
+# 用错 --out 补报告会生成一批哈希指向别处的报告，每份看着完整、读者逐份核对全失败
+verify-reports:
+    cargo run --release -q -p assay -- verify-reports web/data.json web/reports web/evidence
+
 # 本地完整检查（提交前跑这个）
-check: fmt-check clippy typos test deny verify-evidence proofs
+check: fmt-check clippy typos test deny verify-evidence verify-reports proofs
     echo "全部通过"
 
 # 1) 全量体检（真实网络，约 12 分钟；limit=0 表示全部）

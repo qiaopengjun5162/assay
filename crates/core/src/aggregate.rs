@@ -125,12 +125,21 @@ fn round4(x: f64) -> f64 {
     crate::util::round_to(x, 4)
 }
 
-/// 部门统计的 JSON 形状。
+/// 部门统计的 JSON 形状。**这是 `web/data.json` 里 `byDept` 的公开契约**。
 ///
-/// `byDept` 是给 `web/data.json` 前端读的，key 必须 camelCase——前端
-/// `DeptRow` 是 `rename_all = "camelCase"`。曾经写成 `empty_avg`，
-/// 前端反序列化失败取默认 0，部门榜「平均空值率」整片显示 0.0% 而没人发现。
-fn dept_object(v: &DeptStat) -> Result<Value> {
+/// `emptyAvg` 是派生值（`empty_sum / empty_n`），`DeptStat` 上那个同义字段标了
+/// `skip_serializing`，所以只能在这里手算并插入。其余多词键（`all_empty` 等）
+/// 仍是 snake_case：前端 `DeptRow` 只读 `n / stopped / mismatch / emptyAvg`，
+/// 没人读的键不值得为风格统一去改结构体。
+///
+/// 公开是为了让 `tests/artifact_parity.rs` 能拿它跟**入库的** `web/data.json`
+/// 对键名——那次事故是「代码改了 key，产物没重跑，前端加 alias 兜住」，
+/// 于是发布的契约与代码的行为长期不是一回事，而没有任何检查会红。
+///
+/// # Errors
+///
+/// `DeptStat` 序列化失败时向上抛（字段都是标量，实际不会发生）。
+pub fn dept_object(v: &DeptStat) -> Result<Value> {
     let mut obj = serde_json::to_value(v)?;
     if let Some(m) = obj.as_object_mut() {
         let avg = if v.empty_n > 0 {

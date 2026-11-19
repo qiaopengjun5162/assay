@@ -12,6 +12,9 @@ pub struct Data {
     /// 检查项清单：由 `crates/core/src/checks.rs` 直接发布，前端不自己写文案。
     #[serde(default)]
     pub checks: Vec<CheckRow>,
+    /// 跑批历史（`history/summary.json` 的镜像）。空数组 = 还没开始攒。
+    #[serde(default)]
+    pub history: Vec<HistoryPoint>,
     #[serde(default)]
     pub total: usize,
     #[serde(default)]
@@ -36,6 +39,30 @@ pub struct CheckRow {
     pub hits: u64,
     #[serde(default)]
     pub of: u64,
+}
+
+/// 一次跑批的指标点。与 `crates/core/src/history.rs` 的 `Point` 同形。
+///
+/// 只含原始计数：问题分随权重变，曲线里混进分数等于把两把尺子画在同一张图上。
+#[derive(Debug, Clone, Deserialize, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct HistoryPoint {
+    #[serde(default)]
+    pub date: String,
+    #[serde(default)]
+    pub audited: u64,
+    #[serde(default)]
+    pub with_preview: u64,
+    #[serde(default)]
+    pub lag_over90: u64,
+    #[serde(default)]
+    pub mismatch: u64,
+    #[serde(default)]
+    pub all_empty: u64,
+    #[serde(default)]
+    pub stopped: u64,
+    #[serde(default)]
+    pub empty_over30: u64,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]

@@ -2,6 +2,7 @@
 
 mod app;
 mod model;
+mod spark;
 mod verify;
 
 fn main() {

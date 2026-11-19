@@ -25,6 +25,10 @@ pub struct ExportOptions<'a> {
     /// 快照日期（写进 `generatedAt`）。`None` 时按 `run.json` → 证据时间自动推，
     /// 都拿不到就**报错**，不猜。
     pub snapshot_date: Option<&'a str>,
+    /// 跑批历史日志（`history/summary.json`）。给了就嵌进 `data.json` 的 `history`，
+    /// 前端据此画曲线。只**读**不写：追加由 `assay history` 负责，
+    /// 让「导出」保持纯读，副作用只在一个地方发生。
+    pub history_path: Option<&'a str>,
     /// `Some(n)` 时额外产出 `index.json` + `shards/NN.json`（**全量，不受 limit 影响**）。
     ///
     /// 起因：单文件 `data.json` 是全量加载的，一周涨 723KB，52 周就是 37MB。
@@ -207,6 +211,12 @@ pub fn export(opts: &ExportOptions<'_>) -> Result<ExportOutcome> {
             })
         })
         .collect();
+    // 曲线数据：只读日志。日志坏了就让导出失败——静默当成空数组会在页面上
+    // 表现成「历史被清空」，而人往往先看到图、后去查原因。
+    let history_json: Vec<crate::history::Point> = match opts.history_path {
+        Some(p) => crate::history::read_log(p)?,
+        None => Vec::new(),
+    };
     let out = json!({
         "generatedAt": snapshot_date,
         "generatedAtFrom": snapshot_from,
@@ -214,6 +224,7 @@ pub fn export(opts: &ExportOptions<'_>) -> Result<ExportOutcome> {
         "api": "/dopServer/dataCatalog/{dataQueryPage,catalogDetail,catalogDataPreview}",
         "summary": summary,
         "checks": checks_json,
+        "history": history_json,
         "datasets": rows.iter().take(opts.limit).collect::<Vec<_>>(),
         "total": total,
     });
@@ -320,6 +331,7 @@ fn write_split(rows: &[Value], full: &Value, out_path: &str, shards: usize) -> R
         "api": full["api"],
         "summary": full["summary"],
         "checks": full["checks"],
+        "history": full["history"],
         "total": full["total"],
         "shards": { "count": shards, "dir": "shards" },
         "datasets": index_rows_out,
@@ -543,6 +555,7 @@ mod tests {
             // limit 故意小于总数：索引与分片必须是全量，不受它影响
             limit: 5,
             snapshot_date: None,
+            history_path: None,
             shards: Some(4),
         })
         .unwrap();
@@ -648,6 +661,7 @@ mod tests {
             out_path: out_path.to_str().unwrap(),
             limit: 5,
             snapshot_date: Some("2026-01-02"),
+            history_path: None,
             shards: Some(2),
         })
         .unwrap();
@@ -774,6 +788,7 @@ mod tests {
             out_path: dir.join("data.json").to_str().unwrap(),
             limit: 5,
             snapshot_date: None,
+            history_path: None,
             shards: None,
         })
         .unwrap_err();

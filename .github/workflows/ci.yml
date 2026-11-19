@@ -89,7 +89,8 @@ jobs:
         run: cargo check --locked -p assay-core -p assay -p assay-api --all-features
 
   # 地板存在的意义：让「能自动验证的那部分」不会悄悄烂掉。
-  # 它刻意低于实测值（76.81% → 74），留余量吸收工具链小版本差异。
+  # 一次测量出两个数、两个地板：逻辑主体（core+cli）76.88% → 74，
+  # 全量（含 api）73.81% → 72。为什么分两个，见 scripts/coverage.sh 头部。
   # macOS 与 Ubuntu 实测一致，这里没有 cfg 差异要担心。
   # 只升不降：新代码没测试就该让这里红。
   coverage:

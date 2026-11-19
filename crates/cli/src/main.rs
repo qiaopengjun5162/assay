@@ -747,7 +747,12 @@ fn tamper(path: &str) -> assay_core::Result<()> {
     };
     let tmp = std::env::temp_dir().join(format!("assay-tamper-{}.lean", std::process::id()));
     std::fs::File::create(&tmp)?.write_all(out.as_bytes())?;
-    println!("篡改: 空值数 {old} → {new}（{}）", tmp.display());
+    // 屏幕上的第一行要短：演示时投影不会给长路径留位置，但也不能说假话——
+    // 括号里标明这是临时副本，原文件没动。
+    println!(
+        "篡改: 空值数 {old} → {new}（临时副本 {}，原文件未动）",
+        tmp.file_name().unwrap_or_default().to_string_lossy()
+    );
     let res = std::process::Command::new("lean").arg(&tmp).output()?;
     let stdout = String::from_utf8_lossy(&res.stdout);
     let stderr = String::from_utf8_lossy(&res.stderr);
@@ -760,7 +765,11 @@ fn tamper(path: &str) -> assay_core::Result<()> {
             "篡改后仍然通过，证明没有约束力".into(),
         ));
     }
-    println!("\n内核拒绝（预期）—— 退出码 {:?}", res.status.code());
+    // code() 为 None 表示被信号杀掉，不能打印成 `Some(1)` —— 那是给调试看的，不是给人看的。
+    match res.status.code() {
+        Some(code) => println!("\n内核拒绝（预期）—— lean 退出码 {code}"),
+        None => println!("\n内核拒绝（预期）—— lean 被信号终止"),
+    }
     Ok(())
 }
 

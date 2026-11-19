@@ -2,6 +2,7 @@
 
 mod app;
 mod model;
+mod verify;
 
 fn main() {
     console_error_panic_hook::set_once();

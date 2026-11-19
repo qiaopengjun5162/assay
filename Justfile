@@ -58,9 +58,9 @@ hooks:
 clippy-wasm:
     cd crates/web && cargo clippy --target wasm32-unknown-unknown -- -D warnings
 
-# 单元 + 集成测试
+# 单元 + 集成测试（含 web 的复核命令纯函数；它 native 可跑，不必等 wasm）
 test:
-    cargo nextest run -p assay-core -p assay --all-features
+    cargo nextest run -p assay-core -p assay -p assay-web --all-features
 
 # 测试 + 覆盖率（带地板；CI 的 coverage job 跑同一条命令）
 coverage:

@@ -9,10 +9,33 @@ pub struct Data {
     pub summary: Summary,
     #[serde(default)]
     pub datasets: Vec<Row>,
+    /// 检查项清单：由 `crates/core/src/checks.rs` 直接发布，前端不自己写文案。
+    #[serde(default)]
+    pub checks: Vec<CheckRow>,
     #[serde(default)]
     pub total: usize,
     #[serde(default)]
     pub generated_at: String,
+}
+
+/// 一条检查项的公开定义。`hits` 是全量命中数（分母是 `Data::total`，不是榜单行数）。
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct CheckRow {
+    #[serde(default)]
+    pub id: String,
+    #[serde(default)]
+    pub title: String,
+    #[serde(default)]
+    pub dim: String,
+    #[serde(default)]
+    pub weight: f64,
+    #[serde(default)]
+    pub note: String,
+    #[serde(default)]
+    pub hits: u64,
+    #[serde(default)]
+    pub of: u64,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]

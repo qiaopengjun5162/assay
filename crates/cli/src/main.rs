@@ -3,7 +3,7 @@
 //! 所有子命令共享 `--out` 目录约定（默认 `out-full`），产物与旧版脚本一一对应。
 
 use assay_core::api::Client;
-use assay_core::{aggregate, audit, drift, evidence, explain, export, pack, proof};
+use assay_core::{aggregate, audit, checks, drift, evidence, explain, export, pack, proof};
 use clap::{Parser, Subcommand};
 use std::path::Path;
 
@@ -164,6 +164,21 @@ enum Command {
         dir: String,
         #[arg(long, default_value_t = 8080)]
         port: u16,
+    },
+    /// 列出全部检查项（人话 + 维度 + 阈值 + 权重），可附命中数
+    ///
+    /// 「你们凭什么说它有问题？」——答案就是这张表。不带 --items 只打定义；
+    /// 带上跑批产物会多一列命中数，让「门槛多少、命中了多少」一起对得上。
+    Checks {
+        /// items.jsonl；省略则用 <--out>/items.jsonl（不存在则只打定义）
+        #[arg(long)]
+        items: Option<String>,
+        /// 目录快照（逾期判定要用更新时间）；省略则用 <--out>/catalog_snapshot.json
+        #[arg(long)]
+        catalog: Option<String>,
+        /// 只输出 JSON（便于喂给别的工具）
+        #[arg(long)]
+        json: bool,
     },
 }
 
@@ -468,8 +483,131 @@ fn run(cli: Cli) -> assay_core::Result<()> {
             println!("  验：tar xzf {dest} && cd assay-audit-{captured_at} && shasum -a 256 -c MANIFEST.sha256");
         }
         Command::Serve { dir, port } => serve(&dir, port)?,
+        Command::Checks {
+            items,
+            catalog,
+            json,
+        } => {
+            let items_path = items.unwrap_or_else(|| format!("{out}/items.jsonl"));
+            let catalog_path = catalog.unwrap_or_else(|| format!("{out}/catalog_snapshot.json"));
+            print_checks(&items_path, &catalog_path, json)?;
+        }
     }
     Ok(())
+}
+
+/// 打检查项清单：定义 + 本批命中数。
+///
+/// 命中数按整批算，不受 `export --limit` 影响——「2,791 条里 163 条」这种句子
+/// 两边的数必须来自同一个分母，否则又是一处「看起来对、对不上」。
+fn print_checks(items_path: &str, catalog_path: &str, as_json: bool) -> assay_core::Result<()> {
+    let items: Vec<assay_core::Dataset> = if Path::new(items_path).is_file() {
+        audit::read_items(items_path)?
+    } else {
+        Vec::new()
+    };
+    let update: std::collections::HashMap<String, String> = if Path::new(catalog_path).is_file() {
+        aggregate::load_catalog(catalog_path)?
+            .into_iter()
+            .filter_map(|r| r.update_time.map(|t| (r.id, t)))
+            .collect()
+    } else {
+        Default::default()
+    };
+
+    let tally = checks::tally(
+        items
+            .iter()
+            .map(|d| checks::Facts::with_catalog(d, update.get(&d.id).map(|s| s.as_str()))),
+    );
+    let total = items.len();
+
+    if as_json {
+        let rows: Vec<serde_json::Value> = tally
+            .iter()
+            .map(|(c, hits)| {
+                serde_json::json!({
+                    "id": c.id,
+                    "title": c.title,
+                    "dim": c.dim,
+                    "weight": c.weight,
+                    "note": c.note,
+                    "hits": hits,
+                    "of": total,
+                })
+            })
+            .collect();
+        println!("{}", serde_json::to_string_pretty(&rows)?);
+        return Ok(());
+    }
+
+    if total == 0 {
+        println!(
+            "检查项 {} 条（没找到 {items_path}，只打定义；跑一次 audit 或传 --items 才有命中数）",
+            tally.len()
+        );
+    } else {
+        println!("检查项 {} 条，本批 {total} 条数据的命中数：", tally.len());
+    }
+    println!();
+    println!(
+        "{} {} {} {} 人话",
+        pad("id", 20),
+        pad("维度", 8),
+        pad("命中", 12),
+        pad("权重", 5)
+    );
+    for (c, hits) in &tally {
+        let hit = if total == 0 {
+            "—".to_string()
+        } else {
+            format!("{hits}/{total}")
+        };
+        let w = if c.weight.fract() == 0.0 {
+            format!("{:.0}", c.weight)
+        } else {
+            format!("{}", c.weight)
+        };
+        println!(
+            "{} {} {} {} {}",
+            pad(c.id, 20),
+            pad(c.dim, 8),
+            pad(&hit, 12),
+            pad(&w, 5),
+            c.title
+        );
+    }
+    println!();
+    println!("权重 0 = 只做标注、不影响排序；阈值与权重全部在 crates/core/src/checks.rs，");
+    println!("改那里就是改结论，站点上的清单与这里同源。");
+    Ok(())
+}
+
+/// 终端表格按显示宽度对齐：中文占两格，按字节或字符数都会被拉歪。
+fn pad(s: &str, w: usize) -> String {
+    let mut out = s.to_string();
+    for _ in width(s)..w {
+        out.push(' ');
+    }
+    out
+}
+
+fn width(s: &str) -> usize {
+    s.chars()
+        .map(|c| {
+            let cp = c as u32;
+            let wide = matches!(cp,
+                0x1100..=0x115F | 0x2E80..=0xA4CF | 0xAC00..=0xD7A3
+                | 0xF900..=0xFAFF | 0xFE30..=0xFE6F
+                | 0xFF00..=0xFF60 | 0xFFE0..=0xFFE6
+                | 0x20000..=0x2FFFD);
+            if wide {
+                2
+            } else {
+                1
+            }
+        })
+        .sum()
 }
 
 /// 读 summary.json。基线既可能是纯指标切片，也可能是完整跑批快照，
@@ -691,5 +829,29 @@ fn mime_of(p: &Path) -> &'static str {
         "svg" => "image/svg+xml",
         "lean" => "text/plain; charset=utf-8",
         _ => "application/octet-stream",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// 中文是双宽字符。按字节或字符数补齐都会把表拉歪，
+    /// 而「表格不齐」这种东西没有测试会红，只能靠肉眼看出来。
+    #[test]
+    fn width_counts_cjk_as_two_cells() {
+        assert_eq!(width("abc"), 3);
+        assert_eq!(width("维度"), 4);
+        assert_eq!(width("命中 12"), 7);
+        assert_eq!(width(""), 0);
+    }
+
+    #[test]
+    fn pad_fills_by_display_width_without_truncating() {
+        assert_eq!(pad("ab", 4), "ab  ");
+        assert_eq!(pad("维度", 4), "维度");
+        assert_eq!(pad("维度", 6), "维度  ");
+        // 超宽不截断：少一列比少一个字好查
+        assert_eq!(pad("abc", 2), "abc");
     }
 }

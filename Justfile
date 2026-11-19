@@ -90,6 +90,10 @@ audit threads="8" limit="0":
 report:
     cargo run --release -p assay -- --out {{out}} report
 
+# 检查项清单：阈值 / 权重 / 本批命中数（尺子本身也公开）
+checks:
+    cargo run --release -p assay -- --out {{out}} checks
+
 # 周度漂移对比：拿基线比本轮 summary.json（0 正常 / 1 漂移 / 2 跑批不可信）
 drift:
     cargo run --release -p assay -- drift --current {{out}}/summary.json

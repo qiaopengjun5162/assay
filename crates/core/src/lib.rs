@@ -9,6 +9,7 @@
 pub mod aggregate;
 pub mod api;
 pub mod audit;
+pub mod checks;
 pub mod config;
 pub mod drift;
 pub mod evidence;

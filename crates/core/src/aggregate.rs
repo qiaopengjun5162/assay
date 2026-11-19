@@ -3,7 +3,7 @@
 //! 所有口径与旧版 `scripts/aggregate.py` 一致；对比测试直接拿真实产物核对数字。
 
 use crate::model::{CatalogRecord, Dataset, DeptStat};
-use crate::scoring::{classify, score, SchemaKind};
+use crate::scoring::{classify, score};
 use crate::Result;
 use serde_json::{json, Map, Value};
 use std::collections::HashMap;
@@ -161,24 +161,22 @@ pub fn aggregate(items_path: &str, catalog_path: &str, out_dir: &str) -> Result<
         };
         let Some(d) = lag_days(&ut) else { continue };
         lags.push(d.max(0));
-        if let Some(limit) = cycle_threshold(&it.cycle_str()) {
-            if d > limit {
-                overdue += 1;
-            }
+        // 「逾期」的判定只有 `checks::Facts::overdue` 一处实现，
+        // 这里不再自己写 `d > limit`——两处各写一遍就是下一个分叉点。
+        if crate::checks::Facts::with_catalog(it, Some(&ut)).overdue() {
+            overdue += 1;
         }
     }
 
     let n = items.len();
     let with_preview: Vec<&Dataset> = items.iter().filter(|i| i.sample_rows > 0).collect();
     let rates: Vec<f64> = with_preview.iter().map(|i| i.empty_rate).collect();
+    // 「结构对不上」的口径只有 `checks::schema_mismatch` 一处实现。
+    // 原先这里手写三选一、`SchemaKind::is_mismatch()` 里手写两选一，
+    // 两个数（1,284 / 1,256）谁先被用谁就错。
     let mismatch: Vec<&Dataset> = items
         .iter()
-        .filter(|i| {
-            matches!(
-                classify(i),
-                SchemaKind::ColumnCount | SchemaKind::FieldSet | SchemaKind::NamingOnly
-            )
-        })
+        .filter(|i| crate::checks::schema_mismatch(&crate::checks::Facts::of(i)))
         .collect();
     let stopped: Vec<&Dataset> = items
         .iter()
@@ -220,13 +218,10 @@ pub fn aggregate(items_path: &str, catalog_path: &str, out_dir: &str) -> Result<
         if i.all_empty_cols > 0 {
             s.all_empty += 1;
         }
-        if matches!(
-            classify(i),
-            SchemaKind::ColumnCount | SchemaKind::FieldSet | SchemaKind::NamingOnly
-        ) {
+        if crate::checks::schema_mismatch(&crate::checks::Facts::of(i)) {
             s.mismatch += 1;
         }
-        if i.desc_len < 10 {
+        if i.desc_len < crate::checks::DESC_MIN {
             s.no_desc += 1;
         }
         if crate::scoring::STOPPED_CYCLES.contains(&i.cycle_str().as_str()) {
@@ -259,16 +254,16 @@ pub fn aggregate(items_path: &str, catalog_path: &str, out_dir: &str) -> Result<
         "emptyRateMean": (!rates.is_empty()).then(|| round4(rates.iter().sum::<f64>() / rates.len() as f64)),
         "emptyRateMedian": empty_median.map(round4),
         "emptyRateP90": p90,
-        "emptyRateOver30": rates.iter().filter(|r| **r > 0.3).count(),
+        "emptyRateOver30": rates.iter().filter(|r| **r > crate::checks::EMPTY_RATE_HIGH).count(),
         "allEmptyColumnDatasets": items.iter().filter(|i| i.all_empty_cols > 0).count(),
         "schemaMismatch": mismatch.len(),
         "mismatchKinds": json_object(kinds.most_common(usize::MAX)),
-        "noDescription": items.iter().filter(|i| i.desc_len < 10).count(),
+        "noDescription": items.iter().filter(|i| i.desc_len < crate::checks::DESC_MIN).count(),
         "noColumnList": items.iter().filter(|i| i.declared_cols == 0).count(),
         "stoppedUpdate": stopped.len(),
         "lagMedianDays": median(lags.iter().map(|d| *d as f64).collect()).map(|m| m as i64),
-        "lagOver90Days": lags.iter().filter(|d| **d > 90).count(),
-        "lagOver365Days": lags.iter().filter(|d| **d > 365).count(),
+        "lagOver90Days": lags.iter().filter(|d| **d > crate::checks::LAG_WARN_DAYS).count(),
+        "lagOver365Days": lags.iter().filter(|d| **d > crate::checks::LAG_LONG_DAYS).count(),
         "claimedCycleOverdue": overdue,
         "updateCycle": json_object(cycles.most_common(8)),
         "byDept": Value::Object(by_dept),

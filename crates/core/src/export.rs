@@ -2,7 +2,7 @@
 //!
 //! 字段口径与旧版 `scripts/export_web.py` 一致；前端只读这个文件，不需要后端。
 
-use crate::aggregate::{cycle_threshold, lag_days, load_catalog};
+use crate::aggregate::load_catalog;
 use crate::model::{Dataset, EvidenceEntry, Explanation, ProofEntry};
 use crate::util::safe_id;
 use crate::{Error, Result};
@@ -184,12 +184,36 @@ pub fn export(opts: &ExportOptions<'_>) -> Result<ExportOutcome> {
         m.insert("evidenceCount".into(), json!(evidence_by_id.len()));
         m.insert("explainCount".into(), json!(explain_by_id.len()));
     }
+    // 检查项清单：把「尺子」本身也发布出去。
+    //
+    // 之前这些阈值只存在于 Rust 源码里，读者想问「你们凭什么说它有问题、门槛多少」
+    // 只能去翻代码——而翻代码的人不会相信结论，信结论的人不会去翻代码。
+    // 命中数是按这一批全量算的（不受 `--limit` 影响），所以「N/M」两数都对得上。
+    let tally =
+        crate::checks::tally(items.iter().map(|d| {
+            crate::checks::Facts::with_catalog(d, catalog.get(&d.id).map(|s| s.as_str()))
+        }));
+    let checks_json: Vec<Value> = tally
+        .iter()
+        .map(|(c, hits)| {
+            json!({
+                "id": c.id,
+                "title": c.title,
+                "dim": c.dim,
+                "weight": c.weight,
+                "note": c.note,
+                "hits": hits,
+                "of": total,
+            })
+        })
+        .collect();
     let out = json!({
         "generatedAt": snapshot_date,
         "generatedAtFrom": snapshot_from,
         "source": "浙江省公共数据开放平台（data.zjzwfw.gov.cn）",
         "api": "/dopServer/dataCatalog/{dataQueryPage,catalogDetail,catalogDataPreview}",
         "summary": summary,
+        "checks": checks_json,
         "datasets": rows.iter().take(opts.limit).collect::<Vec<_>>(),
         "total": total,
     });
@@ -295,6 +319,7 @@ fn write_split(rows: &[Value], full: &Value, out_path: &str, shards: usize) -> R
         "source": full["source"],
         "api": full["api"],
         "summary": full["summary"],
+        "checks": full["checks"],
         "total": full["total"],
         "shards": { "count": shards, "dir": "shards" },
         "datasets": index_rows_out,
@@ -383,10 +408,9 @@ fn row(
     reports_dir: Option<&str>,
 ) -> Value {
     let update_time = catalog.get(&d.id).cloned();
-    let lag = update_time.as_deref().and_then(lag_days);
-    let overdue = cycle_threshold(&d.cycle_str())
-        .map(|limit| lag.map(|l| l > limit).unwrap_or(false))
-        .unwrap_or(false);
+    let facts = crate::checks::Facts::with_catalog(d, update_time.as_deref());
+    let lag = facts.lag_days();
+    let overdue = facts.overdue();
     let report = reports_dir
         .map(|dir| {
             Path::new(dir)

@@ -133,7 +133,7 @@ just lint-docs    # Markdown lint
 just smoke        # 200 条端到端（联网，约 90 秒），产物进 out-smoke/，不覆盖正式产物
 just all          # 全量（联网，约 14 分钟）
 just drift        # 周度漂移对比：基线 vs 本轮 summary.json（0 正常 / 1 漂移 / 2 不可信）
-just coverage     # 行覆盖率地板 74%（实测 76.72%）
+just coverage     # 行覆盖率地板 74%（实测 76.81%）
 just serve        # 本地预览 crates/web/dist
 ```
 

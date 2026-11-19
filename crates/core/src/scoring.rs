@@ -33,11 +33,6 @@ impl SchemaKind {
             SchemaKind::NoSample => "无样例",
         }
     }
-
-    /// 结构性问题（用于统计 schemaMismatch）。
-    pub fn is_mismatch(self) -> bool {
-        matches!(self, SchemaKind::ColumnCount | SchemaKind::FieldSet)
-    }
 }
 
 /// 分类：先看有没有样例，再看列数，最后看名字是不是只是带前缀。
@@ -81,26 +76,29 @@ pub fn classify(d: &Dataset) -> SchemaKind {
     )
 }
 
-/// 问题分：只用于排序，不是科学指标。权重公开写在代码里。
+/// 问题分：只用于排序，不是科学指标。权重全部来自 `checks` 登记表，
+/// 这里不再写字面量——两处各写一份，改一处忘一处的后果是榜单和页面解释打架。
 pub fn score(d: &Dataset) -> f64 {
+    use crate::checks::{EMPTY_CAP, EMPTY_SLOPE, W_ALL_EMPTY, W_DESC, W_NAMING};
+    use crate::checks::{W_NO_PREVIEW, W_SCHEMA, W_STOPPED};
     let mut s = 0.0_f64;
     match classify(d) {
-        SchemaKind::ColumnCount | SchemaKind::FieldSet => s += 3.0,
-        SchemaKind::NamingOnly => s += 1.0,
+        SchemaKind::ColumnCount | SchemaKind::FieldSet => s += W_SCHEMA,
+        SchemaKind::NamingOnly => s += W_NAMING,
         SchemaKind::Consistent | SchemaKind::NoSample => {}
     }
     if d.all_empty_cols > 0 {
-        s += 2.0;
+        s += W_ALL_EMPTY;
     }
-    s += (d.empty_rate * 6.0).min(3.0);
+    s += (d.empty_rate * EMPTY_SLOPE).min(EMPTY_CAP);
     if STOPPED_CYCLES.contains(&d.cycle_str().as_str()) {
-        s += 1.0;
+        s += W_STOPPED;
     }
-    if d.desc_len < 10 {
-        s += 1.0;
+    if d.desc_len < crate::checks::DESC_MIN {
+        s += W_DESC;
     }
     if d.has_preview == 0 {
-        s += 1.0;
+        s += W_NO_PREVIEW;
     }
     round2(s)
 }

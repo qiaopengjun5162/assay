@@ -187,6 +187,66 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
     dept_top.sort_by(|a, b| b.1.stopped.cmp(&a.1.stopped).then(b.1.n.cmp(&a.1.n)));
     dept_top.truncate(12);
 
+    // 检查项清单：把「尺子」印在榜下面。
+    //
+    // 文字与命中数全部来自 data.json 的 `checks`（由 core 的 `checks.rs` 发布），
+    // 前端不自己写一份文案——写一份就是下一条要分叉的口径。
+    // 分母是 `c.of`（全量 24,322），不是榜单展示的行数，两个数必须各自说清。
+    let total_checked = data.checks.first().map(|c| c.of).unwrap_or(0);
+    let checks_view = (!data.checks.is_empty()).then(|| {
+        let rows_view = data
+            .checks
+            .iter()
+            .map(|c| {
+                let share = if c.of == 0 {
+                    String::new()
+                } else {
+                    format!("{:.1}%", c.hits as f64 / c.of as f64 * 100.0)
+                };
+                let weight = if c.weight == 0.0 {
+                    "只标注".to_string()
+                } else {
+                    format!("+{}", c.weight)
+                };
+                view! {
+                    <tr>
+                        <td class="c-dim">{c.dim.clone()}</td>
+                        <td class="c-title">
+                            {c.title.clone()}
+                            <span class="c-id">{c.id.clone()}</span>
+                            {(!c.note.is_empty()).then(|| view! { <span class="c-note">{c.note.clone()}</span> })}
+                        </td>
+                        <td class="c-hit">{fmt_num(c.hits)}<span class="c-share">{share}</span></td>
+                        <td class="c-w">{weight}</td>
+                    </tr>
+                }
+            })
+            .collect_view();
+        view! {
+            <section class="checks">
+                <h2>"我们查了这 "{data.checks.len()}" 条，阈值全在这里"</h2>
+                <p class="hint">
+                    "上面每个数字都出自这张表。命中数的分母是全量 "{fmt_num(total_checked)}
+                    " 条，不是榜单只展示的前 "{rows.get().len()}" 条。"
+                    "「问题分」是命中后加在排序分上的分值，「只标注」的项不进分数——"
+                    "不参与排序就该明说，而不是让人猜。"
+                </p>
+                <table class="checktable">
+                    <thead>
+                        <tr><th>"维度"</th><th>"检查项"</th><th>"命中"</th><th>"问题分"</th></tr>
+                    </thead>
+                    <tbody>{rows_view}</tbody>
+                </table>
+                <p class="hint">
+                    "机器可读的版本：" <code>"assay checks --json"</code>
+                    " 或 data.json 的 "<code>"checks"</code>
+                    " 字段；定义源码在 "<code>"crates/core/src/checks.rs"</code>
+                    "。改阈值就是改结论，所以只允许在那里改一次。"
+                </p>
+            </section>
+        }
+    });
+
     let filtered = move || {
         let q = search.get().to_lowercase();
         let dd = dept.get();
@@ -281,6 +341,8 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
         <section class="board">
             {move || filtered().into_iter().enumerate().map(|(i, r)| row_view(i, r, route)).collect_view()}
         </section>
+
+        {checks_view}
         <footer class="site">
             "体检于 " {data.generated_at.clone()} " · 共 " {fmt_num(data.total as u64)} " 个数据集，展示前 " {rows.get().len()} " 个 · 数据来源 浙江省公共数据开放平台"
         </footer>

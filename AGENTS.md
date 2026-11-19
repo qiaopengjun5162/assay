@@ -45,6 +45,11 @@
 9. **榜单行只有一个来源**（`export::row` → `light_row`）：静态 `index.json`、灌库写入的
    `observation`、接口返回的 `DatasetRow` 三者必须逐字段同形。有单测跨两侧比对，
    改名或加字段会当场红。见 `docs/DECISIONS.md` D21。
+10. **阈值与权重只在 `checks.rs` 出现一次**：`desc_len < 10`、空值率 `> 30%`、
+    滞后 `> 90/365` 天、停更词表都在那张登记表里。`scoring` / `aggregate` /
+    `export` / 前端全部引用它，别再写字面量。判定函数 `fires()` 也只有一处实现——
+    同一个概念有两种算法时（历史上 `schemaMismatch` 有 1,284 和 1,256 两个数），
+    错的那一处不会报错，只会安静地给出另一个答案。见 D30。
 
 ## 分层边界
 
@@ -60,7 +65,7 @@
 ```bash
 just check        # fmt + clippy(core/cli) + 单测 + 证明门禁
 just clippy-wasm  # 前端也在门禁内
-just coverage     # 行覆盖率地板 74%（实测 76.72%）
+just coverage     # 行覆盖率地板 74%（实测 76.81%）
 just lint-docs
 just smoke        # 联网，200 条，产物进 out-smoke/
 ```

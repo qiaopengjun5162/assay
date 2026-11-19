@@ -3,7 +3,7 @@
 //! 路由走 hash（`#/detail/<id>`），刷新可直达；不引第三方路由库，
 //! 因为只有三个视图、两条跳转。
 
-use crate::model::{Data, Row};
+use crate::model::{CheckRow, Data, Row};
 use crate::spark;
 use crate::verify::verify_command;
 use leptos::prelude::*;
@@ -14,6 +14,7 @@ enum Route {
     List,
     Detail(String),
     Proof(String),
+    Checks,
 }
 
 fn decode(s: &str) -> String {
@@ -44,6 +45,9 @@ fn parse_route(hash: &str) -> Route {
     if let Some(rest) = h.strip_prefix("proof/") {
         return Route::Proof(decode(rest.split('?').next().unwrap_or(rest)));
     }
+    if h == "checks" {
+        return Route::Checks;
+    }
     Route::List
 }
 
@@ -56,6 +60,23 @@ fn urlencoding(s: &str) -> String {
             other => format!("%{other:02X}"),
         })
         .collect()
+}
+
+/// 从 hash 里取查询参数：`#/?dept=xxx` 这种。
+///
+/// 详情页的部门标签用它跳回榜单并预置筛选——读者看完一条自然会问
+/// 「这个部门还有哪些」，不该让他自己再去下拉里找一遍。
+fn hash_query(key: &str) -> String {
+    web_sys::window()
+        .and_then(|w| w.location().hash().ok())
+        .and_then(|h| h.split_once('?').map(|(_, q)| q.to_string()))
+        .and_then(|q| {
+            q.split('&').find_map(|kv| {
+                let (k, v) = kv.split_once('=')?;
+                (k == key).then(|| decode(v))
+            })
+        })
+        .unwrap_or_default()
 }
 
 fn fmt_num(n: u64) -> String {
@@ -108,6 +129,7 @@ pub fn App() -> impl IntoView {
                 <div class="top-meta">"每条结论都能自己验"</div>
                 <nav class="top-nav">
                     <a href="#/" on:click=move |_| { route.set(Route::List); }>"榜单"</a>
+                    <a href="#/checks" on:click=move |_| { route.set(Route::Checks); }>"判定规则"</a>
                 </nav>
             </header>
             {move || match (data.get(), route.get()) {
@@ -115,14 +137,23 @@ pub fn App() -> impl IntoView {
                 (Some(d), Route::List) => list_view(d, route).into_any(),
                 (Some(d), Route::Detail(id)) => detail_view(d, &id, route).into_any(),
                 (Some(d), Route::Proof(id)) => proof_view(d, &id, route).into_any(),
+                (Some(d), Route::Checks) => checks_page(d).into_any(),
             }}
+            {move || data.get().map(|d| view! {
+                <SiteFooter
+                    generated_at=d.generated_at.clone()
+                    total=d.total as u64
+                    shown=d.datasets.len()
+                />
+            })}
         </div>
     }
 }
 
 fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
     let search = RwSignal::new(String::new());
-    let dept = RwSignal::new(String::new());
+    // 详情页点部门标签会带 `#/?dept=…` 过来，初次进入就按它筛好
+    let dept = RwSignal::new(hash_query("dept"));
     let sort = RwSignal::new("score".to_string());
     let only_stopped = RwSignal::new(false);
     let only_empty = RwSignal::new(false);
@@ -138,6 +169,8 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
     depts.dedup();
 
     let s = data.summary.clone();
+    // 部门全量条数：筛完只显示榜上那几条，得能说清「其余不在前 500 名里」
+    let by_dept = data.summary.by_dept.clone();
     let rows = RwSignal::new(data.datasets.clone());
 
     // 首屏「最离谱的一条」：声明了列、但实际给的列数远多于声明。
@@ -194,59 +227,8 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
     // 前端不自己写一份文案——写一份就是下一条要分叉的口径。
     // 分母是 `c.of`（全量 24,322），不是榜单展示的行数，两个数必须各自说清。
     let total_checked = data.checks.first().map(|c| c.of).unwrap_or(0);
-    let checks_view = (!data.checks.is_empty()).then(|| {
-        let rows_view = data
-            .checks
-            .iter()
-            .map(|c| {
-                let share = if c.of == 0 {
-                    String::new()
-                } else {
-                    format!("{:.1}%", c.hits as f64 / c.of as f64 * 100.0)
-                };
-                let weight = if c.weight == 0.0 {
-                    "只标注".to_string()
-                } else {
-                    format!("+{}", c.weight)
-                };
-                view! {
-                    <tr>
-                        <td class="c-dim">{c.dim.clone()}</td>
-                        <td class="c-title">
-                            {c.title.clone()}
-                            <span class="c-id">{c.id.clone()}</span>
-                            {(!c.note.is_empty()).then(|| view! { <span class="c-note">{c.note.clone()}</span> })}
-                        </td>
-                        <td class="c-hit">{fmt_num(c.hits)}<span class="c-share">{share}</span></td>
-                        <td class="c-w">{weight}</td>
-                    </tr>
-                }
-            })
-            .collect_view();
-        view! {
-            <section class="checks">
-                <h2>"我们查了这 "{data.checks.len()}" 条，阈值全在这里"</h2>
-                <p class="hint">
-                    "上面每个数字都出自这张表。命中数的分母是全量 "{fmt_num(total_checked)}
-                    " 条，不是榜单只展示的前 "{rows.get().len()}" 条。"
-                    "「问题分」是命中后加在排序分上的分值，「只标注」的项不进分数——"
-                    "不参与排序就该明说，而不是让人猜。"
-                </p>
-                <table class="checktable">
-                    <thead>
-                        <tr><th>"维度"</th><th>"检查项"</th><th>"命中"</th><th>"问题分"</th></tr>
-                    </thead>
-                    <tbody>{rows_view}</tbody>
-                </table>
-                <p class="hint">
-                    "机器可读的版本：" <code>"assay checks --json"</code>
-                    " 或 data.json 的 "<code>"checks"</code>
-                    " 字段；定义源码在 "<code>"crates/core/src/checks.rs"</code>
-                    "。改阈值就是改结论，所以只允许在那里改一次。"
-                </p>
-            </section>
-        }
-    });
+    let checks_view = (!data.checks.is_empty())
+        .then(|| checks_section(&data.checks, total_checked, rows.get().len()));
 
     // 跑批历史：只画原始计数。
     //
@@ -394,13 +376,30 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             <span class="hint">"（剩下那些是平台只给了表头、没有数据行，没有可证的命题）"</span>
         </p>
 
+        <ol class="howto">
+            <li><b>"① 看榜"</b>"按问题分排序，左边带红条的是停更或字段对不上的。"</li>
+            <li><b>"② 点开一条"</b>"六维体检、具体哪几列对不上、AI 解读，都在同一页。"</li>
+            <li><b>"③ 自己验"</b>"点按钮当场重算 SHA-256；也可以把命令复制到自己终端跑。"</li>
+        </ol>
+
         {history_view}
 
         <section class="deptboard">
             <h2>"问题最多的部门"</h2>
-            <p class="hint">"按「停更数据集数量」排序，取前 12 个部门。平均空值率来自样例（每份 5 行左右），只作参考。"</p>            <div class="deptgrid">
-                {dept_top.into_iter().map(|(name, d)| view! {
-                    <div class="deptcard">
+            <p class="hint">"按「停更数据集数量」排序，取前 12 个部门。点一下筛出这个部门的全部数据集。平均空值率来自样例（每份 5 行左右），只作参考。"</p>
+            <div class="deptgrid">
+                {dept_top.into_iter().map(|(name, d)| {
+                    let pick = name.clone();
+                    view! {
+                    <button class="deptcard" on:click=move |_| {
+                        dept.set(pick.clone());
+                        if let Some(el) = web_sys::window()
+                            .and_then(|w| w.document())
+                            .and_then(|d| d.get_element_by_id("board"))
+                        {
+                            el.scroll_into_view();
+                        }
+                    }>
                         <div class="dname">{name}</div>
                         <div class="dmeta">{format!(
                             "{} 个数据集 · 停更 {} · 字段对不上 {} · 平均空值率 {}",
@@ -411,8 +410,8 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
                                 .map(|v| format!("{:.1}%", v * 100.0))
                                 .unwrap_or_else(|| "无样例".to_string())
                         )}</div>
-                    </div>
-                }).collect_view()}
+                    </button>
+                }}).collect_view()}
             </div>
         </section>
 
@@ -420,27 +419,159 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             <input class="search" type="search" placeholder="搜索数据集名称或部门…" prop:value=move || search.get()
                 on:input=move |e| search.set(event_target_value(&e)) />
             <select on:change=move |e| dept.set(event_target_value(&e))>
-                <option value="">"全部部门"</option>
-                {depts.into_iter().map(|d| view! { <option value=d.clone()>{d.clone()}</option> }).collect_view()}
+                <option value="" selected=move || dept.get().is_empty()>"全部部门"</option>
+                {depts.into_iter().map(|d| {
+                    let val = d.clone();
+                    let label = d.clone();
+                    // 用 option 的 selected 而不是 select 的 value：
+                    // `#/?dept=…` 进来时 options 还没渲染，prop:value 会被吞掉，
+                    // 结果列表筛好了、下拉却显示「全部部门」。
+                    view! {
+                        <option value=val.clone() selected=move || dept.get() == val>{label}</option>
+                    }
+                }).collect_view()}
             </select>
             <select on:change=move |e| sort.set(event_target_value(&e))>
-                <option value="score">"按问题分"</option>
-                <option value="empty">"按空值率"</option>
-                <option value="lag">"按停更时长"</option>
+                <option value="score" selected=move || sort.get() == "score">"按问题分"</option>
+                <option value="empty" selected=move || sort.get() == "empty">"按空值率"</option>
+                <option value="lag" selected=move || sort.get() == "lag">"按停更时长"</option>
             </select>
             <label class="check"><input type="checkbox" on:change=move |e| only_stopped.set(event_target_checked(&e)) />"只看停更"</label>
             <label class="check"><input type="checkbox" on:change=move |e| only_empty.set(event_target_checked(&e)) />"空值 > 30%"</label>
             <label class="check"><input type="checkbox" on:change=move |e| only_mismatch.set(event_target_checked(&e)) />"字段对不上"</label>
         </section>
 
-        <section class="board">
+        {/* 部门卡说的是「这个部门有多少数据集」，榜单只放了前 500 名。
+            两个数不是一回事，不写清楚就会被读成「藏了 268 条」。 */}
+        {move || {
+            let dd = dept.get();
+            (!dd.is_empty()).then(|| {
+                let total = by_dept.get(&dd).map(|v| v.n).unwrap_or(0);
+                let shown = filtered().len() as u64;
+                let hidden = total.saturating_sub(shown);
+                view! {
+                    <p class="filter-note">
+                        "已筛选 " <b>{dd.clone()}</b>
+                        "：榜上 " <b>{shown.to_string()}</b> " 条"
+                        {(!dd.is_empty() && hidden > 0).then(|| format!(
+                            "；该部门共 {total} 个数据集，其余 {hidden} 个不在前 500 名内"
+                        ))}
+                        " "
+                        <button class="linkbtn" on:click=move |_| dept.set(String::new())>"查看全部"</button>
+                    </p>
+                }
+            })
+        }}
+
+        <section class="board" id="board">
             {move || filtered().into_iter().enumerate().map(|(i, r)| row_view(i, r, route)).collect_view()}
         </section>
-
         {checks_view}
+    }
+}
+
+/// 页脚三个视图共用。详情页、证明页也要能一眼看到「这是哪天的数据、代码在哪」——
+/// 只挂在榜单页的话，从群里点进来直接落在详情页的读者就找不到出处。
+#[component]
+fn SiteFooter(generated_at: String, total: u64, shown: usize) -> impl IntoView {
+    view! {
         <footer class="site">
-            "体检于 " {data.generated_at.clone()} " · 共 " {fmt_num(data.total as u64)} " 个数据集，展示前 " {rows.get().len()} " 个 · 数据来源 浙江省公共数据开放平台"
+            <p>
+                "体检于 " {generated_at} " · 共 " {fmt_num(total)}
+                " 个数据集，展示前 " {shown.to_string()} " 个 · 数据来源 浙江省公共数据开放平台"
+            </p>
+            <p class="foot-links">
+                <a href="#/checks">"判定规则（10 条检查项）"</a>
+                " · "
+                <a href="https://github.com/qiaopengjun5162/assay" target="_blank" rel="noopener">"源码"</a>
+                " · "
+                <a href="https://github.com/qiaopengjun5162/assay/blob/main/docs/DECISIONS.md"
+                   target="_blank" rel="noopener">"方法与决策记录"</a>
+                " · "
+                <a href="https://github.com/qiaopengjun5162/assay/issues"
+                   target="_blank" rel="noopener">"发现算错了？开 issue"</a>
+            </p>
+            <p class="hint">
+                "这是一个纯静态页面：没有账号、没有埋点、不向服务器发任何写请求。"
+                "「在浏览器里重算」用的是你自己这台机器上的 CPU。"
+            </p>
         </footer>
+    }
+}
+
+/// 判定规则独立页：`#/checks`。
+///
+/// 榜单页把这张表放在 500 行之后，正常读者不会滚到那儿；页脚和首屏都要能一键到这里。
+fn checks_page(data: Data) -> impl IntoView {
+    let total_checked = data.checks.first().map(|c| c.of).unwrap_or(0);
+    let shown = data.datasets.len();
+    view! {
+        <nav class="crumb"><a href="#/">"榜单"</a>" / 判定规则"</nav>
+        <h1 class="detail-title">"判定规则：每条结论的出处"</h1>
+        <p class="lede">
+            "这里列出全部检查项、阈值、命中数和它在排序里的权重。"
+            "榜单上任何一条，都能在这张表里找到它为什么被排在那儿。"
+        </p>
+        <p class="verify"><a class="btn" href="#/">"← 回榜单"</a></p>
+        {checks_section(&data.checks, total_checked, shown)}
+    }
+}
+
+/// 10 条检查项的表格。榜单页尾和 `#/checks` 共用同一份渲染，
+/// 避免两处阈值文案各写一遍就分叉。
+fn checks_section(checks: &[CheckRow], total_checked: u64, shown: usize) -> impl IntoView {
+    let rows_view = checks
+        .iter()
+        .map(|c| {
+            let share = if c.of == 0 {
+                String::new()
+            } else {
+                format!("{:.1}%", c.hits as f64 / c.of as f64 * 100.0)
+            };
+            let weight = if c.weight == 0.0 {
+                "只标注".to_string()
+            } else {
+                format!("+{}", c.weight)
+            };
+            view! {
+                <tr>
+                    <td class="c-dim">{c.dim.clone()}</td>
+                    <td class="c-title">
+                        {c.title.clone()}
+                        <span class="c-id">{c.id.clone()}</span>
+                        {(!c.note.is_empty()).then(|| view! { <span class="c-note">{c.note.clone()}</span> })}
+                    </td>
+                    <td class="c-hit">{fmt_num(c.hits)}<span class="c-share">{share}</span></td>
+                    <td class="c-w">{weight}</td>
+                </tr>
+            }
+        })
+        .collect_view();
+
+    view! {
+        <section class="checks" id="checks">
+            <h2>"我们查了这 "{checks.len()}" 条，阈值全在这里"</h2>
+            <p class="hint">
+                "榜单上每个数字都出自这张表。命中数的分母是全量 "{fmt_num(total_checked)}
+                " 条，不是榜单只展示的前 "{shown.to_string()}" 条。"
+                "「问题分」是命中后加在排序分上的分值，「只标注」的项不进分数——"
+                "不参与排序就该明说，而不是让人猜。"
+            </p>
+            <div class="tablewrap">
+                <table class="checktable">
+                    <thead>
+                        <tr><th>"维度"</th><th>"检查项"</th><th>"命中"</th><th>"问题分"</th></tr>
+                    </thead>
+                    <tbody>{rows_view}</tbody>
+                </table>
+            </div>
+            <p class="hint">
+                "机器可读的版本：" <code>"assay checks --json"</code>
+                " 或 data.json 的 "<code>"checks"</code>
+                " 字段；定义源码在 "<code>"crates/core/src/checks.rs"</code>
+                "。改阈值就是改结论，所以只允许在那里改一次。"
+            </p>
+        </section>
     }
 }
 
@@ -574,7 +705,8 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
         <nav class="crumb"><a href="#/" on:click=move |_| route.set(Route::List)>"榜单"</a>" / 数据集详情"</nav>
         <h1 class="detail-title">{r.name.clone()}</h1>
         <div class="meta-chips">
-            <span class="chip">{r.dept.clone()}</span>
+            <a class="chip" href=format!("#/?dept={}", urlencoding(&r.dept))
+               title="回榜单，只看这个部门">{r.dept.clone()}</a>
             <span class="chip">{r.open_type.clone().unwrap_or_default()}</span>
             <span class="chip">"问题分 " {format!("{:.1}", r.score)}</span>
             {r.update_time.clone().map(|t| view! { <span class="chip">"最近更新 " {t}</span> })}
@@ -586,8 +718,9 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
             <b>{verdict}</b>
             {(!why.is_empty()).then(|| view! { <span>"：" {why.clone()}</span> })}
             " · 问题分只用于排序，不是科学指标。准确性不在评价范围内。"
+            <ShareLinkButton />
             {report.then(|| view! {
-                <a class="btn" href=report_href.clone() download>"下载体检报告（Markdown）"</a>
+                <a class="btn" href=report_href.clone() download>"下载报告（.md 纯文本）"</a>
             })}
         </div>
 
@@ -717,6 +850,46 @@ fn VerifyButton(sha256: String, files: Vec<String>) -> impl IntoView {
                 State::Failed(e) => view! { <span class="chip warn">{e}</span> }.into_any(),
             }}
         </p>
+    }
+}
+
+/// 复制当前页地址。详情页的地址本身就能直达（hash 路由），
+/// 但让用户自己去地址栏选中一长串 `%3D%3D` 不现实，所以给个按钮。
+#[component]
+fn ShareLinkButton() -> impl IntoView {
+    let done = RwSignal::new(false);
+    let err = RwSignal::new(String::new());
+
+    let copy = move |_| {
+        let url = web_sys::window()
+            .and_then(|w| w.location().href().ok())
+            .unwrap_or_default();
+        if url.is_empty() {
+            err.set("拿不到当前地址".to_string());
+            return;
+        }
+        leptos::task::spawn_local(async move {
+            match copy_to_clipboard(&url).await {
+                Ok(()) => {
+                    done.set(true);
+                    err.set(String::new());
+                }
+                Err(e) => {
+                    done.set(false);
+                    err.set(e);
+                }
+            }
+        });
+    };
+
+    view! {
+        <button class="btn" on:click=copy>
+            {move || if done.get() { "已复制，可直接粘贴" } else { "复制本条链接" }}
+        </button>
+        {move || {
+            let e = err.get();
+            (!e.is_empty()).then(|| view! { <span class="chip warn">{format!("复制失败：{e}")}</span> })
+        }}
     }
 }
 

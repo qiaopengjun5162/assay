@@ -2,6 +2,28 @@
 
 > 只记「当时为什么这么选」。每条都能在文章里展开成一段。
 
+## D29 复核命令必须用绝对 URL，且要能一键复制
+
+**背景**：ROADMAP 把「浏览器内独立复核」列为第一优先，判据是评委不装东西就能验。
+页面早已有 `VerifyButton`（浏览器内重算 + 逐字符对照），但同一屏印出的 `shasum`
+命令用的是 `data.json` 里的相对路径 `evidence/...`。实测：干净环境下
+`curl -O evidence/foo/detail.json` 直接 `Could not resolve host: evidence`；
+开着代理时更隐蔽——代理会返回一张 108 字节的错误页，退出码还是 0，评委以为验过了。
+也就是说「一键复核」的两条路，一条（浏览器按钮）通，另一条（命令）是坏的。
+
+**决定**：
+
+1. 命令里的两个文件地址在渲染时用 `location.origin() + location.pathname()` 补成
+   绝对 URL。纯字符串逻辑抽到 `crates/web/src/verify.rs`，不依赖 Leptos / web-sys，
+   因此能在 native 下单测——命令少一个字符评委就验不了，这种代码必须有测试。
+2. 加「复制命令」按钮（`navigator.clipboard.write_text`）。剪贴板只在安全上下文
+   可用，失败时如实提示手动选中，不假装成功。
+3. web 单测进 `just test` 与 CI rust job。此前 web crate 不在任何测试门禁里，
+   纯函数改动无人拦。
+
+**为什么不让后端生成命令**：命令依赖「评委当前所在站点」的地址，只有浏览器知道；
+后端生成会把 `localhost` 或 Pages 子路径写死，反而更错。
+
 ## D28 深圳不是「注册就给 key」，而且目录本来就不用 key
 
 **背景**：D25 那张表里深圳写的是「需实名注册领 APPKEY，属授权问题」。这句话有两处不准，

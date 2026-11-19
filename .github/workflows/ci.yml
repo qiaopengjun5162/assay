@@ -45,8 +45,8 @@ jobs:
       - name: Clippy（零容忍）
         run: cargo clippy -p assay-core -p assay -p assay-api --all-targets --all-features -- -D warnings
 
-      - name: Test（nextest）
-        run: cargo nextest run -p assay-core -p assay -p assay-api --all-features
+      - name: Test（nextest，含 web 复核命令纯函数）
+        run: cargo nextest run -p assay-core -p assay -p assay-api -p assay-web --all-features
 
       - name: 依赖审计（许可证 + 漏洞）
         run: cargo deny check

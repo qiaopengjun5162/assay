@@ -4,6 +4,7 @@
 //! 因为只有三个视图、两条跳转。
 
 use crate::model::{Data, Row};
+use crate::verify::verify_command;
 use leptos::prelude::*;
 use sha2::Digest;
 
@@ -486,13 +487,23 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
                     "不用装我们的东西。先在本页点按钮，浏览器会把两个原始文件取回来，在本地重算哈希并跟上表的 SHA-256 逐字符比对；也可以把原始文件下到同一个目录，跑下面这条命令，输出必须与上表相同。对不上，就是这份证据被动过。"
                 </p>
                 <VerifyButton sha256=e.sha256.clone() files=e.files.clone() />
-                {e.files.first().map(|first| {
-                    let dir = first.rsplit_once('/').map(|(d, _)| d).unwrap_or(first).to_string();
-                    view! {
-                        <pre class="mono-block">{format!("mkdir -p {dir} && cd {dir} && curl -O {} && curl -O {}\n(cat detail.json; printf '\\n--split--\\n'; cat preview.json) | shasum -a 256", e.files[0], e.files.get(1).cloned().unwrap_or_default())}</pre>
-                        <p class="hint">"Linux 把 shasum -a 256 换成 sha256sum 即可，输出格式一致。文件地址相对本页，所以从站点根目录跑。"</p>
-                    }
-                })}
+                {{
+                    // 页头地址 = origin + pathname。命令要复制到评委自己的电脑上跑，
+                    // 相对路径 `evidence/...` 会 curl 报 Could not resolve host，
+                    // 开着代理时更糟——会拿到一张错误页假装成功。补成绝对 URL。
+                    let loc = web_sys::window().map(|w| w.location());
+                    let base = loc
+                        .as_ref()
+                        .and_then(|l| l.origin().ok().zip(l.pathname().ok()))
+                        .map(|(o, p)| format!("{o}{p}"))
+                        .unwrap_or_default();
+                    let cmd = verify_command(&base, &e.files);
+                    (!cmd.is_empty()).then(|| view! {
+                        <pre class="mono-block">{cmd.clone()}</pre>
+                        <p class="verify"><CopyButton text=cmd /></p>
+                        <p class="hint">"Linux 把 shasum -a 256 换成 sha256sum 即可，输出格式一致。命令里已是完整网址，复制到任意电脑的终端都能跑。"</p>
+                    })
+                }}
             </section>
         })}
 
@@ -550,6 +561,51 @@ fn VerifyButton(sha256: String, files: Vec<String>) -> impl IntoView {
             }}
         </p>
     }
+}
+
+/// 一键把复核命令复制到剪贴板。clipboard API 只在安全上下文可用
+/// （HTTPS 或 localhost）；不可用时如实提示手动选中，不假装成功。
+#[component]
+fn CopyButton(text: String) -> impl IntoView {
+    let copied = RwSignal::new(false);
+    let failed = RwSignal::new(String::new());
+
+    let copy = move |_| {
+        let text = text.clone();
+        leptos::task::spawn_local(async move {
+            match copy_to_clipboard(&text).await {
+                Ok(()) => {
+                    copied.set(true);
+                    failed.set(String::new());
+                }
+                Err(e) => failed.set(e),
+            }
+        });
+    };
+
+    view! {
+        <button class="btn" on:click=copy>"复制命令"</button>
+        {move || if copied.get() {
+            view! { <span class="chip ok">"已复制，粘到终端回车即可"</span> }.into_any()
+        } else if !failed.get().is_empty() {
+            let msg = failed.get();
+            view! { <span class="chip warn">{format!("复制失败：{msg}；请手动选中上面的命令")}</span> }.into_any()
+        } else {
+            view! { <span class="hint">"复制到任意电脑的终端即可运行。"</span> }.into_any()
+        }}
+    }
+}
+
+/// 写剪贴板。web-sys 的 `write_text` 返回 Promise，用已有的 futures crate 等它。
+async fn copy_to_clipboard(text: &str) -> Result<(), String> {
+    let clipboard = web_sys::window()
+        .map(|w| w.navigator().clipboard())
+        .ok_or_else(|| "浏览器未开放剪贴板（需要 HTTPS 或 localhost）".to_string())?;
+    let promise = clipboard.write_text(text);
+    wasm_bindgen_futures::JsFuture::from(promise)
+        .await
+        .map_err(|_| "剪贴板写入未完成".to_string())?;
+    Ok(())
 }
 
 #[derive(Clone, Debug, PartialEq)]

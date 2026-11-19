@@ -59,8 +59,10 @@ clippy-wasm:
     cd crates/web && cargo clippy --target wasm32-unknown-unknown -- -D warnings
 
 # 单元 + 集成测试（含 web 的复核命令纯函数；它 native 可跑，不必等 wasm）
+# 必须与 CI 的 `rust` job 同集合：漏掉 `-p assay-api` 时本地 123 绿、CI 132 绿，
+# 「本地过了」就成了假信号（api 的 9 条曾经只在 CI 跑）。
 test:
-    cargo nextest run -p assay-core -p assay -p assay-web --all-features
+    cargo nextest run -p assay-core -p assay -p assay-api -p assay-web --all-features
 
 # 测试 + 覆盖率（带地板；CI 的 coverage job 跑同一条命令）
 coverage:

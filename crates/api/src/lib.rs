@@ -307,4 +307,34 @@ mod tests {
             assert!(v.get(key).is_some(), "缺字段 {key}，前端会静默拿到默认值");
         }
     }
+
+    async fn body_text(r: Response) -> String {
+        let b = axum::body::to_bytes(r.into_body(), 64 * 1024)
+            .await
+            .expect("读响应体");
+        String::from_utf8_lossy(&b).to_string()
+    }
+
+    /// 404 要带上「为什么没有」，否则前端只能显示一个空榜。
+    #[tokio::test]
+    async fn not_found_is_404_and_says_which_run() {
+        let r = ApiError::NotFound("没有 id=7 的体检记录".into()).into_response();
+        assert_eq!(r.status(), StatusCode::NOT_FOUND);
+        assert!(body_text(r).await.contains("id=7"));
+    }
+
+    /// 500 **不许**把数据库错误原文放出去——里面可能带表名、列名甚至参数值。
+    /// 这条以前只写在注释里（「不外泄 SQL 细节」），没人测过。
+    #[tokio::test]
+    async fn db_error_is_500_and_leaks_nothing() {
+        let r = ApiError::Db(sqlx::Error::RowNotFound).into_response();
+        assert_eq!(r.status(), StatusCode::INTERNAL_SERVER_ERROR);
+
+        let body = body_text(r).await;
+        assert!(body.contains("内部错误"), "{body}");
+        assert!(
+            !body.contains("no rows") && !body.contains("row"),
+            "数据库错误原文不能出现在响应里：{body}"
+        );
+    }
 }

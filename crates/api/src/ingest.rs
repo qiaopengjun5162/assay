@@ -51,6 +51,7 @@ pub struct IngestOutcome {
 
 /// 一条 run 的元信息，来自 `summary.json`。整份也存进 `raw_summary`，
 /// 将来新增指标不用改 schema。
+#[derive(Debug)]
 struct RunMeta {
     audited: i32,
     with_preview: i32,
@@ -174,10 +175,13 @@ fn read_run_meta(summary_path: &Path) -> Result<RunMeta, IngestError> {
     )
     .map_err(|e| IngestError::Bad(format!("{} 不是合法 JSON：{e}", summary_path.display())))?;
     let pick = |k: &str| -> Result<i32, IngestError> {
-        raw[k]
+        // 「缺字段」和「字段太大」是两种完全不同的修法（改上游 / 改列类型），
+        // 合成一句「缺整数字段」会让人去补一个本来就有的字段。
+        let v = raw[k]
             .as_i64()
-            .and_then(|v| i32::try_from(v).ok())
-            .ok_or_else(|| IngestError::Bad(format!("summary.json 缺整数字段 {k}")))
+            .ok_or_else(|| IngestError::Bad(format!("summary.json 缺整数字段 {k}")))?;
+        i32::try_from(v)
+            .map_err(|_| IngestError::Bad(format!("summary.json 的 {k}={v} 超出 i32 范围")))
     };
     Ok(RunMeta {
         audited: pick("audited")?,
@@ -269,5 +273,74 @@ mod tests {
         assert_eq!(out.len(), 2, "重复与空 id 都要被丢掉");
         assert_eq!(out[0]["score"], 1.0, "保留首次出现的那条");
         assert_eq!(out[1]["id"], "b");
+    }
+
+    /// 每个测试一个独立临时目录：并发跑（nextest 是进程级并行）也不会互相覆盖。
+    fn tmp_dir(tag: &str) -> std::path::PathBuf {
+        let d = std::env::temp_dir().join(format!("assay-api-{}-{tag}", std::process::id()));
+        std::fs::create_dir_all(&d).expect("建临时目录");
+        d
+    }
+
+    #[test]
+    fn read_run_meta_takes_the_two_counters_and_keeps_the_whole_document() {
+        let dir = tmp_dir("meta-ok");
+        let p = dir.join("summary.json");
+        std::fs::write(
+            &p,
+            r#"{"audited":24322,"withPreview":19830,"lagMedianDays":137}"#,
+        )
+        .unwrap();
+
+        let m = read_run_meta(&p).unwrap();
+        assert_eq!(m.audited, 24322);
+        assert_eq!(m.with_preview, 19830);
+        // 整份进 raw_summary：以后加指标不用改 schema
+        assert_eq!(m.raw["lagMedianDays"], 137);
+
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    /// 三种失败要给出三种**能直接改**的报错。都退化成一句「读 summary 失败」
+    /// 的话，运维只能靠猜。
+    #[test]
+    fn read_run_meta_failures_name_the_actual_problem() {
+        let dir = tmp_dir("meta-bad");
+
+        let missing = read_run_meta(&dir.join("nope.json")).unwrap_err();
+        assert!(missing.to_string().contains("读不到"), "{missing}");
+
+        let broken = dir.join("broken.json");
+        std::fs::write(&broken, "{not json").unwrap();
+        let e = read_run_meta(&broken).unwrap_err();
+        assert!(e.to_string().contains("不是合法 JSON"), "{e}");
+
+        let partial = dir.join("partial.json");
+        std::fs::write(&partial, r#"{"audited":1}"#).unwrap();
+        let e = read_run_meta(&partial).unwrap_err();
+        assert!(
+            e.to_string().contains("withPreview"),
+            "报错要点名缺哪个字段：{e}"
+        );
+
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    /// 计数超出 i32 时不能静默截断成一个负数写进库（那会让某一周的
+    /// `audited` 变成 -1，且没有任何地方报错）。
+    #[test]
+    fn read_run_meta_rejects_a_count_that_does_not_fit() {
+        let dir = tmp_dir("meta-overflow");
+        let p = dir.join("summary.json");
+        std::fs::write(&p, r#"{"audited":99999999999,"withPreview":1}"#).unwrap();
+
+        let e = read_run_meta(&p).unwrap_err();
+        assert!(e.to_string().contains("audited"), "{e}");
+        assert!(
+            e.to_string().contains("超出"),
+            "超出范围要说「超出」，不能说「缺字段」：{e}"
+        );
+
+        std::fs::remove_dir_all(&dir).ok();
     }
 }

@@ -4,6 +4,7 @@
 //! 因为只有三个视图、两条跳转。
 
 use crate::model::{Data, Row};
+use crate::spark;
 use crate::verify::verify_command;
 use leptos::prelude::*;
 use sha2::Digest;
@@ -247,6 +248,102 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
         }
     });
 
+    // 跑批历史：只画原始计数。
+    //
+    // 一个点不画线——单点连不成趋势，画成一小段横线会被读成「稳定」。
+    // 零个点整块不渲染：空白图例比没有图更糟。
+    let history_view = {
+        let pts = data.history.clone();
+        (!pts.is_empty()).then(|| {
+            if pts.len() < 2 {
+                let p = &pts[0];
+                return view! {
+                    <section class="history">
+                        <h2>"指标在变好还是变坏"</h2>
+                        <p class="hint">
+                            {format!(
+                                "只有 {} 这一次跑批：滞后 > 90 天 {} 个、字段对不上 {} 个、整列全空 {} 个。周度巡检每周记一条，两点以上才画得出曲线——单点连不成趋势，画出来会被当成「稳定」。",
+                                p.date,
+                                fmt_num(p.lag_over90),
+                                fmt_num(p.mismatch),
+                                fmt_num(p.all_empty),
+                            )}
+                        </p>
+                    </section>
+                }
+                .into_any();
+            }
+
+            let first = pts.first().map(|p| p.date.clone()).unwrap_or_default();
+            let last = pts.last().map(|p| p.date.clone()).unwrap_or_default();
+            let lag: Vec<f64> = pts
+                .iter()
+                .map(|p| {
+                    if p.audited > 0 {
+                        p.lag_over90 as f64 / p.audited as f64 * 100.0
+                    } else {
+                        0.0
+                    }
+                })
+                .collect();
+            let mism: Vec<f64> = pts.iter().map(|p| p.mismatch as f64).collect();
+            let empty: Vec<f64> = pts.iter().map(|p| p.all_empty as f64).collect();
+
+            let cards: Vec<(String, String, String, String)> = [
+                ("超过 90 天未更新", &lag, " 个百分点", true),
+                ("声明列数与实际不符", &mism, " 个", false),
+                ("存在整列全空", &empty, " 个", false),
+            ]
+            .into_iter()
+            .map(|(label, values, unit, is_ratio)| {
+                let cur = *values.last().unwrap_or(&0.0);
+                let prev = *values.get(values.len().saturating_sub(2)).unwrap_or(&0.0);
+                let shown = if is_ratio {
+                    format!("{cur:.1}%")
+                } else {
+                    fmt_num(cur as u64)
+                };
+                (
+                    label.to_string(),
+                    shown,
+                    spark::trend(cur, prev, unit),
+                    spark::path(values, 240.0, 44.0, 4.0),
+                )
+            })
+            .collect();
+
+            view! {
+                <section class="history">
+                    <h2>"指标在变好还是变坏"</h2>
+                    <p class="hint">
+                        {format!(
+                            "每次跑批记一条，只记原始计数——问题分随权重变，分数进不了这条线。{first} → {last}，共 {} 次跑批。",
+                            pts.len()
+                        )}
+                    </p>
+                    <div class="sparkgrid">
+                        {cards
+                            .into_iter()
+                            .map(|(label, shown, trend, d)| {
+                                view! {
+                                    <div class="spark">
+                                        <div class="spark-h">{label}</div>
+                                        <div class="spark-num">{shown}</div>
+                                        <svg viewBox="0 0 240 44" preserveAspectRatio="none">
+                                            <path d=d fill="none" stroke="currentColor" stroke-width="1.6" />
+                                        </svg>
+                                        <div class="spark-trend">{trend}</div>
+                                    </div>
+                                }
+                            })
+                            .collect_view()}
+                    </div>
+                </section>
+            }
+            .into_any()
+        })
+    };
+
     let filtered = move || {
         let q = search.get().to_lowercase();
         let dd = dept.get();
@@ -300,6 +397,8 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             <b>{s.proof_count}</b>" 条有机器证明 · AI 解读 "<b>{s.explain_count}</b>" 条"
             <span class="hint">"（剩下那些是平台只给了表头、没有数据行，没有可证的命题）"</span>
         </p>
+
+        {history_view}
 
         <section class="deptboard">
             <h2>"问题最多的部门"</h2>

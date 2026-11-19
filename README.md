@@ -81,7 +81,7 @@
 | AI 解释层 | 完成：**500 条**解读（榜上全部），数字护栏 500/500 通过；首轮越界数字自动重写 |
 | 前端 | 完成：Leptos + WASM，榜单 / 详情 / 证明三视图，刷新可直达 |
 | 工程门禁 | 完成：fmt(Rust+TOML) / clippy / nextest / cargo-deny / lean / 密钥扫描 / 文档 lint |
-| 周度巡检 | 完成：每周一全量体检，指标漂移自动开 PR（基线 + 报告） |
+| 周度巡检 | 完成：每周一全量体检，指标漂移自动开 PR（基线 + 报告），并往 `history/summary.json` 追加一条指标 |
 | 语言构成 | Rust 全量（CLI / 库 / WASM 前端），Python 已移除；线上为 WASM 版 |
 
 ## 快速开始
@@ -116,7 +116,8 @@ just explain 500    # 3) 解释层（需要 LLM key；先跑 just probe 验证�
 just evidence 100   # 4) 证据包：原始响应 + SHA-256
 just prove 100      # 5) 生成定理并跑 Lean 内核
 just reports 100    # 6) 单数据集报告 → web/reports/*.md
-just export 500     # 7) 导出 web/data.json
+just history        # 6b) 跑批历史：把本轮指标追加进 history/summary.json（补跑旧快照用 just history 2026-11-14）
+just export 500     # 7) 导出 web/data.json（history 一并嵌进站点的曲线数据）
 just web            # 8) 构建 WASM 前端 → crates/web/dist
 just tamper         # 篡改演示：内核必须拒绝
 just drift          # 周度漂移对比：拿基线比本轮 summary.json
@@ -137,6 +138,8 @@ shasum -a 256 -c MANIFEST.sha256
 
 周度巡检由 `.github/workflows/audit.yml` 每周一自动跑一遍全量体检，指标漂移就开 PR
 （基线 + 报告），口径与阈值见 [docs/audit/README.md](docs/audit/README.md)。
+同一趟会往 `history/summary.json` 追加一条**原始计数**（不记问题分：权重一改分数就不可比），
+站点在两点以上时画成曲线，见 [D31](docs/DECISIONS.md)。
 
 > **快照已冻结**：仓库里的榜单、证明、证据都对应 2026-11-14 这次抓取。
 > `just all` 会用当天数据重跑，数字会漂移；路演/引用前不要执行，除非确实要刷新时点。
@@ -226,9 +229,9 @@ assay explain --probe
 | `out-full/leaderboard.md` | 问题 Top 50 |
 | `out-full/leaderboard_dept.md` | 部门榜 Top 25 |
 | `out-full/explanations.json` | 500 条 AI 解读 + 护栏结果 |
-| `out-full/evidence.json` | 100 份证据包索引（含 SHA-256） |
-| `out-full/proofs.json` | 100 个数据集的定理元信息 |
-| `out-full/TopProofs.lean` | 2,355 条定理，`lean` 退出码 0 |
+| `out-full/evidence.json` | 500 份证据包索引（含 SHA-256） |
+| `out-full/proofs.json` | 391 个可证数据集的定理元信息 |
+| `out-full/TopProofs.lean` | 4,970 条定理（391 个数据集），`lean` 退出码 0 |
 | `web/data.json` | 前端数据（500 条明细） |
 | `web/reports/*.md` | 前 500 名单数据集报告（字段差异、原始样例、证据哈希、AI 解读） |
 | `crates/web/dist/` | 打包后的静态站 |

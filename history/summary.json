@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2026-11-14",
+    "audited": 24322,
+    "withPreview": 19830,
+    "lagOver90": 13665,
+    "mismatch": 1284,
+    "allEmpty": 3976,
+    "stopped": 8843,
+    "emptyOver30": 1097
+  }
+]

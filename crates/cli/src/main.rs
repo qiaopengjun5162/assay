@@ -3,7 +3,9 @@
 //! 所有子命令共享 `--out` 目录约定（默认 `out-full`），产物与旧版脚本一一对应。
 
 use assay_core::api::Client;
-use assay_core::{aggregate, audit, checks, drift, evidence, explain, export, pack, proof};
+use assay_core::{
+    aggregate, audit, checks, drift, evidence, explain, export, history, pack, proof,
+};
 use clap::{Parser, Subcommand};
 use std::path::Path;
 
@@ -74,6 +76,9 @@ enum Command {
         /// 快照日期（YYYY-MM-DD）。默认从 `<out>/run.json` 推，没有就从证据时间推
         #[arg(long)]
         snapshot_date: Option<String>,
+        /// 跑批历史日志（默认 history/summary.json）。只读，嵌进 data.json 的 history
+        #[arg(long, default_value = "history/summary.json")]
+        history: String,
     },
     /// 批量生成单数据集报告（前 N 名，Markdown，写进站点目录）
     Reports {
@@ -157,6 +162,22 @@ enum Command {
         /// 产出这批数据的 commit，写进清单供追溯
         #[arg(long)]
         commit: Option<String>,
+    },
+    /// 跑批历史：把这一轮的指标追加进日志，攒成曲线
+    ///
+    /// 同一天重跑会**替换**当天那一条，不会在图上画两个点。
+    /// 日期默认取 `<--current>` 旁边的 `run.json`（跑批开跑时间），
+    /// 补跑旧快照时用 `--date` 指定，别用「今天」——图的横轴会全错。
+    History {
+        /// 这一轮的 summary.json；省略则用 --out 下的
+        #[arg(long)]
+        current: Option<String>,
+        /// 历史日志（不存在就新建）
+        #[arg(long, default_value = "history/summary.json")]
+        log: String,
+        /// 采集日期 YYYY-MM-DD；省略则从 run.json 推
+        #[arg(long)]
+        date: Option<String>,
     },
     /// 本地静态服务（替代 python -m http.server）
     Serve {
@@ -277,6 +298,7 @@ fn run(cli: Cli) -> assay_core::Result<()> {
             split,
             shards,
             snapshot_date,
+            history,
         } => {
             let reports_dir = Path::new(&dest).parent().map(|p| p.join("reports"));
             let reports_dir = reports_dir
@@ -299,6 +321,7 @@ fn run(cli: Cli) -> assay_core::Result<()> {
                 out_path: &dest,
                 limit,
                 snapshot_date: snapshot_date.as_deref(),
+                history_path: Some(&history),
                 shards: split.then_some(shards),
             })?;
             println!(
@@ -458,6 +481,28 @@ fn run(cli: Cli) -> assay_core::Result<()> {
                 }
             }
             std::process::exit(report.verdict.exit_code());
+        }
+        Command::History { current, log, date } => {
+            let current = current.unwrap_or_else(|| format!("{out}/summary.json"));
+            let summary = read_json_value(&current)
+                .ok_or_else(|| assay_core::Error::Other(format!("缺少 {current}")))?;
+            let date = match date {
+                Some(d) => d,
+                None => date_of_run(&current)?,
+            };
+            // 缺字段说明这份 summary 不是本工具的产物；不猜、不补 0。
+            let point = history::Point::from_summary(&date, &summary).ok_or_else(|| {
+                assay_core::Error::Other(format!(
+                    "{current} 里缺指标或日期 {date} 不合法，不记这一轮"
+                ))
+            })?;
+            let points = history::append(&log, point)?;
+            let first = points.first().map(|p| p.date.as_str()).unwrap_or("-");
+            let last = points.last().map(|p| p.date.as_str()).unwrap_or("-");
+            println!("历史 {log}：{} 点（{first} → {last}）", points.len());
+            if points.len() < 2 {
+                println!("提示：曲线要两点以上才画得出来，等下一次周报");
+            }
         }
         Command::Pack {
             dest,
@@ -637,6 +682,30 @@ fn write_text(dest: &str, text: &str) -> assay_core::Result<()> {
 fn today() -> String {
     let s = assay_core::util::now_iso8601();
     s.get(..10).unwrap_or(&s).to_string()
+}
+
+fn read_json_value(path: &str) -> Option<serde_json::Value> {
+    let text = std::fs::read_to_string(path).ok()?;
+    serde_json::from_str(&text).ok()
+}
+
+/// 这一轮跑批的日期：优先 `<summary 同目录>/run.json` 的 `capturedAt`。
+///
+/// 不用「今天」当默认值：补跑旧快照时「今天」会把横轴写成错的日期，
+/// 而且这个错误没有任何报错——图上只是多了一个不该有的点。
+fn date_of_run(current: &str) -> assay_core::Result<String> {
+    let dir = Path::new(current).parent().unwrap_or(Path::new("."));
+    let run = dir.join("run.json");
+    let ts = read_json_value(&run.to_string_lossy())
+        .and_then(|v| v["capturedAt"].as_str().map(str::to_string));
+    match ts.as_deref().and_then(|s| s.get(..10)).map(str::to_string) {
+        Some(d) if assay_core::history::is_iso_date(&d) => Ok(d),
+        _ => Err(assay_core::Error::Other(format!(
+            "推不出这一轮的日期：{} 里没有合法的 capturedAt。\
+             补跑旧快照时用 --date YYYY-MM-DD 指定，不要用「今天」。",
+            run.display()
+        ))),
+    }
 }
 
 /// 证据复核：逻辑在 `evidence::verify_index`，这里只打结果与给退出码。

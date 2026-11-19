@@ -16,6 +16,7 @@ pub mod evidence;
 pub mod explain;
 pub mod export;
 pub mod guard;
+pub mod history;
 pub mod lean;
 pub mod matrix;
 pub mod model;

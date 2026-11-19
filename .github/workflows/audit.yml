@@ -102,6 +102,29 @@ jobs:
               ;;
           esac
 
+      # 历史日志：每周记一条原始计数，攒成曲线。
+      #
+      # 只在判定可信（0 正常 / 1 漂移）时才记：exit 2 那一轮抓取本身就坏了，
+      # 记进去会在曲线上画一个假悬崖，而且没有任何报错会提醒后来者。
+      #
+      # 直接推到 main，不走 PR：这是数据追加，不是代码变更，每周开一个 PR
+      # 只会让人学会无脑点合并。main 没有保护规则（2026-11-19 核实），
+      # 推不上去就红给你看，不会静默丢数据。
+      - name: 追加历史日志
+        if: steps.drift.outputs.code == '0' || steps.drift.outputs.code == '1'
+        run: |
+          ./target/release/assay --out out-audit history \
+            --log history/summary.json
+          if git diff --quiet -- history/summary.json; then
+            echo "历史无变化（同日重跑），不提交"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add history/summary.json
+          git commit -m "chore(audit): 追加 $(date -u +%F) 的体检指标"
+          git push
+
       # 产物留着查「到底是哪些数据集变了」。items.jsonl 压缩后不大，留 30 天。
       - name: 上传产物
         if: always()

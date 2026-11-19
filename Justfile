@@ -90,6 +90,12 @@ audit threads="8" limit="0":
 report:
     cargo run --release -p assay -- --out {{out}} report
 
+# 2b) 跑批历史：把这一轮的指标追加进 history/summary.json（同日重跑会替换，不重复画点）
+#     日期取 {{out}}/run.json；没有 run.json（如补跑旧快照）就显式传：
+#       just history 2026-11-14
+history date="":
+    cargo run --release -p assay -- --out {{out}} history {{ if date != "" { "--date " + date } else { "" } }}
+
 # 检查项清单：阈值 / 权重 / 本批命中数（尺子本身也公开）
 checks:
     cargo run --release -p assay -- --out {{out}} checks
@@ -128,9 +134,9 @@ prove top="100":
 reports top="100" dest="web/reports":
     cargo run --release -p assay -- --out {{out}} reports --top {{top}} --dest {{dest}}
 
-# 7) 导出静态站数据（报告目录由 dest 同级决定）
-export limit="500" dest="web/data.json":
-    cargo run --release -p assay -- --out {{out}} export --limit {{limit}} --dest {{dest}}
+# 7) 导出静态站数据（history 会被嵌进 data.json，前端据此画曲线）
+export limit="500" dest="web/data.json" history="history/summary.json":
+    cargo run --release -p assay -- --out {{out}} export --limit {{limit}} --dest {{dest}} --history {{history}}
 
 # 7b) 数据分层：data.json 之外再产 index.json（全量）+ shards/（详情分片）
 #     实测全量：index 7.3MB / shards 12MB（24 片，每片约 500KB）
@@ -153,8 +159,8 @@ api:
 api-ingest date out="out-full":
     cargo run -p assay-api -- ingest --out {{out}} --captured-at {{date}}
 
-# 全流水线：体检 → 榜单 → 解释 → 证据 → 证明 → 报告 → 导出 → 前端
-all: audit report explain evidence prove reports export web
+# 全流水线：体检 → 榜单 → 历史 → 解释 → 证据 → 证明 → 报告 → 导出 → 前端
+all: audit report history explain evidence prove reports export web
     echo "完成：just serve 预览"
 
 # 小样本端到端自检（不覆盖正式产物）

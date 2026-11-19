@@ -41,15 +41,21 @@
 
 无。第二平台需要人工探明接口，属于下一步而非阻塞。
 
-## 测试覆盖率（2026-11-17 实测）
+## 测试覆盖率（2026-11-19 实测）
 
-`cargo llvm-cov nextest`：总行覆盖 **45.54%**（1972 行，覆盖 898 行）。
+`./scripts/coverage.sh`（70 测试，core+cli）：总行覆盖 **68.46%**（3744 行，覆盖 2563 行）。
+地板从 52 抬到 **66**——macOS 与 Ubuntu 实测数字一致（68.46%），留 2.46pp 吸收工具链差异。
 
-纯函数层基本满分：`lean` 100%、`util` 98.4%、`matrix` 97.9%、`scoring` 92.5%、`aggregate` 92.9%。
+纯函数层接近满分：`lean` 100%、`util` 98.4%、`matrix` 97.9%、`drift` 98.3%、
+`aggregate` 93.8%、`scoring` 93.3%、`export` 91.2%。
 
-零覆盖的是 IO 编排层——`evidence`、`explain`、`export`、`proof` 与 `cli` 全 0%。
-它们都要 HTTP 或外部进程，`crates/core/tests/pipeline.rs` 目前只覆盖 `audit` → `report`。
-下一步补法：给 `evidence` / `export` 用假 `CatalogSource` 补集成测试，`proof` 断言生成文本而非真跑 lean。
+低覆盖的仍是 IO 编排层，但已不是旧记录说的「全 0%」：`evidence` 64.8%、
+`explain` 24.8%、`api.rs` 41.2%（客户端部分）、`proof` 0%、`cli` 0%。
+这几层的正确性靠产物门禁兜，不靠单测：`verify-evidence` 逐份重算 500 个哈希、
+Lean 内核校验、口径对齐用冻结 golden 文件。
+
+下一步补法：`explain` 与 `api` 的纯函数部分（参数归一化、协议判断、护栏）本可单测却没测，
+优先级高于给真跑 HTTP 的部分补测试；`proof` 断言生成文本而非真跑 lean。
 
 ## 冻结说明
 

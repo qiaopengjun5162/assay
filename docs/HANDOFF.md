@@ -242,6 +242,8 @@ just api-ingest 2026-11-18     # 把 out-full 灌进库（幂等，同一天重�
 | 命令入口 | `crates/cli/src/main.rs` |
 | 前端视图 | `crates/web/src/app.rs` |
 | 前端数据模型 | `crates/web/src/model.rs` |
+| 前端样式 / 响应式断点 | `crates/web/style.css` |
+| 分享卡片 / favicon | `web/og.png`、`web/favicon.svg`（`index.html` 里 copy-file） |
 
 ## 6. 环境坑
 
@@ -270,6 +272,32 @@ just prove 100
 just web && just serve   # 打开 8080，确认榜单 500 行、详情、证明页、返回键
 ```
 
+### 按用户的路径走一遍（改前端后必做）
+
+前三项是自动化判据，后两项只能人眼。
+
+```bash
+# 1) 四视图都能直达且刷新不白屏
+for h in "" "#/checks" "#/detail/HuZoVx_QGmxtyEgbHu_Ulw%3D%3D" "#/proof/HuZoVx_QGmxtyEgbHu_Ulw%3D%3D"; do
+  curl -s -o /dev/null -w "%{http_code} $h\n" "http://127.0.0.1:8080/$h"
+done
+
+# 2) 深链筛选：进 #/?dept=<部门名> 后列表要筛好，**下拉也必须显示该部门**
+#    下拉靠 option 的 selected 同步；改回 prop:value 会被吞（options 还没渲染），
+#    表现是列表筛好了、下拉仍写「全部部门」。
+
+# 3) 移动端横向溢出：窄视口下 documentElement.scrollWidth 必须等于视口宽
+#    真机口径 390px。桌面 Chrome 有 500px 最小窗口宽，别拿 --window-size=390 当手机。
+#    用 iframe 固定 390 宽量：scrollWidth 应等于 390，且没有元素 right 超出视口。
+
+# 4) 浏览器内重算：详情页点「在浏览器里重算 SHA-256」，结果必须是「一致」
+```
+
+人眼两项：
+
+- 手机宽度（≈390–500px）下：案例卡两栏要上下堆叠，8 张数字卡两列，页面不能左右晃。
+- 分享出去：`index.html` 的 og: 标签要能在微信/Twitter 展开成卡片（改文案后重新生成 `web/og.png`）。
+
 ## 8. 交付前检查清单
 
 - [ ] `just check` 全绿（含 `cargo deny check`）
@@ -277,7 +305,8 @@ just web && just serve   # 打开 8080，确认榜单 500 行、详情、证明�
 - [ ] `just smoke` 通过
 - [ ] 口径对齐（若改了统计）
 - [ ] `lean` PASS，`verify.txt` 为 PASS
-- [ ] 前端三视图可访问，浏览器返回正常
+- [ ] 前端四视图（榜单 / 详情 / 证明 / 判定规则）可访问，浏览器返回正常
+- [ ] 窄视口（≈390px）无横向溢出，分享卡片能展开（见上一节）
 - [ ] `web/reports` 覆盖导出的前 N 名；`proofs.json` 是其中有数据行的那部分（现为 500 / 391）
 - [ ] 文档更新（README / ARCHITECTURE / DECISIONS 至少一处）
 - [ ] 没有 key、没有 `out-full/` 大文件进 git

@@ -114,6 +114,17 @@ a:hover { text-decoration: underline; }
 .coverage b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .coverage .hint { display: block; margin-top: 2px; }
 
+/* ---------- 三步用法 ---------- */
+.howto {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin: 20px 0 10px; padding: 0; list-style: none;
+}
+.howto li {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px; font-size: 13px; color: var(--ink-2); line-height: 1.6;
+}
+.howto li b { display: block; font-size: 14px; color: var(--ink); margin-bottom: 3px; }
+
 /* ---------- 跑批历史（迷你折线） ---------- */
 .history { margin: 26px 0 6px; }
 .history h2 { font-size: 17px; margin: 0 0 6px; }
@@ -143,6 +154,12 @@ a:hover { text-decoration: underline; }
 .deptboard .hint { margin: 0 0 14px; }
 .deptgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
 .deptcard { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+button.deptcard {
+  display: block; width: 100%; text-align: left; font: inherit; color: inherit;
+  cursor: pointer;
+}
+button.deptcard:hover { border-color: var(--ink-2); background: #fbfbfc; }
+button.deptcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .deptcard .dname { font-weight: 600; font-size: 14px; line-height: 1.35; margin-bottom: 6px; }
 .deptcard .dmeta { color: var(--muted); font-size: 12px; }
 
@@ -156,6 +173,8 @@ input[type="search"], select {
   font: inherit; color: var(--ink); background: #fff;
   border: 1px solid var(--line-strong); border-radius: 8px;
   padding: 8px 11px; min-height: 40px;
+  /* 部门名可能是「省政府机构/省民政厅」这种长串：不限宽会把整页撑出横向滚动 */
+  max-width: 100%; min-width: 0;
 }
 input[type="search"] { flex: 1 1 260px; }
 input[type="search"]:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
@@ -164,6 +183,19 @@ input[type="search"]:focus, select:focus { outline: 2px solid var(--accent); out
   font-size: 14px; color: var(--ink-2); cursor: pointer;
 }
 .check input { width: 17px; height: 17px; accent-color: var(--accent); }
+
+/* 筛选后的一行说明：榜上几条 vs 部门全量几条 */
+.filter-note {
+  margin: 0 0 10px; font-size: 13px; color: var(--ink-2);
+  background: var(--warn-bg); border: 1px solid #e6c893; border-radius: 8px;
+  padding: 8px 12px;
+}
+.filter-note b { font-variant-numeric: tabular-nums; color: var(--ink); }
+.linkbtn {
+  background: none; border: 0; padding: 0; margin: 0;
+  font: inherit; color: var(--accent); font-weight: 600;
+  cursor: pointer; text-decoration: underline;
+}
 
 /* ---------- 榜单 ---------- */
 .board {
@@ -193,6 +225,9 @@ input[type="search"]:focus, select:focus { outline: 2px solid var(--accent); out
 .chip.bad { background: var(--bad-bg); border-color: #e9b3ad; color: #8f1d17; font-weight: 700; }
 .chip.warn { background: var(--warn-bg); border-color: #e6c893; color: #6b4000; font-weight: 700; }
 .chip.ok { background: var(--ok-bg); border-color: #a8d5ba; color: #08492a; font-weight: 700; }
+/* 部门标签是链接：点回榜单只看这个部门 */
+a.chip { color: var(--ink); text-decoration: none; }
+a.chip:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
 
 /* ---------- 详情 ---------- */
 .crumb { padding: 22px 0 6px; font-size: 14px; color: var(--muted); }
@@ -206,6 +241,8 @@ input[type="search"]:focus, select:focus { outline: 2px solid var(--accent); out
 }
 .verdict.bad { border-left-color: var(--bad); }
 .verdict b { font-size: 17px; color: var(--ink); }
+.verdict .btn { margin-left: 10px; }
+.verdict .chip { margin-left: 8px; }
 .btn {
   display: inline-block; border: 1px solid var(--line-strong); background: #fff; color: var(--ink);
   padding: 9px 14px; border-radius: 8px; font-size: 14px; font-weight: 600;
@@ -228,11 +265,13 @@ h2.section { font-size: 17px; margin: 26px 0 12px; }
 }
 .panel h2 { margin: 0 0 10px; font-size: 16px; }
 .panel h3 { margin: 16px 0 6px; font-size: 14px; }
-.panel p { margin: 8px 0; }
+.panel p { margin: 8px 0; overflow-wrap: anywhere; }
 .panel.mismatch { border-left: 4px solid var(--warn); }
 .explain { font-size: 15px; line-height: 1.7; color: var(--ink-2); margin: 0; }
 
-.hint { color: var(--muted); font-size: 13px; }
+/* 说明文字里会内联 SHA-256（64 字符无空格）。不打断它，整页就会被撑宽
+ * ——详情页在 390px 下实测过：一个 <p class="hint"> 把视口顶到 525px。 */
+.hint { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
 .mono-sm { font-family: var(--mono); font-size: 12px; word-break: break-all; }
 
 .kv { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -281,6 +320,14 @@ pre.code { line-height: 1.55; }
   background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
   overflow: hidden;
 }
+/* 表格四列在 390px 下最小宽度超出视口，会顶破整页。
+ * 外层给横向滚动，宁可让这张表自己滚，也不让整页左右晃。 */
+.tablewrap {
+  overflow-x: auto;
+  border: 1px solid var(--line); border-radius: 8px;
+  background: var(--panel); -webkit-overflow-scrolling: touch;
+}
+.tablewrap .checktable { border: 0; background: transparent; }
 .checktable thead th {
   text-align: left; font-size: 12px; font-weight: 600; letter-spacing: .04em;
   color: var(--muted); text-transform: uppercase;
@@ -316,6 +363,8 @@ footer.site {
   border-top: 1px solid var(--line); margin-top: 34px; padding-top: 16px;
   color: var(--muted); font-size: 13px;
 }
+footer.site p { margin: 4px 0; }
+footer.site .foot-links a { font-weight: 600; }
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 900px) {
@@ -332,9 +381,23 @@ footer.site {
 }
 @media (max-width: 640px) {
   .dims { grid-template-columns: 1fr; }
-  .stats { grid-template-columns: 1fr; }
+  /* 8 张数字卡堆成一列要滚 8 屏，两列刚好：数字短、标签短 */
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .stat { padding: 12px 14px; }
+  .stat .num { font-size: 21px; }
   .vs-arrow { display: none; }
+  /* 两栏并排时「实际给到」那格会被挤到贴边裁切，手机上改成上下堆叠 */
+  .vs-col { flex: 1 1 100%; }
+  .howto { grid-template-columns: 1fr; }
   .row .chips { padding-left: 0; }
   .kv th { width: 96px; }
   .pass-card { flex-direction: column; align-items: flex-start; }
+
+  /* 两个下拉各占一行：手机上司名长，并排会挤成一团 */
+  .filters select { flex: 1 1 100%; }
+  /* 权重只影响排序，手机上先让位给「检查项」本身 */
+  .checktable thead th:nth-child(4),
+  .checktable td.c-w { display: none; }
+  .checktable .c-hit { width: auto; }
+  .checktable td, .checktable thead th { padding-left: 10px; padding-right: 10px; }
 }

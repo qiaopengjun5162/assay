@@ -48,8 +48,10 @@ cat > "$DIST/_a11y.html" <<'HTML'
 <pre id="o" style="font:12px/1.5 monospace;white-space:pre-wrap"></pre>
 <script>
 const ID = 'HuZoVx_QGmxtyEgbHu_Ulw%3D%3D';
+const D = '%E5%AE%81%E6%B3%A2%E5%B8%82%E7%BB%9F%E8%AE%A1%E5%B1%80';  // 宁波市统计局
 const MAP = {list:['/','榜单'],checks:['/#/checks','判定规则'],
-  detail:['/#/detail/'+ID,'详情'],proof:['/#/proof/'+ID,'证明']};
+  detail:['/#/detail/'+ID,'详情'],proof:['/#/proof/'+ID,'证明'],
+  dept:['/#/dept/'+D,'部门']};
 const [path,name] = MAP[new URLSearchParams(location.search).get('r')||'list'];
 const f = document.getElementById('f');
 const sleep = ms => new Promise(r => setTimeout(r,ms));
@@ -73,6 +75,10 @@ f.onload = async () => {
     out.push('~ [incomplete] '+v.id+' x'+v.nodes.length);
     for (const n of v.nodes.slice(0,3)) out.push('    target='+n.target.join(' '));
   }
+  // 渲染残留：Leptos 里写成 "占全量 {share}" 会把花括号原样输出，
+  // 编译不报错、页面也不报错，只有人眼能发现。这里扫一遍。
+  const stray = doc.body.innerText.match(/\{[a-zA-Z_][\w.]*\}/g) || [];
+  out.push('stray_placeholders='+stray.length+(stray.length?' '+JSON.stringify(stray.slice(0,3)):''));
   out.push('===== DONE');
   document.getElementById('o').textContent = out.join('\n');
 };
@@ -94,13 +100,17 @@ for _ in $(seq 40); do
 done
 
 fail=0
-for r in list checks detail proof; do
+for r in list checks detail proof dept; do
   dom="$("$CHROME" --headless=new --no-sandbox --disable-gpu \
         --virtual-time-budget=30000 --window-size=1300,1200 \
         --dump-dom "http://127.0.0.1:$PORT/_a11y.html?r=$r" 2>/dev/null \
         | sed -n '/<pre/,/<\/pre>/p' | sed 's/<[^>]*>//g')"
   echo "$dom"
   if ! echo "$dom" | grep -q '^violations=0$'; then
+    fail=1
+  fi
+  if ! echo "$dom" | grep -q '^stray_placeholders=0'; then
+    echo "!! $r 渲染出未替换的占位符（Leptos 里把 {var} 写进了字符串字面量）" >&2
     fail=1
   fi
   if ! echo "$dom" | grep -q '===== DONE'; then
@@ -115,4 +125,4 @@ if [ "$fail" -ne 0 ]; then
   exit 1
 fi
 echo
-echo "✅ 四个视图 violations=0。incomplete 项要人工确认，不能当通过。"
+echo "✅ 五个视图 violations=0，无渲染残留。incomplete 项要人工确认，不能当通过。"

@@ -278,8 +278,10 @@ just web && just serve   # 打开 8080，确认榜单 500 行、详情、证明�
 前三项是自动化判据，后两项只能人眼。
 
 ```bash
-# 1) 四视图都能直达且刷新不白屏
-for h in "" "#/checks" "#/detail/HuZoVx_QGmxtyEgbHu_Ulw%3D%3D" "#/proof/HuZoVx_QGmxtyEgbHu_Ulw%3D%3D"; do
+# 1) 五视图都能直达且刷新不白屏
+for h in "" "#/checks" "#/detail/HuZoVx_QGmxtyEgbHu_Ulw%3D%3D" \
+         "#/proof/HuZoVx_QGmxtyEgbHu_Ulw%3D%3D" \
+         "#/dept/%E5%AE%81%E6%B3%A2%E5%B8%82%E7%BB%9F%E8%AE%A1%E5%B1%80"; do
   curl -s -o /dev/null -w "%{http_code} $h\n" "http://127.0.0.1:8080/$h"
 done
 
@@ -292,6 +294,9 @@ done
 #    用 iframe 固定 390 宽量：scrollWidth 应等于 390，且没有元素 right 超出视口。
 
 # 4) 浏览器内重算：详情页点「在浏览器里重算 SHA-256」，结果必须是「一致」
+
+# 5) 部门页口径：卡片上的 N（全量）和列表条数 M（榜上前 500）必须同时出现，
+#    并写明「其余 N-M 条没进榜，不代表没问题」。只写 N 会被读成「藏了 N-M 条」。
 ```
 
 人眼两项：
@@ -305,9 +310,13 @@ done
 just web && just a11y
 ```
 
-`scripts/a11y.sh` 会起一个临时静态服务，把四个视图塞进 iframe，用 axe-core 跑
+`scripts/a11y.sh` 会起一个临时静态服务，把五个视图塞进 iframe，用 axe-core 跑
 WCAG 2.1 A/AA + best-practice，**任一视图 `violations != 0` 就非零退出**。axe 只下一次，
 缓存在 `~/.cache/assay-axe/`。
+
+同一支脚本还会扫**渲染残留**：页面上出现 `{share}` 这种没被替换的花括号就算失败。
+Leptos 把 `{var}` 写进字符串字面量时编译不报错、页面也不报错，只有人眼能发现——
+部门页的「占全量 {share}」就是这么被扫出来的。
 
 **`incomplete` 不等于通过。** axe 判不了的项目必须人工看，当前只剩两项，都是良性：
 
@@ -334,9 +343,9 @@ WCAG 2.1 A/AA + best-practice，**任一视图 `violations != 0` 就非零退出
 - [ ] `just smoke` 通过
 - [ ] 口径对齐（若改了统计）
 - [ ] `lean` PASS，`verify.txt` 为 PASS
-- [ ] 前端四视图（榜单 / 详情 / 证明 / 判定规则）可访问，浏览器返回正常
+- [ ] 前端五视图（榜单 / 详情 / 证明 / 判定规则 / 部门）可访问，浏览器返回正常
 - [ ] 窄视口（≈390px）无横向溢出，分享卡片能展开（见上一节）
-- [ ] `just a11y` 四个视图 `violations=0`，`incomplete` 项已人工确认
+- [ ] `just a11y` 五个视图 `violations=0`，`incomplete` 项已人工确认
 - [ ] `web/reports` 覆盖导出的前 N 名；`proofs.json` 是其中有数据行的那部分（现为 500 / 391）
 - [ ] 文档更新（README / ARCHITECTURE / DECISIONS 至少一处）
 - [ ] 没有 key、没有 `out-full/` 大文件进 git

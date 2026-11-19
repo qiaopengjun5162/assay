@@ -28,7 +28,8 @@
 │  crates/core                                                  │
 │                                                               │
 │  纯函数（无 IO、无网络，CI 可全速跑）                          │
-│    scoring  分类与评分                                        │
+│    checks   检查项登记表：阈值 / 权重 / 维度 / 人话            │
+│    scoring  分类与评分（权重取自 checks）                      │
 │    matrix   空值位图 / 列计数 / 空值率                        │
 │    guard    数字护栏                                          │
 │    lean     Lean 文本生成                                     │
@@ -126,6 +127,21 @@ pub const STOPPED_CYCLES: [&str; 3];
 ```
 
 唯一口径来源。任何地方要判断「字段是否一致」，都调这里，不要自己写比较。
+权重不在这里写死，全部取自 `checks` 登记表。
+
+### 3.3a `checks.rs`
+
+```rust
+pub const ALL: &[Check];                       // id / 人话 / 维度 / 权重 / 阈值
+pub fn fires(c: &Check, f: &Facts) -> bool;    // 命中判定，只有这一处实现
+pub fn tally(facts: impl Iterator<Item = Facts>) -> Vec<(&Check, usize)>;
+pub fn schema_mismatch(f: &Facts) -> bool;     // = summary.schemaMismatch 的口径
+```
+
+阈值与权重的唯一来源。`desc_len < 10`、空值率 `> 30%`、滞后 `> 90 / 365` 天、
+停更词表这些数字只在这里出现；`scoring` / `aggregate` / `export` / 前端全部引用它。
+这张表还会随 `export` 发布进 `data.json` 的 `checks` 字段，站点原样印出来——
+「尺子」本身也要能被检查。见 D30。
 
 ### 3.4 `lean.rs` / `proof.rs`
 

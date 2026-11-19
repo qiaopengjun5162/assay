@@ -18,7 +18,7 @@ cargo install cargo-llvm-cov        # 覆盖率门禁要用
 ```bash
 just check        # fmt(Rust+TOML) + clippy + nextest + cargo-deny + 证明门禁
 just clippy-wasm  # 前端也在门禁内
-just coverage     # 行覆盖率地板 74%（实测 76.72%）
+just coverage     # 行覆盖率地板 74%（实测 76.81%）
 ```
 
 `just check` 红了不要提交，也不要为了让测试过而改断言——先判断是实现错了还是口径本就该变。

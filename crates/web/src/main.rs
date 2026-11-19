@@ -2,6 +2,7 @@
 
 mod app;
 mod model;
+mod sort;
 mod spark;
 mod verify;
 

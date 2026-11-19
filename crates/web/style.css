@@ -56,6 +56,9 @@ a:hover { text-decoration: underline; }
   margin: 0 0 10px; color: var(--muted); font-size: 13px;
   font-family: var(--mono); letter-spacing: .2px;
 }
+/* 日期、编号这类记号不从中间断开：「2026-11-」换行成「18」看着像坏了一半。
+   只对不可断的短片段用，别套到整段文字上——那样窄屏会横向溢出。 */
+.nw { white-space: nowrap; }
 .hero h1 {
   margin: 0 0 12px; font-size: 34px; line-height: 1.2; letter-spacing: -.6px;
 }

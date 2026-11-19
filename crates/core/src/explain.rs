@@ -169,6 +169,30 @@ pub fn explain(opts: &ExplainOptions<'_>) -> Result<ExplainOutcome> {
 }
 
 fn run_one(d: &Dataset, facts: &[(&'static str, String)], cfg: &LlmConfig) -> Explanation {
+    run_one_with(d, facts, cfg, call_model)
+}
+
+/// 一版文本算不算写完整了：有句读结尾，且不少于 15 字。
+///
+/// 从 `run_one` 里抽出来单测。跑批里出现过模型返回半截话，这个判定一退化，
+/// 页面就会展示半句话，而现有测试一条都不会红。
+fn is_complete(text: &str) -> bool {
+    text.trim_end().ends_with(['。', '！', '？', '”']) && text.trim().chars().count() >= 15
+}
+
+/// 护栏循环。模型调用通过 `call` 注入，测试用脚本替代网络。
+///
+/// 生产路径传的就是 `call_model`，所以「重写一次 / 传输失败也重试一次」
+/// 的语义两侧完全一致；这里不用 trait 对象，是为 4 个测试引入 dyn 不值当。
+fn run_one_with<F>(
+    d: &Dataset,
+    facts: &[(&'static str, String)],
+    cfg: &LlmConfig,
+    call: F,
+) -> Explanation
+where
+    F: Fn(&LlmConfig, &[(&'static str, String)], &str) -> Result<String>,
+{
     let mut last_text = String::new();
     let mut last_illegal: Vec<String> = Vec::new();
     for attempt in 1..=2 {
@@ -177,7 +201,7 @@ fn run_one(d: &Dataset, facts: &[(&'static str, String)], cfg: &LlmConfig) -> Ex
         } else {
             "上一版不合格（数字越界、引用过多或被截断），请重写：只写三句完整的中文，不超过 120 字，数字最多 3 个，结尾必须是句号。".to_string()
         };
-        let text = match call_model(cfg, facts, &hint) {
+        let text = match call(cfg, facts, &hint) {
             Ok(t) => t,
             // 传输层失败（超时、空响应、429）也重试一次。
             // 「重写一次」原本只覆盖护栏不合格，但调模型最常见的失败其实是网络和空返回，
@@ -198,8 +222,7 @@ fn run_one(d: &Dataset, facts: &[(&'static str, String)], cfg: &LlmConfig) -> Ex
                 }
             }
         };
-        let complete = text.trim_end().ends_with(['。', '！', '？', '”']);
-        if !complete || text.trim().chars().count() < 15 {
+        if !is_complete(&text) {
             eprintln!(
                 "  CUT   {} 结尾不完整或过短（第 {attempt} 次）",
                 short(&d.name)
@@ -400,5 +423,169 @@ mod tests {
     fn truncate_keeps_head() {
         assert_eq!(truncate("abc", 10), "abc");
         assert_eq!(truncate("abcdef", 3), "abc…");
+        // 按字符数而不是字节数截，中文不能截出半个字
+        assert_eq!(truncate("一二三四五", 3), "一二三…");
+    }
+
+    #[test]
+    fn short_and_round1_keep_shape() {
+        assert_eq!(
+            short("一二三四五六七八九十一二三四"),
+            "一二三四五六七八九十一二三四"
+        );
+        assert_eq!(short("abcdefghij"), "abcdefghij");
+        assert_eq!(short("123456789012345678901"), "123456789012345678901");
+        assert_eq!(
+            short("1234567890123456789012345"),
+            "123456789012345678901234"
+        );
+        assert_eq!(round1(1.24), 1.2);
+        assert_eq!(round1(1.25), 1.3);
+    }
+
+    #[test]
+    fn describe_source_names_all_three_origins() {
+        let mut c = cfg("https://example.test/v1");
+        assert_eq!(describe_source(&c), "兜底值");
+        c.source = Source::Env;
+        assert_eq!(describe_source(&c), "环境变量");
+        c.source = Source::File("/tmp/hermes.yaml".into());
+        assert_eq!(describe_source(&c), "配置文件 /tmp/hermes.yaml");
+    }
+
+    /// 半截返回和过短返回都得挡住。这是唯一一处「文本够不够格」的判定，
+    /// 500 条跑批里出现过模型只吐半句，页面展示过一次截断文本。
+    #[test]
+    fn is_complete_requires_punctuation_and_minimum_length() {
+        assert!(is_complete("这份数据的字段说明不完整，建议补齐后再使用。"));
+        assert!(is_complete(
+            "  这份数据的问题在于字段对不上，请核对后再用！  "
+        ));
+        assert!(is_complete("这份数据空值过多，建议先清洗再发布。”"));
+        assert!(!is_complete("这句话太短。"));
+        assert!(!is_complete("这份数据的字段说明不完整，建议补齐后再使用"));
+        assert!(!is_complete(""));
+    }
+
+    /// 两种响应形状同时出现时按 OpenAI 优先；非 text 块要跳过。
+    #[test]
+    fn text_of_handles_empty_and_mixed_shapes() {
+        assert_eq!(text_of(&json!({})), "");
+        assert_eq!(text_of(&json!({"choices": []})), "");
+        assert_eq!(
+            text_of(&json!({"content": [{"type": "thinking", "text": "别看我"}]})),
+            ""
+        );
+        let both = json!({
+            "choices": [{"message": {"content": "开"}}],
+            "content": [{"type": "text", "text": "安"}]
+        });
+        assert_eq!(text_of(&both), "开");
+    }
+
+    /// 用脚本替代模型，把护栏的五条路径都跑一遍——这些原本只有联网才能覆盖。
+    fn scripted(
+        replies: Vec<Result<String>>,
+    ) -> impl Fn(&LlmConfig, &[(&'static str, String)], &str) -> Result<String> {
+        let queue = Mutex::new(replies.into_iter());
+        move |_, _, _| {
+            queue
+                .lock()
+                .unwrap()
+                .next()
+                .unwrap_or_else(|| Err(Error::Http("脚本已用尽".into())))
+        }
+    }
+
+    fn sample() -> Dataset {
+        Dataset {
+            id: "test-id".into(),
+            name: "测试数据集".into(),
+            ..Default::default()
+        }
+    }
+
+    fn facts() -> Vec<(&'static str, String)> {
+        vec![("样例空值率", "12.0%".into())]
+    }
+
+    const GOOD: &str = "这份数据的字段说明不够完整，建议补齐后再对外发布，避免使用者误判。";
+
+    #[test]
+    fn run_one_passes_first_attempt() {
+        let c = cfg("https://example.test/v1");
+        let e = run_one_with(&sample(), &facts(), &c, scripted(vec![Ok(GOOD.into())]));
+        assert_eq!(e.status, "pass");
+        assert_eq!(e.attempts, 1);
+        assert!(e.illegal.is_empty());
+    }
+
+    #[test]
+    fn run_one_retries_truncated_answer() {
+        let c = cfg("https://example.test/v1");
+        let e = run_one_with(
+            &sample(),
+            &facts(),
+            &c,
+            scripted(vec![Ok("只写了半句".into()), Ok(GOOD.into())]),
+        );
+        assert_eq!(e.status, "pass");
+        assert_eq!(e.attempts, 2, "截断算一次失败，要重写");
+    }
+
+    #[test]
+    fn run_one_retries_out_of_fact_number() {
+        let c = cfg("https://example.test/v1");
+        let bad = "这份数据有42处字段对不上，建议核对声明与实际样例，避免误用。";
+        let e = run_one_with(
+            &sample(),
+            &facts(),
+            &c,
+            scripted(vec![Ok(bad.into()), Ok(GOOD.into())]),
+        );
+        assert_eq!(e.status, "pass");
+        assert_eq!(e.attempts, 2);
+    }
+
+    #[test]
+    fn run_one_retries_transport_error() {
+        let c = cfg("https://example.test/v1");
+        let e = run_one_with(
+            &sample(),
+            &facts(),
+            &c,
+            scripted(vec![Err(Error::Http("连接超时".into())), Ok(GOOD.into())]),
+        );
+        assert_eq!(e.status, "pass");
+        assert_eq!(e.attempts, 2);
+    }
+
+    #[test]
+    fn run_one_reports_error_vs_rejected_distinctly() {
+        let c = cfg("https://example.test/v1");
+        let err = run_one_with(
+            &sample(),
+            &facts(),
+            &c,
+            scripted(vec![
+                Err(Error::Http("连接超时".into())),
+                Err(Error::Http("连接超时".into())),
+            ]),
+        );
+        assert_eq!(err.status, "error");
+        assert!(err.illegal[0].contains("连接超时"));
+        assert!(err.text.is_empty(), "传输失败没有可展示的文本");
+
+        let bad = "这份数据有42处字段对不上，建议核对声明与实际样例，避免误用。";
+        let rej = run_one_with(
+            &sample(),
+            &facts(),
+            &c,
+            scripted(vec![Ok(bad.into()), Ok(bad.into())]),
+        );
+        assert_eq!(rej.status, "rejected");
+        assert_eq!(rej.attempts, 2);
+        assert!(rej.illegal.iter().any(|x| x == "42"));
+        assert_eq!(rej.text, bad, "被拒的文本仍要留档，方便回看护栏为什么拒绝");
     }
 }

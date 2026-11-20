@@ -12,17 +12,25 @@
 本地跑：`just serve` → http://127.0.0.1:8080
 
 想离线复核？[下载现成二进制（免装 Rust）→ releases/latest](https://github.com/qiaopengjun5162/assay/releases/latest)
-（Linux / macOS / Windows 五平台，每个带 `.sha256`）。解压后在本仓库根目录跑：
+（Linux / macOS / Windows 五平台，每个带 `.sha256`）。复核用的是**本仓库入库的产物**
+（`web/data.json`、`web/evidence/`、`web/reports/`），所以先 clone 仓库；下载目录和仓库
+目录不同，下面两步要分别在各自的目录里跑，别混在一起：
 
 ```bash
-shasum -a 256 -c assay-*.sha256      # 先验包没被动过
-./assay verify-evidence web/data.json web/evidence   # 500 份证据逐份重算
-./assay verify-reports web/data.json web/reports web/evidence  # 500 份报告哈希 + 回链
+# ① 在下载目录：.sha256 里记的是压缩包名，必须和压缩包放在一起才能验
+shasum -a 256 -c assay-macos-arm64.tar.gz.sha256
+tar xzf assay-macos-arm64.tar.gz                     # 解出 assay 二进制
+
+# ② 回到仓库根目录：用刚解出的二进制复核入库产物（web/ 在这里）
+~/Downloads/assay verify-evidence web/data.json web/evidence
+~/Downloads/assay verify-reports web/data.json web/reports web/evidence
 ```
 
-两条门禁都输出 `500 / 500 份一致`，即离线复核通过——不需要信网页，也不需要联网。
-Windows 把 `./assay` 换成 `assay.exe`、`shasum` 换成 `certutil -hashfile <文件> SHA256`
-（或在 Git Bash 里照抄上面命令）。
+把 `macos-arm64` 换成你的平台，`~/Downloads` 换成实际下载目录。两条门禁都输出
+`500 / 500 份一致`，即离线复核通过——不需要信网页，也不需要联网。
+Windows 下是 `.zip`：先 `certutil -hashfile assay-windows-amd64.zip SHA256` 与发布页的
+`.sha256` 对一下，解压得 `assay.exe`，再在仓库根目录跑上面两条 verify（把 `~/Downloads/assay`
+换成 `assay.exe` 的完整路径）。
 
 ---
 
@@ -226,7 +234,7 @@ assay explain --probe
 # 端点   https://platform.yeta.ai/v1/chat/completions
 # 模型   deepseek-v4.1-flash
 # 协议   openai-chat
-# key    TLDA90…Kmbi（来源：配置文件 ~/.hermes/profiles/ai/config.yaml）
+# key    <已隐藏，来源：本机配置文件 ~/.hermes/profiles/ai/config.yaml>
 # 代理   直连
 # 响应   "可以"  1.9s
 ```

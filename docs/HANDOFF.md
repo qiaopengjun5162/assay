@@ -152,7 +152,10 @@
 
 已完成（2026-11-18 · 审计包）：
 
-- `assay pack --captured-at <日期>` → `dist/assay-audit-<日期>.tar.gz`
+- `assay pack --captured-at <日期> [--commit <SHA>]` → `dist/assay-audit-<日期>.tar.gz`。
+  对外交付**要传 `--commit`**（`just pack 2026-11-18 $(git rev-parse --short HEAD)`），
+  否则 `MANIFEST.json` 的 `commit` 是 null，拿到包的人不知道对应哪版代码；实测带 commit
+  连打两次字节一致。
 - 包内自带 `VERIFY.md` + 标准 shasum 格式的 `MANIFEST.sha256`：对方解压后
   `shasum -a 256 -c MANIFEST.sha256` 一条命令验完，**不需要装本工具**
 - 实测 100 条证据：3.6MB → **0.4MB**，206 条校验全 OK

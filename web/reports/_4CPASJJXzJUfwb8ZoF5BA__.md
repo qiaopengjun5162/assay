@@ -1,5 +1,7 @@
 # 各口岸出口信息（历史数据）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/%2B4CPASJJXzJUfwb8ZoF5BA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/%2B4CPASJJXzJUfwb8ZoF5BA%3D%3D
 - 数据集 ID：`+4CPASJJXzJUfwb8ZoF5BA==`
 - 提供部门：宁波海关
 - 开放类型：A

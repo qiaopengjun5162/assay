@@ -1,5 +1,7 @@
 # 宁波市出入境受理点信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/zkohU2wnS_xFEXINeKtp9g%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/zkohU2wnS_xFEXINeKtp9g%3D%3D
 - 数据集 ID：`zkohU2wnS_xFEXINeKtp9g==`
 - 提供部门：宁波市公安局
 - 开放类型：A

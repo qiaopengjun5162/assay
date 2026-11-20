@@ -1,5 +1,7 @@
 # 温州市瓯海区错峰乐游应用-全域文旅客流来源地信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/UYJR_bx4sGpD3v1K9Mu1jQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/UYJR_bx4sGpD3v1K9Mu1jQ%3D%3D
 - 数据集 ID：`UYJR_bx4sGpD3v1K9Mu1jQ==`
 - 提供部门：瓯海区文化和广电旅游体育局（区文物局）
 - 开放类型：A

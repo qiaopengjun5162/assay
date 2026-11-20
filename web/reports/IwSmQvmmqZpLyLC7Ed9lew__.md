@@ -1,5 +1,7 @@
 # 余姚市药店及医疗机构国谈药品信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/IwSmQvmmqZpLyLC7Ed9lew%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/IwSmQvmmqZpLyLC7Ed9lew%3D%3D
 - 数据集 ID：`IwSmQvmmqZpLyLC7Ed9lew==`
 - 提供部门：余姚市
 - 开放类型：A

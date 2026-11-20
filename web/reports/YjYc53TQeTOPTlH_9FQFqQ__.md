@@ -1,5 +1,7 @@
 # 梧岙水库仪器类型配置信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/YjYc53TQeTOPTlH_9FQFqQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/YjYc53TQeTOPTlH_9FQFqQ%3D%3D
 - 数据集 ID：`YjYc53TQeTOPTlH_9FQFqQ==`
 - 提供部门：瑞安市水利局
 - 开放类型：A

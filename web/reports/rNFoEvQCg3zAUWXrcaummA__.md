@@ -1,5 +1,7 @@
 # 平阳县文化场所信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/rNFoEvQCg3zAUWXrcaummA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/rNFoEvQCg3zAUWXrcaummA%3D%3D
 - 数据集 ID：`rNFoEvQCg3zAUWXrcaummA==`
 - 提供部门：平阳县文化和广电旅游体育局
 - 开放类型：A

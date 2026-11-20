@@ -1,5 +1,7 @@
 # 奉化区基本医疗保险定点零售药店信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ZNzZvaIP1mibOQRl_CL%2BqQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ZNzZvaIP1mibOQRl_CL%2BqQ%3D%3D
 - 数据集 ID：`ZNzZvaIP1mibOQRl_CL+qQ==`
 - 提供部门：奉化区
 - 开放类型：A

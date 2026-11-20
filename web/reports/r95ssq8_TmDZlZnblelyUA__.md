@@ -1,5 +1,7 @@
 # 注销个体数信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/r95ssq8%2BTmDZlZnblelyUA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/r95ssq8%2BTmDZlZnblelyUA%3D%3D
 - 数据集 ID：`r95ssq8+TmDZlZnblelyUA==`
 - 提供部门：温州市市场监管局
 - 开放类型：A

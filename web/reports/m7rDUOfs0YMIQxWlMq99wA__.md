@@ -1,5 +1,7 @@
 # 房产小区地理位置信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/m7rDUOfs0YMIQxWlMq99wA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/m7rDUOfs0YMIQxWlMq99wA%3D%3D
 - 数据集 ID：`m7rDUOfs0YMIQxWlMq99wA==`
 - 提供部门：慈溪市
 - 开放类型：A

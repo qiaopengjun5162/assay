@@ -1,5 +1,7 @@
 # 行政事业性收费目录清单信息(2022年)
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/nJRQ46cz2PTC4ynqxp8ZeA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/nJRQ46cz2PTC4ynqxp8ZeA%3D%3D
 - 数据集 ID：`nJRQ46cz2PTC4ynqxp8ZeA==`
 - 提供部门：宁波市财政局
 - 开放类型：A

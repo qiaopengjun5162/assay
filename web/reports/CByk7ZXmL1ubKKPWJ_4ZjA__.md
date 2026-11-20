@@ -1,5 +1,7 @@
 # 瓯海智慧养老服务系统养老院基础数据信息(新)
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/CByk7ZXmL1ubKKPWJ%2B4ZjA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/CByk7ZXmL1ubKKPWJ%2B4ZjA%3D%3D
 - 数据集 ID：`CByk7ZXmL1ubKKPWJ+4ZjA==`
 - 提供部门：瓯海区民政局
 - 开放类型：A

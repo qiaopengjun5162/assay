@@ -200,6 +200,31 @@ fn audit_and_report_run_offline() {
         .unwrap();
     assert!(md.contains(&top.name));
     assert!(md.contains("## 体检结论"));
+    // 下载出去的报告还得能回到这一条：回链用绝对 URL，id 逐字节编码。
+    assert!(md.contains(&assay_core::single::detail_url(&top.id)));
+    assert!(md.contains(&assay_core::single::proof_url(&top.id)));
+
+    // 换证据根目录必须真的换源：11-18 的 500 份入库证据在 web/evidence，
+    // 不在 out-full/evidence（后者只有 100 份）。这条防止报告又生成成无哈希的空壳。
+    let alt_evidence = dir.join("alt-evidence");
+    let alt_item = alt_evidence.join(assay_core::util::safe_id(&top.id));
+    std::fs::create_dir_all(&alt_item).unwrap();
+    std::fs::write(alt_item.join("detail.json"), b"{}").unwrap();
+    std::fs::write(alt_item.join("preview.json"), b"[[\"c\"],[\"v\"]]").unwrap();
+    let alt_dest = dir.join("alt-reports");
+    assay_core::single::render_top_with_evidence(
+        &items,
+        10,
+        &alt_evidence,
+        &alt_dest.to_string_lossy(),
+        &explanations,
+    )
+    .unwrap();
+    let alt_md = std::fs::read_to_string(
+        alt_dest.join(format!("{}.md", assay_core::util::safe_id(&top.id))),
+    )
+    .unwrap();
+    assert!(alt_md.contains("## 证据"), "指定证据根目录没生效");
 
     let _ = std::fs::remove_dir_all(&dir);
 }

@@ -1,5 +1,7 @@
 # 北仑区文化驿站汇总信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/jJelA1RmR6RjV57cIEAMGA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/jJelA1RmR6RjV57cIEAMGA%3D%3D
 - 数据集 ID：`jJelA1RmR6RjV57cIEAMGA==`
 - 提供部门：北仑区
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 金华市固废一件事系统_固废台账信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/bwi3bLelihXM4t2aKDooeQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/bwi3bLelihXM4t2aKDooeQ%3D%3D
 - 数据集 ID：`bwi3bLelihXM4t2aKDooeQ==`
 - 提供部门：金华市生态环境局
 - 开放类型：A

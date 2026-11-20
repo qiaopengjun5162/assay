@@ -1,5 +1,7 @@
 # 安吉县发改局生态保护补偿多跨协同系统-奖补申报企业信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/x0l7GMg32nszD4ZJS55N%2BA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/x0l7GMg32nszD4ZJS55N%2BA%3D%3D
 - 数据集 ID：`x0l7GMg32nszD4ZJS55N+A==`
 - 提供部门：安吉县发改局
 - 开放类型：A

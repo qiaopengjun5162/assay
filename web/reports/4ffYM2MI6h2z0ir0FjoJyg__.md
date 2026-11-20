@@ -1,5 +1,7 @@
 # 金华市“浙江省最美公共文化空间”信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/4ffYM2MI6h2z0ir0FjoJyg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/4ffYM2MI6h2z0ir0FjoJyg%3D%3D
 - 数据集 ID：`4ffYM2MI6h2z0ir0FjoJyg==`
 - 提供部门：金华市文广旅游局
 - 开放类型：A

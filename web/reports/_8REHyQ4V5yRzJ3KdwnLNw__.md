@@ -1,5 +1,7 @@
 # 宁海县运营管理智能设备离线记录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/%2B8REHyQ4V5yRzJ3KdwnLNw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/%2B8REHyQ4V5yRzJ3KdwnLNw%3D%3D
 - 数据集 ID：`+8REHyQ4V5yRzJ3KdwnLNw==`
 - 提供部门：宁海县
 - 开放类型：A

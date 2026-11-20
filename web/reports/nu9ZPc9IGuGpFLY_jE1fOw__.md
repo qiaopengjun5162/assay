@@ -1,5 +1,7 @@
 # 象山县九龙治水河流基础信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/nu9ZPc9IGuGpFLY_jE1fOw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/nu9ZPc9IGuGpFLY_jE1fOw%3D%3D
 - 数据集 ID：`nu9ZPc9IGuGpFLY_jE1fOw==`
 - 提供部门：象山县
 - 开放类型：A

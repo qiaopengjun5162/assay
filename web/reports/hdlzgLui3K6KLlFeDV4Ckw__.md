@@ -1,5 +1,7 @@
 # 水闸信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/hdlzgLui3K6KLlFeDV4Ckw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/hdlzgLui3K6KLlFeDV4Ckw%3D%3D
 - 数据集 ID：`hdlzgLui3K6KLlFeDV4Ckw==`
 - 提供部门：奉化区
 - 开放类型：A

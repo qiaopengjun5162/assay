@@ -1,5 +1,7 @@
 # 农药经营许可证信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/TSeARvl7v6k0vWKeCVMaBg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/TSeARvl7v6k0vWKeCVMaBg%3D%3D
 - 数据集 ID：`TSeARvl7v6k0vWKeCVMaBg==`
 - 提供部门：宁海县
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 余姚市妇联机关妇委会信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/VJBdWCk0Cg5lGsEMRyf4eg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/VJBdWCk0Cg5lGsEMRyf4eg%3D%3D
 - 数据集 ID：`VJBdWCk0Cg5lGsEMRyf4eg==`
 - 提供部门：余姚市
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 慈溪市公共服务活动信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/nXUBIkqS81pOMz0NNdOoBg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/nXUBIkqS81pOMz0NNdOoBg%3D%3D
 - 数据集 ID：`nXUBIkqS81pOMz0NNdOoBg==`
 - 提供部门：慈溪市
 - 开放类型：A

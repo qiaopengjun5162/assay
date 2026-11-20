@@ -1,5 +1,7 @@
 # 建设项目基础信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ZJ7CTcvu6kk325XzMLSIyA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ZJ7CTcvu6kk325XzMLSIyA%3D%3D
 - 数据集 ID：`ZJ7CTcvu6kk325XzMLSIyA==`
 - 提供部门：省政府机构/省生态环境厅
 - 开放类型：B

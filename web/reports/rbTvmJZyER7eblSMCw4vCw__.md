@@ -1,5 +1,7 @@
 # 各大洲出口情况
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/rbTvmJZyER7eblSMCw4vCw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/rbTvmJZyER7eblSMCw4vCw%3D%3D
 - 数据集 ID：`rbTvmJZyER7eblSMCw4vCw==`
 - 提供部门：宁波海关
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 宁波市环境风险重点管控单位名录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/AmzMb2scQsOmhBppbuNQxA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/AmzMb2scQsOmhBppbuNQxA%3D%3D
 - 数据集 ID：`AmzMb2scQsOmhBppbuNQxA==`
 - 提供部门：宁波市生态环境局
 - 开放类型：A

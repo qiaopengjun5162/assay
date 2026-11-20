@@ -1,5 +1,7 @@
 # 口岸未准入食品化妆品信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/_1LZWUnj7BQ5CA%2B1VEh0Qw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/_1LZWUnj7BQ5CA%2B1VEh0Qw%3D%3D
 - 数据集 ID：`_1LZWUnj7BQ5CA+1VEh0Qw==`
 - 提供部门：宁波海关
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 浙江省房屋建筑与市政工程施工图设计文件审查合格书信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/iRbM7Lrm7wVSMOHjv0il8Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/iRbM7Lrm7wVSMOHjv0il8Q%3D%3D
 - 数据集 ID：`iRbM7Lrm7wVSMOHjv0il8Q==`
 - 提供部门：台州市建设局
 - 开放类型：A

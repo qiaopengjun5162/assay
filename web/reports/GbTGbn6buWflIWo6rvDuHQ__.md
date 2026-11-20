@@ -1,5 +1,7 @@
 # 北仑区居民人均可支配收入信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/GbTGbn6buWflIWo6rvDuHQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/GbTGbn6buWflIWo6rvDuHQ%3D%3D
 - 数据集 ID：`GbTGbn6buWflIWo6rvDuHQ==`
 - 提供部门：北仑区
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 海曙区公路桥梁
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/_Ib6yi5o6hxCvUzH2dJ3zQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/_Ib6yi5o6hxCvUzH2dJ3zQ%3D%3D
 - 数据集 ID：`_Ib6yi5o6hxCvUzH2dJ3zQ==`
 - 提供部门：海曙区
 - 开放类型：A

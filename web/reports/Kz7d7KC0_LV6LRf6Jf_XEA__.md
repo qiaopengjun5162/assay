@@ -1,5 +1,7 @@
 # 水库基础信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Kz7d7KC0%2BLV6LRf6Jf_XEA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Kz7d7KC0%2BLV6LRf6Jf_XEA%3D%3D
 - 数据集 ID：`Kz7d7KC0+LV6LRf6Jf_XEA==`
 - 提供部门：文成县政府办公室
 - 开放类型：A

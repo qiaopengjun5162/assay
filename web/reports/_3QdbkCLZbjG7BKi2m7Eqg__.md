@@ -1,5 +1,7 @@
 # 水闸工程特性信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/%2B3QdbkCLZbjG7BKi2m7Eqg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/%2B3QdbkCLZbjG7BKi2m7Eqg%3D%3D
 - 数据集 ID：`+3QdbkCLZbjG7BKi2m7Eqg==`
 - 提供部门：瑞安市水利局
 - 开放类型：A

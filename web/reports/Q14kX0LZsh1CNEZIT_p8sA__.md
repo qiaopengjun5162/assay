@@ -1,5 +1,7 @@
 # 宁波保险业经营数据
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Q14kX0LZsh1CNEZIT%2Bp8sA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Q14kX0LZsh1CNEZIT%2Bp8sA%3D%3D
 - 数据集 ID：`Q14kX0LZsh1CNEZIT+p8sA==`
 - 提供部门：宁波金融监管局
 - 开放类型：A

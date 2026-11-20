@@ -1,5 +1,7 @@
 # 市级政府性基金支出决算信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/QPC72hqrAfl0zfa2H1koBA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/QPC72hqrAfl0zfa2H1koBA%3D%3D
 - 数据集 ID：`QPC72hqrAfl0zfa2H1koBA==`
 - 提供部门：宁波市财政局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 学校年级信息（2023-2024）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/vWdUh75jz2I8xw0MCbWAQg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/vWdUh75jz2I8xw0MCbWAQg%3D%3D
 - 数据集 ID：`vWdUh75jz2I8xw0MCbWAQg==`
 - 提供部门：宁波市教育局
 - 开放类型：A

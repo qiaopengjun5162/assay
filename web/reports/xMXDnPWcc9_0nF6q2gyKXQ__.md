@@ -1,5 +1,7 @@
 # 慈溪市AED信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/xMXDnPWcc9%2B0nF6q2gyKXQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/xMXDnPWcc9%2B0nF6q2gyKXQ%3D%3D
 - 数据集 ID：`xMXDnPWcc9+0nF6q2gyKXQ==`
 - 提供部门：慈溪市
 - 开放类型：A

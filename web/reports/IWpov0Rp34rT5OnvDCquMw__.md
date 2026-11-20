@@ -1,5 +1,7 @@
 # 省市回流_“互联网+监管”企业基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/IWpov0Rp34rT5OnvDCquMw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/IWpov0Rp34rT5OnvDCquMw%3D%3D
 - 数据集 ID：`IWpov0Rp34rT5OnvDCquMw==`
 - 提供部门：文成县市场监管局
 - 开放类型：A

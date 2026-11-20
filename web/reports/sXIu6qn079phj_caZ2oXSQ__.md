@@ -1,5 +1,7 @@
 # 南湖区新执业药师注册证（国标）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/sXIu6qn079phj_caZ2oXSQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/sXIu6qn079phj_caZ2oXSQ%3D%3D
 - 数据集 ID：`sXIu6qn079phj_caZ2oXSQ==`
 - 提供部门：南湖区政务数据局（行政审批局）
 - 开放类型：A

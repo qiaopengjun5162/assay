@@ -1,5 +1,7 @@
 # 象山县省级科技型中小企业信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/wTTpuzQdUWttrLrDaKHjOQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/wTTpuzQdUWttrLrDaKHjOQ%3D%3D
 - 数据集 ID：`wTTpuzQdUWttrLrDaKHjOQ==`
 - 提供部门：象山县
 - 开放类型：A

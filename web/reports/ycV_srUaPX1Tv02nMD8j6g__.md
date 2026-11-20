@@ -1,5 +1,7 @@
 # 奉化区惠企、人才兑现一键通平台系统申报指南信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ycV%2BsrUaPX1Tv02nMD8j6g%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ycV%2BsrUaPX1Tv02nMD8j6g%3D%3D
 - 数据集 ID：`ycV+srUaPX1Tv02nMD8j6g==`
 - 提供部门：奉化区
 - 开放类型：A

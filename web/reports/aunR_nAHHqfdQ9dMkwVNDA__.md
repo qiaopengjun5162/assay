@@ -1,5 +1,7 @@
 # 宁波市AED信息（历史数据）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/aunR%2BnAHHqfdQ9dMkwVNDA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/aunR%2BnAHHqfdQ9dMkwVNDA%3D%3D
 - 数据集 ID：`aunR+nAHHqfdQ9dMkwVNDA==`
 - 提供部门：宁波市红十字会
 - 开放类型：A

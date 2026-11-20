@@ -1,5 +1,7 @@
 # 疗休养基地信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/M6xuWctHKhsp2uwycQ0ILQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/M6xuWctHKhsp2uwycQ0ILQ%3D%3D
 - 数据集 ID：`M6xuWctHKhsp2uwycQ0ILQ==`
 - 提供部门：宁波市总工会
 - 开放类型：A

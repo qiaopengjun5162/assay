@@ -1,5 +1,7 @@
 # 海曙区农药经营许可证信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/S5ji1pZ1RQpzDOb%2BssFVLg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/S5ji1pZ1RQpzDOb%2BssFVLg%3D%3D
 - 数据集 ID：`S5ji1pZ1RQpzDOb+ssFVLg==`
 - 提供部门：海曙区
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 慈溪市健身中心地理位置信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Z9kT4q%2BEFDQUB5YXMjYE4w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Z9kT4q%2BEFDQUB5YXMjYE4w%3D%3D
 - 数据集 ID：`Z9kT4q+EFDQUB5YXMjYE4w==`
 - 提供部门：慈溪市
 - 开放类型：A

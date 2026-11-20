@@ -1,5 +1,7 @@
 # 出入境卫生检疫业务
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/cvEr3HrXTBIdHAnhz9RbOg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/cvEr3HrXTBIdHAnhz9RbOg%3D%3D
 - 数据集 ID：`cvEr3HrXTBIdHAnhz9RbOg==`
 - 提供部门：宁波海关
 - 开放类型：A

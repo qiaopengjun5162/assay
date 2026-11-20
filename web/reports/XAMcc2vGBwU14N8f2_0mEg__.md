@@ -1,5 +1,7 @@
 # 期刊目录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/XAMcc2vGBwU14N8f2_0mEg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/XAMcc2vGBwU14N8f2_0mEg%3D%3D
 - 数据集 ID：`XAMcc2vGBwU14N8f2_0mEg==`
 - 提供部门：宁海县
 - 开放类型：A

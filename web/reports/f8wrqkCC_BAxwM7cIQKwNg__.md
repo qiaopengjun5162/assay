@@ -1,5 +1,7 @@
 # 宁海县地名管理地址信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/f8wrqkCC%2BBAxwM7cIQKwNg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/f8wrqkCC%2BBAxwM7cIQKwNg%3D%3D
 - 数据集 ID：`f8wrqkCC+BAxwM7cIQKwNg==`
 - 提供部门：宁海县
 - 开放类型：A

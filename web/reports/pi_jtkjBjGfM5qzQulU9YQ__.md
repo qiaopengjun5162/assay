@@ -1,5 +1,7 @@
 # 公司制企业数信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/pi_jtkjBjGfM5qzQulU9YQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/pi_jtkjBjGfM5qzQulU9YQ%3D%3D
 - 数据集 ID：`pi_jtkjBjGfM5qzQulU9YQ==`
 - 提供部门：温州市市场监管局
 - 开放类型：A

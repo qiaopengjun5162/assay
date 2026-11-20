@@ -1,5 +1,7 @@
 # 湖州市南浔区智慧城管系统事部件信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/LKtOmHzrPQzQWPtBynhvMQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/LKtOmHzrPQzQWPtBynhvMQ%3D%3D
 - 数据集 ID：`LKtOmHzrPQzQWPtBynhvMQ==`
 - 提供部门：南浔区综合行政执法局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 北仑区馆藏报纸资料信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/35pOtbJi69vB8Z3Z8jY6FA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/35pOtbJi69vB8Z3Z8jY6FA%3D%3D
 - 数据集 ID：`35pOtbJi69vB8Z3Z8jY6FA==`
 - 提供部门：北仑区
 - 开放类型：A

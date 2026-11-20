@@ -1,5 +1,7 @@
 # 洞头区海塘信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/UC2bvOL_%2B6o_Zgpy0FoPMA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/UC2bvOL_%2B6o_Zgpy0FoPMA%3D%3D
 - 数据集 ID：`UC2bvOL_+6o_Zgpy0FoPMA==`
 - 提供部门：洞头区大数据管理中心
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 绍兴市公交里程每月统计信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/PCgG5CX5b5QUT%2Bw0TGMjVQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/PCgG5CX5b5QUT%2Bw0TGMjVQ%3D%3D
 - 数据集 ID：`PCgG5CX5b5QUT+w0TGMjVQ==`
 - 提供部门：绍兴市交通运输局
 - 开放类型：A

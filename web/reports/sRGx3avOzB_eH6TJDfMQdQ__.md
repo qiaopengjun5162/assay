@@ -1,5 +1,7 @@
 # 上市公司信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/sRGx3avOzB%2BeH6TJDfMQdQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/sRGx3avOzB%2BeH6TJDfMQdQ%3D%3D
 - 数据集 ID：`sRGx3avOzB+eH6TJDfMQdQ==`
 - 提供部门：宁波证监局
 - 开放类型：A

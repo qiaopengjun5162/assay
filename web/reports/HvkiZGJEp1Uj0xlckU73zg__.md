@@ -1,5 +1,7 @@
 # 居家养老服务中心信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/HvkiZGJEp1Uj0xlckU73zg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/HvkiZGJEp1Uj0xlckU73zg%3D%3D
 - 数据集 ID：`HvkiZGJEp1Uj0xlckU73zg==`
 - 提供部门：宁波市民政局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 余姚市公积金业务服务网点信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/01KqbvkVx5JfkQ2VSYJ%2BKA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/01KqbvkVx5JfkQ2VSYJ%2BKA%3D%3D
 - 数据集 ID：`01KqbvkVx5JfkQ2VSYJ+KA==`
 - 提供部门：余姚市
 - 开放类型：A

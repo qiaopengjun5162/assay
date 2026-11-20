@@ -1,5 +1,7 @@
 # AED地址信息（历史数据）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/PpmVp5nCyFVPuicfNGR2ng%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/PpmVp5nCyFVPuicfNGR2ng%3D%3D
 - 数据集 ID：`PpmVp5nCyFVPuicfNGR2ng==`
 - 提供部门：宁波市数据局
 - 开放类型：A

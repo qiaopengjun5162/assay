@@ -1,5 +1,7 @@
 # 出口退（免）税一类和四类企业名单信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/xEeo9NXNOYn97k_MMreSHw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/xEeo9NXNOYn97k_MMreSHw%3D%3D
 - 数据集 ID：`xEeo9NXNOYn97k_MMreSHw==`
 - 提供部门：奉化区
 - 开放类型：A

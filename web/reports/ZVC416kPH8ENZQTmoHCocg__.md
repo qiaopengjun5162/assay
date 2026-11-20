@@ -1,5 +1,7 @@
 # 北仑区农业统计年报信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ZVC416kPH8ENZQTmoHCocg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ZVC416kPH8ENZQTmoHCocg%3D%3D
 - 数据集 ID：`ZVC416kPH8ENZQTmoHCocg==`
 - 提供部门：北仑区
 - 开放类型：A

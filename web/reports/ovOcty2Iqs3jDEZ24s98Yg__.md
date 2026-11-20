@@ -1,5 +1,7 @@
 # 省市回流_异常经营名录信息（国家下发数据）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ovOcty2Iqs3jDEZ24s98Yg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ovOcty2Iqs3jDEZ24s98Yg%3D%3D
 - 数据集 ID：`ovOcty2Iqs3jDEZ24s98Yg==`
 - 提供部门：龙湾区发改局
 - 开放类型：A

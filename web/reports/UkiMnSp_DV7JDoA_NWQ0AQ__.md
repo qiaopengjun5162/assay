@@ -1,5 +1,7 @@
 # 古籍档案信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/UkiMnSp_DV7JDoA%2BNWQ0AQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/UkiMnSp_DV7JDoA%2BNWQ0AQ%3D%3D
 - 数据集 ID：`UkiMnSp_DV7JDoA+NWQ0AQ==`
 - 提供部门：宁波市档案馆
 - 开放类型：A

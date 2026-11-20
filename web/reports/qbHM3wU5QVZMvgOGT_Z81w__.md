@@ -1,5 +1,7 @@
 # 报纸档案信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/qbHM3wU5QVZMvgOGT_Z81w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/qbHM3wU5QVZMvgOGT_Z81w%3D%3D
 - 数据集 ID：`qbHM3wU5QVZMvgOGT_Z81w==`
 - 提供部门：宁波市档案馆
 - 开放类型：A

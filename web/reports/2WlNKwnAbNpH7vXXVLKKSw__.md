@@ -1,5 +1,7 @@
 # 宁波市景区数字孪生综合系统文旅晓灵通甬菜百碗基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/2WlNKwnAbNpH7vXXVLKKSw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/2WlNKwnAbNpH7vXXVLKKSw%3D%3D
 - 数据集 ID：`2WlNKwnAbNpH7vXXVLKKSw==`
 - 提供部门：宁波市文化广电旅游局
 - 开放类型：A

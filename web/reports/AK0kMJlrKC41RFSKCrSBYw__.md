@@ -1,5 +1,7 @@
 # 用人单位违法延长劳动者工作时间的处罚
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/AK0kMJlrKC41RFSKCrSBYw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/AK0kMJlrKC41RFSKCrSBYw%3D%3D
 - 数据集 ID：`AK0kMJlrKC41RFSKCrSBYw==`
 - 提供部门：宁波市人力社保局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 德清县-生态环境局-智慧环保-数据中心-环境信访-基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/syUa16ElVrP5roKvVr69Yw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/syUa16ElVrP5roKvVr69Yw%3D%3D
 - 数据集 ID：`syUa16ElVrP5roKvVr69Yw==`
 - 提供部门：市生态环境局德清分局
 - 开放类型：A

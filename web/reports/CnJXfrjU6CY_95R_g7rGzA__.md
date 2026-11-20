@@ -1,5 +1,7 @@
 # 北仑区A级景区基础信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/CnJXfrjU6CY%2B95R_g7rGzA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/CnJXfrjU6CY%2B95R_g7rGzA%3D%3D
 - 数据集 ID：`CnJXfrjU6CY+95R_g7rGzA==`
 - 提供部门：北仑区
 - 开放类型：A

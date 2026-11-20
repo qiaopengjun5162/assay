@@ -1,5 +1,7 @@
 # 温岭市自规局国土空间农转用地块信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/5AYVAHD9mfpTHhxTDxBH%2BA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/5AYVAHD9mfpTHhxTDxBH%2BA%3D%3D
 - 数据集 ID：`5AYVAHD9mfpTHhxTDxBH+A==`
 - 提供部门：温岭市自然资源和规划局
 - 开放类型：A

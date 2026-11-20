@@ -1,5 +1,7 @@
 # 医疗机构科室信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/OMho8PKEBuk3JS5jNr2NcA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/OMho8PKEBuk3JS5jNr2NcA%3D%3D
 - 数据集 ID：`OMho8PKEBuk3JS5jNr2NcA==`
 - 提供部门：北仑区
 - 开放类型：A

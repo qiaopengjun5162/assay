@@ -1,5 +1,7 @@
 # 农药经营主体信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/llwH%2BrXUl0IctnwQWjpbog%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/llwH%2BrXUl0IctnwQWjpbog%3D%3D
 - 数据集 ID：`llwH+rXUl0IctnwQWjpbog==`
 - 提供部门：象山县
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 北仑区非遗项目信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Aw92Fml4L9GAFwgJWgLdHg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Aw92Fml4L9GAFwgJWgLdHg%3D%3D
 - 数据集 ID：`Aw92Fml4L9GAFwgJWgLdHg==`
 - 提供部门：北仑区
 - 开放类型：A

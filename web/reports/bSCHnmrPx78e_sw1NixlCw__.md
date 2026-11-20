@@ -1,5 +1,7 @@
 # 余姚市2015-2019年度服务科技创新项目信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/bSCHnmrPx78e_sw1NixlCw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/bSCHnmrPx78e_sw1NixlCw%3D%3D
 - 数据集 ID：`bSCHnmrPx78e_sw1NixlCw==`
 - 提供部门：余姚市
 - 开放类型：A

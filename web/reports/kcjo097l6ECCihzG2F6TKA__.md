@@ -1,5 +1,7 @@
 # 金华市乡镇（街道）综合文化站（特级站）信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/kcjo097l6ECCihzG2F6TKA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/kcjo097l6ECCihzG2F6TKA%3D%3D
 - 数据集 ID：`kcjo097l6ECCihzG2F6TKA==`
 - 提供部门：金华市文广旅游局
 - 开放类型：A

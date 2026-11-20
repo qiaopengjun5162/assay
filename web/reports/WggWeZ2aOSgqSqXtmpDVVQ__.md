@@ -1,5 +1,7 @@
 # 宁波市职业培训机构信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/WggWeZ2aOSgqSqXtmpDVVQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/WggWeZ2aOSgqSqXtmpDVVQ%3D%3D
 - 数据集 ID：`WggWeZ2aOSgqSqXtmpDVVQ==`
 - 提供部门：宁波市人力社保局
 - 开放类型：A

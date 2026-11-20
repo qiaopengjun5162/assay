@@ -1,5 +1,7 @@
 # 省市回流_“互联网+监管”其他信息（经营异常公告详情信息)
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/1TAnTSlR9_ilAIgcfF3sLw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/1TAnTSlR9_ilAIgcfF3sLw%3D%3D
 - 数据集 ID：`1TAnTSlR9_ilAIgcfF3sLw==`
 - 提供部门：瓯海区市场监督管理局（区知识产权局）
 - 开放类型：A

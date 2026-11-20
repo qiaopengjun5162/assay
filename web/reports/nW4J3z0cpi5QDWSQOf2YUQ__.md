@@ -1,5 +1,7 @@
 # 家谱档案信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/nW4J3z0cpi5QDWSQOf2YUQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/nW4J3z0cpi5QDWSQOf2YUQ%3D%3D
 - 数据集 ID：`nW4J3z0cpi5QDWSQOf2YUQ==`
 - 提供部门：宁波市档案馆
 - 开放类型：A

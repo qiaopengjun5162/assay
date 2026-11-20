@@ -1,5 +1,7 @@
 # 历年缴存情况信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/WBZUioxbTnZCQ6r7O%2BPLfA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/WBZUioxbTnZCQ6r7O%2BPLfA%3D%3D
 - 数据集 ID：`WBZUioxbTnZCQ6r7O+PLfA==`
 - 提供部门：乐清市住房公积金管理中心
 - 开放类型：A

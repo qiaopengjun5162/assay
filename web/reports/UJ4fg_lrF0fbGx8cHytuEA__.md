@@ -1,5 +1,7 @@
 # 镇海区河道断面点位信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/UJ4fg%2BlrF0fbGx8cHytuEA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/UJ4fg%2BlrF0fbGx8cHytuEA%3D%3D
 - 数据集 ID：`UJ4fg+lrF0fbGx8cHytuEA==`
 - 提供部门：镇海区
 - 开放类型：A

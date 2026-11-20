@@ -1,5 +1,7 @@
 # 在册市场主体数信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/BbuiXkPjR4lqFU7%2BFw8Dag%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/BbuiXkPjR4lqFU7%2BFw8Dag%3D%3D
 - 数据集 ID：`BbuiXkPjR4lqFU7+Fw8Dag==`
 - 提供部门：温州市市场监管局
 - 开放类型：A

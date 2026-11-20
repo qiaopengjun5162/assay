@@ -1,5 +1,7 @@
 # 市级企业工程技术中心信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/M3eeMPS9b6uKK6waGcElkg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/M3eeMPS9b6uKK6waGcElkg%3D%3D
 - 数据集 ID：`M3eeMPS9b6uKK6waGcElkg==`
 - 提供部门：象山县
 - 开放类型：A

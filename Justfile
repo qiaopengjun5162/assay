@@ -145,7 +145,9 @@ prove top="100":
 
 # 6) 单数据集报告（前 N 名 → Markdown，随站点发布）
 reports top="100" dest="web/reports":
-    cargo run --release -p assay -- --out {{out}} reports --top {{top}} --dest {{dest}}
+    # 证据必须取入库的 web/evidence：out-full/evidence 只有 11-14 的 100 份，
+    # 用它重生成会让 500 份报告全丢哈希段。verify-reports 会在门禁里拦住。
+    cargo run --release -p assay -- --out {{out}} reports --top {{top}} --dest {{dest}} --evidence-dir web/evidence --no-explain
 
 # 7) 导出静态站数据（history 会被嵌进 data.json，前端据此画曲线）
 export limit="500" dest="web/data.json" history="history/summary.json":

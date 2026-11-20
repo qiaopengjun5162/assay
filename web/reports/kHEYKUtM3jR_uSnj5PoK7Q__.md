@@ -1,5 +1,7 @@
 # 社会经济监测问卷问题信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/kHEYKUtM3jR%2BuSnj5PoK7Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/kHEYKUtM3jR%2BuSnj5PoK7Q%3D%3D
 - 数据集 ID：`kHEYKUtM3jR+uSnj5PoK7Q==`
 - 提供部门：省政府机构/省发展改革委
 - 开放类型：A

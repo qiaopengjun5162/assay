@@ -1,5 +1,7 @@
 # 道路信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/2JzLxS_gbM816AaIczwEtg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/2JzLxS_gbM816AaIczwEtg%3D%3D
 - 数据集 ID：`2JzLxS_gbM816AaIczwEtg==`
 - 提供部门：宁波市综合行政执法局
 - 开放类型：A

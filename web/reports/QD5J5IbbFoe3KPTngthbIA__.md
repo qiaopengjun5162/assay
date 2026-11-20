@@ -1,5 +1,7 @@
 # 南浔区妇女联合会特色家庭信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/QD5J5IbbFoe3KPTngthbIA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/QD5J5IbbFoe3KPTngthbIA%3D%3D
 - 数据集 ID：`QD5J5IbbFoe3KPTngthbIA==`
 - 提供部门：南浔区妇女联合会
 - 开放类型：A

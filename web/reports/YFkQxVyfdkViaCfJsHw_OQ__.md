@@ -1,5 +1,7 @@
 # 省回流_“互联网+监管”其他信息（严重违法公告详情信息)
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/YFkQxVyfdkViaCfJsHw%2BOQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/YFkQxVyfdkViaCfJsHw%2BOQ%3D%3D
 - 数据集 ID：`YFkQxVyfdkViaCfJsHw+OQ==`
 - 提供部门：温州市市场监管局
 - 开放类型：A

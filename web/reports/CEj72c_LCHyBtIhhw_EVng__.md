@@ -1,5 +1,7 @@
 # 票务线下交易明细信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/CEj72c_LCHyBtIhhw_EVng%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/CEj72c_LCHyBtIhhw_EVng%3D%3D
 - 数据集 ID：`CEj72c_LCHyBtIhhw_EVng==`
 - 提供部门：南浔区文旅集团
 - 开放类型：A

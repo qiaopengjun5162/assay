@@ -1,5 +1,7 @@
 # 金华市土地供应出让公告宗地表地理信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/1BBZfiSauVjF7hHGLF33Jw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/1BBZfiSauVjF7hHGLF33Jw%3D%3D
 - 数据集 ID：`1BBZfiSauVjF7hHGLF33Jw==`
 - 提供部门：金华市资规局
 - 开放类型：A

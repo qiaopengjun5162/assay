@@ -1,5 +1,7 @@
 # 绿色农产品证书信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/xtZqnOiDrsB8fL_EI57IPw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/xtZqnOiDrsB8fL_EI57IPw%3D%3D
 - 数据集 ID：`xtZqnOiDrsB8fL_EI57IPw==`
 - 提供部门：宁波市市农业农村局
 - 开放类型：A

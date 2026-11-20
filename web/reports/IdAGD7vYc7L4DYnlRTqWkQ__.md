@@ -1,5 +1,7 @@
 # 镇海区残疾人基本信息（历史数据）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/IdAGD7vYc7L4DYnlRTqWkQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/IdAGD7vYc7L4DYnlRTqWkQ%3D%3D
 - 数据集 ID：`IdAGD7vYc7L4DYnlRTqWkQ==`
 - 提供部门：镇海区
 - 开放类型：A

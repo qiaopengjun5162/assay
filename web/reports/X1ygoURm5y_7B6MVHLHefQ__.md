@@ -1,5 +1,7 @@
 # 陆源污染防治_入海排污口信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/X1ygoURm5y%2B7B6MVHLHefQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/X1ygoURm5y%2B7B6MVHLHefQ%3D%3D
 - 数据集 ID：`X1ygoURm5y+7B6MVHLHefQ==`
 - 提供部门：省政府机构/省生态环境厅
 - 开放类型：A

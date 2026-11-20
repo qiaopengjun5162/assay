@@ -1,5 +1,7 @@
 # 北仑区铸牢中华民族共同体意识研学基地信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Mm8hct%2BE7sG3qEpOdd3kYA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Mm8hct%2BE7sG3qEpOdd3kYA%3D%3D
 - 数据集 ID：`Mm8hct+E7sG3qEpOdd3kYA==`
 - 提供部门：北仑区
 - 开放类型：A

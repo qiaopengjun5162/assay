@@ -1,5 +1,7 @@
 # 救助机构名录信息（2018-2020）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/%2BIBTkWsVuA6fFI4k0RUHXA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/%2BIBTkWsVuA6fFI4k0RUHXA%3D%3D
 - 数据集 ID：`+IBTkWsVuA6fFI4k0RUHXA==`
 - 提供部门：宁波市数据局
 - 开放类型：A

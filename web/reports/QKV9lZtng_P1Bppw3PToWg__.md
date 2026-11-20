@@ -1,5 +1,7 @@
 # 金华市“浙江省文化示范村”信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/QKV9lZtng%2BP1Bppw3PToWg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/QKV9lZtng%2BP1Bppw3PToWg%3D%3D
 - 数据集 ID：`QKV9lZtng+P1Bppw3PToWg==`
 - 提供部门：金华市文广旅游局
 - 开放类型：A

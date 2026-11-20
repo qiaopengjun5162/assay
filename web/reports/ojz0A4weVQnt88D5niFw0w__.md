@@ -1,5 +1,7 @@
 # 北仑区港口经营许可证
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ojz0A4weVQnt88D5niFw0w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ojz0A4weVQnt88D5niFw0w%3D%3D
 - 数据集 ID：`ojz0A4weVQnt88D5niFw0w==`
 - 提供部门：北仑区
 - 开放类型：A

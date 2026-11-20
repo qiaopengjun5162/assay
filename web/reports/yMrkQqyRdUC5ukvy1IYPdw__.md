@@ -1,5 +1,7 @@
 # 市级政府集中采购目录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/yMrkQqyRdUC5ukvy1IYPdw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/yMrkQqyRdUC5ukvy1IYPdw%3D%3D
 - 数据集 ID：`yMrkQqyRdUC5ukvy1IYPdw==`
 - 提供部门：宁波市财政局
 - 开放类型：A

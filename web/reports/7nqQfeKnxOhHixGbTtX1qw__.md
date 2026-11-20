@@ -1,5 +1,7 @@
 # 市归集_上城区城市智治_垃圾清运可回收物业务数据信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/7nqQfeKnxOhHixGbTtX1qw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/7nqQfeKnxOhHixGbTtX1qw%3D%3D
 - 数据集 ID：`7nqQfeKnxOhHixGbTtX1qw==`
 - 提供部门：上城区综合行政执法局
 - 开放类型：A

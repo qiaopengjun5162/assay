@@ -1,5 +1,7 @@
 # 种业资金补助信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/qn_M9VAh63iut9gaSxFerQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/qn_M9VAh63iut9gaSxFerQ%3D%3D
 - 数据集 ID：`qn_M9VAh63iut9gaSxFerQ==`
 - 提供部门：宁波市市农业农村局
 - 开放类型：A

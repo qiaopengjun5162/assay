@@ -1,5 +1,7 @@
 # 酒店星级信息（法人）信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/5e_hCcLpqPpEVfHw6heQNw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/5e_hCcLpqPpEVfHw6heQNw%3D%3D
 - 数据集 ID：`5e_hCcLpqPpEVfHw6heQNw==`
 - 提供部门：温州市文化广电旅游局
 - 开放类型：A

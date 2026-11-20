@@ -1,5 +1,7 @@
 # 省市回流_会计从业资格证
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/jLT0DAYWfH64s6Fw840bGg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/jLT0DAYWfH64s6Fw840bGg%3D%3D
 - 数据集 ID：`jLT0DAYWfH64s6Fw840bGg==`
 - 提供部门：龙港市社会治理中心
 - 开放类型：A

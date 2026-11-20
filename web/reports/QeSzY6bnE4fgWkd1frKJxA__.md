@@ -1,5 +1,7 @@
 # 金融许可证信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/QeSzY6bnE4fgWkd1frKJxA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/QeSzY6bnE4fgWkd1frKJxA%3D%3D
 - 数据集 ID：`QeSzY6bnE4fgWkd1frKJxA==`
 - 提供部门：宁波金融监管局
 - 开放类型：A

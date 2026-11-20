@@ -1,5 +1,7 @@
 # 慈溪市青慈云乐团节目列表信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Wrumt5%2BeLdDTLmFD5k6iIQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Wrumt5%2BeLdDTLmFD5k6iIQ%3D%3D
 - 数据集 ID：`Wrumt5+eLdDTLmFD5k6iIQ==`
 - 提供部门：慈溪市
 - 开放类型：A

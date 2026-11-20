@@ -1,5 +1,7 @@
 # 治超非现场执法点信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/7ESvDUIiJKY0llEf54wIeg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/7ESvDUIiJKY0llEf54wIeg%3D%3D
 - 数据集 ID：`7ESvDUIiJKY0llEf54wIeg==`
 - 提供部门：宁波市交通局
 - 开放类型：A

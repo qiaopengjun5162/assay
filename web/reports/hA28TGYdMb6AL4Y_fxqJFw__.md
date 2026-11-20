@@ -1,5 +1,7 @@
 # 象山县海洋灾害综合防治体系应用服务网信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/hA28TGYdMb6AL4Y%2BfxqJFw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/hA28TGYdMb6AL4Y%2BfxqJFw%3D%3D
 - 数据集 ID：`hA28TGYdMb6AL4Y+fxqJFw==`
 - 提供部门：象山县
 - 开放类型：A

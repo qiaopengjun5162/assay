@@ -1,5 +1,7 @@
 # 宁波市口岸卫生许可证
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/hd9U0o5CXu8e3eMsiGkhzQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/hd9U0o5CXu8e3eMsiGkhzQ%3D%3D
 - 数据集 ID：`hd9U0o5CXu8e3eMsiGkhzQ==`
 - 提供部门：宁波海关
 - 开放类型：A

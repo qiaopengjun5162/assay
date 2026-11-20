@@ -1,5 +1,7 @@
 # 民政机构统计信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Pv6V6%2B4MGUOgeEmb2bLgVA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Pv6V6%2B4MGUOgeEmb2bLgVA%3D%3D
 - 数据集 ID：`Pv6V6+4MGUOgeEmb2bLgVA==`
 - 提供部门：象山县
 - 开放类型：A

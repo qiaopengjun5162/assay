@@ -1,5 +1,7 @@
 # 水管理系统_水文测站信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/3GxIzSbxkW%2Buwsh0Ql9aSw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/3GxIzSbxkW%2Buwsh0Ql9aSw%3D%3D
 - 数据集 ID：`3GxIzSbxkW+uwsh0Ql9aSw==`
 - 提供部门：南浔区水利局
 - 开放类型：A

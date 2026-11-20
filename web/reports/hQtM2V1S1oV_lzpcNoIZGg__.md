@@ -1,5 +1,7 @@
 # 宁波市网络招聘招会招聘职位信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/hQtM2V1S1oV_lzpcNoIZGg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/hQtM2V1S1oV_lzpcNoIZGg%3D%3D
 - 数据集 ID：`hQtM2V1S1oV_lzpcNoIZGg==`
 - 提供部门：宁波市人力社保局
 - 开放类型：A

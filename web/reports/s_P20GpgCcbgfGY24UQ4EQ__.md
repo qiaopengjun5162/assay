@@ -1,5 +1,7 @@
 # 慈溪市保险地理位置信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/s_P20GpgCcbgfGY24UQ4EQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/s_P20GpgCcbgfGY24UQ4EQ%3D%3D
 - 数据集 ID：`s_P20GpgCcbgfGY24UQ4EQ==`
 - 提供部门：慈溪市
 - 开放类型：A

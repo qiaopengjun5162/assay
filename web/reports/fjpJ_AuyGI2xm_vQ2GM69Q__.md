@@ -1,5 +1,7 @@
 # 德清县生态环境局智慧环保-核与辐射放射源-基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/fjpJ_AuyGI2xm%2BvQ2GM69Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/fjpJ_AuyGI2xm%2BvQ2GM69Q%3D%3D
 - 数据集 ID：`fjpJ_AuyGI2xm+vQ2GM69Q==`
 - 提供部门：市生态环境局德清分局
 - 开放类型：A

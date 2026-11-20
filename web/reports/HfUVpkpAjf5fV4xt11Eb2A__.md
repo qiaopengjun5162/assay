@@ -1,5 +1,7 @@
 # 票务线下离园明细信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/HfUVpkpAjf5fV4xt11Eb2A%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/HfUVpkpAjf5fV4xt11Eb2A%3D%3D
 - 数据集 ID：`HfUVpkpAjf5fV4xt11Eb2A==`
 - 提供部门：南浔区文旅集团
 - 开放类型：A

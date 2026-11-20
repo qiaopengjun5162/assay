@@ -1,5 +1,7 @@
 # 金华市固废一件事系统_应急联单信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/SqxU8koqt3dKF1PB5JZisA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/SqxU8koqt3dKF1PB5JZisA%3D%3D
 - 数据集 ID：`SqxU8koqt3dKF1PB5JZisA==`
 - 提供部门：金华市生态环境局
 - 开放类型：A

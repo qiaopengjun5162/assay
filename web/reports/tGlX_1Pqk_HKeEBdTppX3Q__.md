@@ -1,5 +1,7 @@
 # 百货商场购物中心地理位置信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/tGlX_1Pqk%2BHKeEBdTppX3Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/tGlX_1Pqk%2BHKeEBdTppX3Q%3D%3D
 - 数据集 ID：`tGlX_1Pqk+HKeEBdTppX3Q==`
 - 提供部门：慈溪市
 - 开放类型：A

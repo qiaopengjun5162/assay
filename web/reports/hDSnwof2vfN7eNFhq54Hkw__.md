@@ -1,5 +1,7 @@
 # 瓯海区山洪灾害监测预警平台-测站基本属性信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/hDSnwof2vfN7eNFhq54Hkw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/hDSnwof2vfN7eNFhq54Hkw%3D%3D
 - 数据集 ID：`hDSnwof2vfN7eNFhq54Hkw==`
 - 提供部门：瓯海区水利局
 - 开放类型：A

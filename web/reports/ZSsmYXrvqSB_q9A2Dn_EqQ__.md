@@ -1,5 +1,7 @@
 # 非遗传承人名录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ZSsmYXrvqSB_q9A2Dn_EqQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ZSsmYXrvqSB_q9A2Dn_EqQ%3D%3D
 - 数据集 ID：`ZSsmYXrvqSB_q9A2Dn_EqQ==`
 - 提供部门：宁波市文化广电旅游局
 - 开放类型：A

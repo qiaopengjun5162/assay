@@ -1,5 +1,7 @@
 # 省回流县市区天气预报信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/TPv6SqQgxbw9LtujbAodhw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/TPv6SqQgxbw9LtujbAodhw%3D%3D
 - 数据集 ID：`TPv6SqQgxbw9LtujbAodhw==`
 - 提供部门：台州市气象局
 - 开放类型：A

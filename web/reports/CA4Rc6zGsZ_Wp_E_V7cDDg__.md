@@ -1,5 +1,7 @@
 # 南湖区网络文化经营许可证（网吧）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/CA4Rc6zGsZ%2BWp%2BE%2BV7cDDg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/CA4Rc6zGsZ%2BWp%2BE%2BV7cDDg%3D%3D
 - 数据集 ID：`CA4Rc6zGsZ+Wp+E+V7cDDg==`
 - 提供部门：南湖区政务数据局（行政审批局）
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 食品安全-餐饮服务专题信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/hPCeT7XsGEgH4LqXSPg2Fg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/hPCeT7XsGEgH4LqXSPg2Fg%3D%3D
 - 数据集 ID：`hPCeT7XsGEgH4LqXSPg2Fg==`
 - 提供部门：瑞安市市场监管局
 - 开放类型：A

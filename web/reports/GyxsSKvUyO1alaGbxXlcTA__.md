@@ -1,5 +1,7 @@
 # 水域监管一件事-组织部门信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/GyxsSKvUyO1alaGbxXlcTA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/GyxsSKvUyO1alaGbxXlcTA%3D%3D
 - 数据集 ID：`GyxsSKvUyO1alaGbxXlcTA==`
 - 提供部门：兰溪市大数据发展中心
 - 开放类型：A

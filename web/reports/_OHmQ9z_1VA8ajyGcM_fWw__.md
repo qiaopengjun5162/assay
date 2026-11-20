@@ -1,5 +1,7 @@
 # 宁波市景区数字孪生综合系统文旅晓灵通政策法规信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/_OHmQ9z%2B1VA8ajyGcM_fWw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/_OHmQ9z%2B1VA8ajyGcM_fWw%3D%3D
 - 数据集 ID：`_OHmQ9z+1VA8ajyGcM_fWw==`
 - 提供部门：宁波市文化广电旅游局
 - 开放类型：A

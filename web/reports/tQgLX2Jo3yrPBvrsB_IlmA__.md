@@ -1,5 +1,7 @@
 # 鹿城区山洪灾害监测预警平台-降水量信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/tQgLX2Jo3yrPBvrsB_IlmA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/tQgLX2Jo3yrPBvrsB_IlmA%3D%3D
 - 数据集 ID：`tQgLX2Jo3yrPBvrsB_IlmA==`
 - 提供部门：鹿城区农业农村局
 - 开放类型：A

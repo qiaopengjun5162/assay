@@ -1,5 +1,7 @@
 # 象山县数字农业系统产品品种信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/1a7TdKWSpeqwm3gKKEyDFQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/1a7TdKWSpeqwm3gKKEyDFQ%3D%3D
 - 数据集 ID：`1a7TdKWSpeqwm3gKKEyDFQ==`
 - 提供部门：象山县
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 洞头区e养食堂管理系统-养老食堂老年人信息（三期）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/OMMqyVsJD7VRChJLK6R3hg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/OMMqyVsJD7VRChJLK6R3hg%3D%3D
 - 数据集 ID：`OMMqyVsJD7VRChJLK6R3hg==`
 - 提供部门：洞头区民政局
 - 开放类型：A

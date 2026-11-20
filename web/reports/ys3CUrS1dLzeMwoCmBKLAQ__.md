@@ -1,5 +1,7 @@
 # 地方志档案信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ys3CUrS1dLzeMwoCmBKLAQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ys3CUrS1dLzeMwoCmBKLAQ%3D%3D
 - 数据集 ID：`ys3CUrS1dLzeMwoCmBKLAQ==`
 - 提供部门：宁波市档案馆
 - 开放类型：A

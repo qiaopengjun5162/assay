@@ -1,5 +1,7 @@
 # 鹿城地理空间数据服务及空间大数据汇聚共享平台-鹿城区公园信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ZVswfH4wP%2BkpJx7hG4Pu6g%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ZVswfH4wP%2BkpJx7hG4Pu6g%3D%3D
 - 数据集 ID：`ZVswfH4wP+kpJx7hG4Pu6g==`
 - 提供部门：鹿城区大数据管理中心
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 永嘉学校体育设施基础信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Dk42U1451E6wmYE4lUjMGQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Dk42U1451E6wmYE4lUjMGQ%3D%3D
 - 数据集 ID：`Dk42U1451E6wmYE4lUjMGQ==`
 - 提供部门：永嘉县人民政府办公室
 - 开放类型：A

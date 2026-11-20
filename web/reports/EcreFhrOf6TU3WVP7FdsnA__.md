@@ -1,5 +1,7 @@
 # 宁波市市区农贸市场商品价格监测信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/EcreFhrOf6TU3WVP7FdsnA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/EcreFhrOf6TU3WVP7FdsnA%3D%3D
 - 数据集 ID：`EcreFhrOf6TU3WVP7FdsnA==`
 - 提供部门：宁波市发改委
 - 开放类型：A

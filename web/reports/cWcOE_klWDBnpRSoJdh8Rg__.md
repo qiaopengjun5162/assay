@@ -1,5 +1,7 @@
 # 吴兴区智慧养老综合服务系统-大屏告警信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/cWcOE_klWDBnpRSoJdh8Rg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/cWcOE_klWDBnpRSoJdh8Rg%3D%3D
 - 数据集 ID：`cWcOE_klWDBnpRSoJdh8Rg==`
 - 提供部门：吴兴区
 - 开放类型：A

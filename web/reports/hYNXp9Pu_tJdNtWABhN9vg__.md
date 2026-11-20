@@ -1,5 +1,7 @@
 # 慈溪市非遗项目信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/hYNXp9Pu%2BtJdNtWABhN9vg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/hYNXp9Pu%2BtJdNtWABhN9vg%3D%3D
 - 数据集 ID：`hYNXp9Pu+tJdNtWABhN9vg==`
 - 提供部门：慈溪市
 - 开放类型：A

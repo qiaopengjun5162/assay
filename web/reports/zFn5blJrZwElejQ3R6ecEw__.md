@@ -1,5 +1,7 @@
 # 德清县-交通运输局-智慧交通-自行车公司信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/zFn5blJrZwElejQ3R6ecEw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/zFn5blJrZwElejQ3R6ecEw%3D%3D
 - 数据集 ID：`zFn5blJrZwElejQ3R6ecEw==`
 - 提供部门：德清县交通运输局
 - 开放类型：A

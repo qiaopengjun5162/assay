@@ -1,5 +1,7 @@
 # 数字政协_工作建议信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/9q5JpcEqvJt7qdZ6WZhG_Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/9q5JpcEqvJt7qdZ6WZhG_Q%3D%3D
 - 数据集 ID：`9q5JpcEqvJt7qdZ6WZhG_Q==`
 - 提供部门：南浔区政协办公室
 - 开放类型：A

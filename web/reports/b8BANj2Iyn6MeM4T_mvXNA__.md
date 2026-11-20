@@ -1,5 +1,7 @@
 # 宁波市再生资源回收企业信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/b8BANj2Iyn6MeM4T_mvXNA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/b8BANj2Iyn6MeM4T_mvXNA%3D%3D
 - 数据集 ID：`b8BANj2Iyn6MeM4T_mvXNA==`
 - 提供部门：宁波市商务局
 - 开放类型：A

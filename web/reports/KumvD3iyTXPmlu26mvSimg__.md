@@ -1,5 +1,7 @@
 # 德清县-交通运输局-智慧交通-充电桩信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/KumvD3iyTXPmlu26mvSimg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/KumvD3iyTXPmlu26mvSimg%3D%3D
 - 数据集 ID：`KumvD3iyTXPmlu26mvSimg==`
 - 提供部门：德清县交通运输局
 - 开放类型：A

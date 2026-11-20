@@ -1,5 +1,7 @@
 # 银行董事高管批文信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/b5GFyOrd42%2BAOemDa00JUg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/b5GFyOrd42%2BAOemDa00JUg%3D%3D
 - 数据集 ID：`b5GFyOrd42+AOemDa00JUg==`
 - 提供部门：宁波金融监管局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 省市回流_全民阅读在线活动信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Lid36R_7hkmCd7fnVz7Ayw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Lid36R_7hkmCd7fnVz7Ayw%3D%3D
 - 数据集 ID：`Lid36R_7hkmCd7fnVz7Ayw==`
 - 提供部门：瓯海区大数据管理中心
 - 开放类型：A

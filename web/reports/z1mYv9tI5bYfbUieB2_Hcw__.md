@@ -1,5 +1,7 @@
 # 江北区洪塘街道城乡一体发展和生态街道建设先进个人信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/z1mYv9tI5bYfbUieB2_Hcw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/z1mYv9tI5bYfbUieB2_Hcw%3D%3D
 - 数据集 ID：`z1mYv9tI5bYfbUieB2_Hcw==`
 - 提供部门：江北区
 - 开放类型：A

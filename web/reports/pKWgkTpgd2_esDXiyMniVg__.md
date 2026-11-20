@@ -1,5 +1,7 @@
 # 宁波市老年食堂数据信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/pKWgkTpgd2%2BesDXiyMniVg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/pKWgkTpgd2%2BesDXiyMniVg%3D%3D
 - 数据集 ID：`pKWgkTpgd2+esDXiyMniVg==`
 - 提供部门：宁波市民政局
 - 开放类型：A

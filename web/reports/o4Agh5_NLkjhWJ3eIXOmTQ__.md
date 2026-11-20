@@ -1,5 +1,7 @@
 # 宁波人寿保险公司原保险保费收入情况
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/o4Agh5_NLkjhWJ3eIXOmTQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/o4Agh5_NLkjhWJ3eIXOmTQ%3D%3D
 - 数据集 ID：`o4Agh5_NLkjhWJ3eIXOmTQ==`
 - 提供部门：宁波金融监管局
 - 开放类型：A

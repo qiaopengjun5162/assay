@@ -1,5 +1,7 @@
 # 温州城市大脑文旅系统_旅行社信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/wLlgx92VSAa2qKn4CWFSHw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/wLlgx92VSAa2qKn4CWFSHw%3D%3D
 - 数据集 ID：`wLlgx92VSAa2qKn4CWFSHw==`
 - 提供部门：温州市文化广电旅游局
 - 开放类型：A

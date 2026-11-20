@@ -1,5 +1,7 @@
 # 龙湾区未来康养智城系统老年人燃气报警记录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/voTg56mlmJsoJ3LTA0UmiA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/voTg56mlmJsoJ3LTA0UmiA%3D%3D
 - 数据集 ID：`voTg56mlmJsoJ3LTA0UmiA==`
 - 提供部门：龙湾区民政局
 - 开放类型：A

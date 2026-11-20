@@ -1,5 +1,7 @@
 # “慈善奖”信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Uks7xrJgGvr%2Bkr5rU8a85A%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Uks7xrJgGvr%2Bkr5rU8a85A%3D%3D
 - 数据集 ID：`Uks7xrJgGvr+kr5rU8a85A==`
 - 提供部门：宁波市民政局
 - 开放类型：A

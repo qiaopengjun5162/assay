@@ -1,5 +1,7 @@
 # 票务线下交易主表信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/%2BjJwTCHp1PE1NIToee5zMw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/%2BjJwTCHp1PE1NIToee5zMw%3D%3D
 - 数据集 ID：`+jJwTCHp1PE1NIToee5zMw==`
 - 提供部门：南浔区文旅集团
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 场景业务信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/SEmT2POu90V3rPGSUuSLBA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/SEmT2POu90V3rPGSUuSLBA%3D%3D
 - 数据集 ID：`SEmT2POu90V3rPGSUuSLBA==`
 - 提供部门：临海市公安局
 - 开放类型：A

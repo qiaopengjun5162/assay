@@ -1,5 +1,7 @@
 # 慈溪市智慧垃圾接收垃圾重量明细信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/MiBThXJ%2B5B4g8LApfjudtQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/MiBThXJ%2B5B4g8LApfjudtQ%3D%3D
 - 数据集 ID：`MiBThXJ+5B4g8LApfjudtQ==`
 - 提供部门：慈溪市
 - 开放类型：A

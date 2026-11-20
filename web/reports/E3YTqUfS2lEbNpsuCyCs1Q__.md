@@ -1,5 +1,7 @@
 # 公交出租车车辆数据信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/E3YTqUfS2lEbNpsuCyCs1Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/E3YTqUfS2lEbNpsuCyCs1Q%3D%3D
 - 数据集 ID：`E3YTqUfS2lEbNpsuCyCs1Q==`
 - 提供部门：宁波市交通局
 - 开放类型：A

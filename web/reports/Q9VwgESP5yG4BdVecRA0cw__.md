@@ -1,5 +1,7 @@
 # 慈溪市已调出劳模名单
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Q9VwgESP5yG4BdVecRA0cw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Q9VwgESP5yG4BdVecRA0cw%3D%3D
 - 数据集 ID：`Q9VwgESP5yG4BdVecRA0cw==`
 - 提供部门：慈溪市
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 畜禽生产信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/0eagYMkNQ8iFRXCaRC9olQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/0eagYMkNQ8iFRXCaRC9olQ%3D%3D
 - 数据集 ID：`0eagYMkNQ8iFRXCaRC9olQ==`
 - 提供部门：象山县
 - 开放类型：A

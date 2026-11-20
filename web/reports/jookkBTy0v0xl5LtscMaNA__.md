@@ -1,5 +1,7 @@
 # 宁波市县级以上示范性合作社信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/jookkBTy0v0xl5LtscMaNA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/jookkBTy0v0xl5LtscMaNA%3D%3D
 - 数据集 ID：`jookkBTy0v0xl5LtscMaNA==`
 - 提供部门：宁波市市农业农村局
 - 开放类型：A

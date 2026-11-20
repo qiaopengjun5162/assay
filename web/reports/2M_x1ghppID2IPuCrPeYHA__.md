@@ -1,5 +1,7 @@
 # 洞头空间中心-温州市、洞头区各季度生产总值信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/2M_x1ghppID2IPuCrPeYHA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/2M_x1ghppID2IPuCrPeYHA%3D%3D
 - 数据集 ID：`2M_x1ghppID2IPuCrPeYHA==`
 - 提供部门：洞头区大数据管理中心
 - 开放类型：A

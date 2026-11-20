@@ -1,5 +1,7 @@
 # 龙湾区未来康养智城系统长者专区动态信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/KefHkegaD0IrafWMCgGYfg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/KefHkegaD0IrafWMCgGYfg%3D%3D
 - 数据集 ID：`KefHkegaD0IrafWMCgGYfg==`
 - 提供部门：龙湾区民政局
 - 开放类型：A

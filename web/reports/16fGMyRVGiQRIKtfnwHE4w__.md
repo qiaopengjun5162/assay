@@ -1,5 +1,7 @@
 # 超市食用油物价信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/16fGMyRVGiQRIKtfnwHE4w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/16fGMyRVGiQRIKtfnwHE4w%3D%3D
 - 数据集 ID：`16fGMyRVGiQRIKtfnwHE4w==`
 - 提供部门：宁波市发改委
 - 开放类型：A

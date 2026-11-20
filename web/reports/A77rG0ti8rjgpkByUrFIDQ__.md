@@ -1,5 +1,7 @@
 # 宁波市光伏发电补贴资金拟补助企业名单信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/A77rG0ti8rjgpkByUrFIDQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/A77rG0ti8rjgpkByUrFIDQ%3D%3D
 - 数据集 ID：`A77rG0ti8rjgpkByUrFIDQ==`
 - 提供部门：宁波市数据局
 - 开放类型：A

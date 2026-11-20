@@ -1,5 +1,7 @@
 # 金华市四星级饭店信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/cgvANErHwKDS_zITwmLqbQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/cgvANErHwKDS_zITwmLqbQ%3D%3D
 - 数据集 ID：`cgvANErHwKDS_zITwmLqbQ==`
 - 提供部门：金华市文广旅游局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 宁波市重要工业生产资料价格监测信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/GUNHtgUMsSJfeZmgczZlnA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/GUNHtgUMsSJfeZmgczZlnA%3D%3D
 - 数据集 ID：`GUNHtgUMsSJfeZmgczZlnA==`
 - 提供部门：宁波市发改委
 - 开放类型：A

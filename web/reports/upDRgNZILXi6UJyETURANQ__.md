@@ -1,5 +1,7 @@
 # 鄞州区智慧水利系统水文测站基础信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/upDRgNZILXi6UJyETURANQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/upDRgNZILXi6UJyETURANQ%3D%3D
 - 数据集 ID：`upDRgNZILXi6UJyETURANQ==`
 - 提供部门：鄞州区
 - 开放类型：A

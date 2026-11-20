@@ -1,5 +1,7 @@
 # 宁波市口岸进出口额信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/MJvpboS9ffIGDylfFCcC0Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/MJvpboS9ffIGDylfFCcC0Q%3D%3D
 - 数据集 ID：`MJvpboS9ffIGDylfFCcC0Q==`
 - 提供部门：宁波海关
 - 开放类型：A

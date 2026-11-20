@@ -1,5 +1,7 @@
 # 宁波市特派员信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/LyQ6ebwXWjrjzZvJeFA6Tw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/LyQ6ebwXWjrjzZvJeFA6Tw%3D%3D
 - 数据集 ID：`LyQ6ebwXWjrjzZvJeFA6Tw==`
 - 提供部门：宁波市科技局
 - 开放类型：A

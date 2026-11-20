@@ -1,5 +1,7 @@
 # 停车交易记录表信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/CqtEOamo2JM0hn8lQtqoWA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/CqtEOamo2JM0hn8lQtqoWA%3D%3D
 - 数据集 ID：`CqtEOamo2JM0hn8lQtqoWA==`
 - 提供部门：南浔交通投资集团
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 省回流_建筑施工企业安全生产许可证
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/X0Iy4N%2B3_srEO_uSvYqu0A%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/X0Iy4N%2B3_srEO_uSvYqu0A%3D%3D
 - 数据集 ID：`X0Iy4N+3_srEO_uSvYqu0A==`
 - 提供部门：温州市住建局
 - 开放类型：A

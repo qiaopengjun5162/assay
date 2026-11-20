@@ -1,5 +1,7 @@
 # 宁波市慢性病常用药品清单信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/OQqE2OoeUg_JetBkhZHOtQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/OQqE2OoeUg_JetBkhZHOtQ%3D%3D
 - 数据集 ID：`OQqE2OoeUg_JetBkhZHOtQ==`
 - 提供部门：奉化区
 - 开放类型：A

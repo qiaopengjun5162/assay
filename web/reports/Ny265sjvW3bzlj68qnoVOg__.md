@@ -1,5 +1,7 @@
 # 产权交易挂牌披露信息-慈溪市
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Ny265sjvW3bzlj68qnoVOg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Ny265sjvW3bzlj68qnoVOg%3D%3D
 - 数据集 ID：`Ny265sjvW3bzlj68qnoVOg==`
 - 提供部门：慈溪市
 - 开放类型：A

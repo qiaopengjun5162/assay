@@ -1,5 +1,7 @@
 # 瑞安总部项目信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ANgB0I11l_kagJWUCFLpWw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ANgB0I11l_kagJWUCFLpWw%3D%3D
 - 数据集 ID：`ANgB0I11l_kagJWUCFLpWw==`
 - 提供部门：瑞安市投资促进服务中心
 - 开放类型：A

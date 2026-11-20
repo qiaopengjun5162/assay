@@ -1,5 +1,7 @@
 # 温岭市经信局企管通系统指标信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/aWrOHvCPuOPgZydggsIxuA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/aWrOHvCPuOPgZydggsIxuA%3D%3D
 - 数据集 ID：`aWrOHvCPuOPgZydggsIxuA==`
 - 提供部门：温岭市经信局
 - 开放类型：A

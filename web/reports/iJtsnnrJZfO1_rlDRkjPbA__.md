@@ -1,5 +1,7 @@
 # 慈溪市茶馆经营主体信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/iJtsnnrJZfO1_rlDRkjPbA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/iJtsnnrJZfO1_rlDRkjPbA%3D%3D
 - 数据集 ID：`iJtsnnrJZfO1_rlDRkjPbA==`
 - 提供部门：慈溪市
 - 开放类型：A

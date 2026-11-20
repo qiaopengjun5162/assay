@@ -1,5 +1,7 @@
 # 人民银行泰顺县支行行政许可信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Aze_m%2BCuB9UdMAIVZEjIZw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Aze_m%2BCuB9UdMAIVZEjIZw%3D%3D
 - 数据集 ID：`Aze_m+CuB9UdMAIVZEjIZw==`
 - 提供部门：中国人民银行泰顺支行
 - 开放类型：A

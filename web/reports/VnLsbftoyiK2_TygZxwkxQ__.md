@@ -1,5 +1,7 @@
 # 台州市黄岩区水雨情河道水情信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/VnLsbftoyiK2_TygZxwkxQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/VnLsbftoyiK2_TygZxwkxQ%3D%3D
 - 数据集 ID：`VnLsbftoyiK2_TygZxwkxQ==`
 - 提供部门：黄岩区水利局
 - 开放类型：A

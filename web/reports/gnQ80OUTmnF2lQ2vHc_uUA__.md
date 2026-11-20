@@ -1,5 +1,7 @@
 # 金融支农重点保供主体名单信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/gnQ80OUTmnF2lQ2vHc%2BuUA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/gnQ80OUTmnF2lQ2vHc%2BuUA%3D%3D
 - 数据集 ID：`gnQ80OUTmnF2lQ2vHc+uUA==`
 - 提供部门：宁波市市农业农村局
 - 开放类型：A

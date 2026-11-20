@@ -78,7 +78,7 @@ just clippy-wasm  # 前端也在门禁内
 ## 演示怎么演
 
 `docs/PITCH.md` 是 6 分钟讲稿，`just tamper` 是全场最硬的一分钟——
-改一位数字，Lean 内核当场报错，退出码 1。演之前预跑一次确认 Lean 在 PATH。
+改一位数字，Lean 内核当场报错、打印 `lean 退出码 1`；`just` 本身退出码 0（演示成功）。演之前预跑一次确认 Lean 在 PATH。
 
 ## 先读什么
 

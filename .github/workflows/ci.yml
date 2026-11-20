@@ -60,11 +60,17 @@ jobs:
             echo "文档漂移：引用了不存在的路径"; exit 1
           fi
 
-      - name: 证据复核（入库的 100 份，逐份重算 SHA-256）
+      - name: 证据复核（入库的 500 份，逐份重算 SHA-256）
         run: cargo run --release -q -p assay -- verify-evidence web/data.json web/evidence
 
       - name: Build release
         run: cargo build --release --locked -p assay
+
+      # 上面的门禁全是「正常产物能通过」。这道证明反过来的一半：
+      # 故意改字节 / 删证据 / 改报告哈希 / 塞 sorry，门禁必须变红。
+      # 全在临时副本上做，不碰入库产物；退出码语义（tamper 0 / drift 0,1,2）一并钉住。
+      - name: 门禁负向自测（坏产物必须被拒）
+        run: bash scripts/gate-negative.sh
 
   # README 曾写「Rust 1.85+」，但没人验证过。实测：1.86 直接过不了
   # （icu_* 2.4 要求 1.88），1.88.0 通过。`rust-version` 写进 Cargo.toml

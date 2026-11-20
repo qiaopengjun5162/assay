@@ -5,9 +5,10 @@
     ".": {
       "release-type": "simple",
       "package-name": "assay",
-      "version-file": "Cargo.toml",
+      "version-file": ".release-please-version",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
+        { "type": "generic", "path": "Cargo.toml" },
         { "type": "generic", "path": "ROADMAP.md" },
         { "type": "toml", "path": "Cargo.lock", "jsonpath": "$.package[?(@.name.value == 'assay')].version" },
         { "type": "toml", "path": "Cargo.lock", "jsonpath": "$.package[?(@.name.value == 'assay-core')].version" },

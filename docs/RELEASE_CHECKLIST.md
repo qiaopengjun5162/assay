@@ -13,9 +13,24 @@ release-please 从 `bootstrap-sha`（`6532b3a`，全 Rust 工作区那一版）�
 Conventional Commits，自己算出下一个版本号并开 PR。发布以**那个 PR 写版本号为准**，
 不手工挑一个顺眼的数字。
 
-用的是 `release-type: simple`：根 `Cargo.toml` 的 `[workspace.package] version`
-带 `x-release-please-version` 标记，`Cargo.lock` 里 4 个 assay 包靠 `toml` extra-files
-同步。rust 策略处理不了虚拟 workspace + `version.workspace = true`，原因见 D36。
+用的是 `release-type: simple`，版本源是单独的 `.release-please-version`（只有一行数字）。
+**不能把 `version-file` 指到 `Cargo.toml`**：simple 策略用 DefaultUpdater 更新版本文件，
+会把整个文件替换成一行，实测发版 PR 差点把 workspace 清单清空（PR #37 已关）。
+根 `Cargo.toml` 与 ROADMAP 的版本行都带 `x-release-please-version` 标记，由 `generic`
+extra-files 只改那一行；`Cargo.lock` 里 4 个 assay 包靠 `toml` extra-files 同步。
+rust 策略处理不了虚拟 workspace + `version.workspace = true`，原因见 D36。
+
+仓库设置：`Settings → Actions → General → Workflow permissions` 要勾上
+**Allow GitHub Actions to create and approve pull requests**，否则 release-please
+会建好分支却在开 PR 时报 “GitHub Actions is not permitted to create or approve
+pull requests”。已用 API 打开（`can_approve_pull_request_reviews=true`），
+默认的 workflow 权限仍保持 `read`，写权限由 workflow 自己声明。
+核对命令：
+
+```bash
+gh api repos/qiaopengjun5162/assay/actions/permissions/workflow \
+  --jq '{default_workflow_permissions, can_approve_pull_request_reviews}'
+```
 
 `release-please` 配置的 `"draft": true`：发版 PR 合并后先生成**草稿 release**，
 草稿不计入 `latest`，`releases/latest/download/...` 在构建期间仍指向上一版可用资产。
@@ -44,9 +59,10 @@ release-please 在每次推 `main` 后自动开/更新 `chore(main): release x.y
 gh pr diff <num> --name-only
 ```
 
-期望只有 `.release-please-manifest.json`、`CHANGELOG.md`、`Cargo.toml`、
-`Cargo.lock`、`ROADMAP.md`（带 `x-release-please-version` 标记那一行）。
-出现 `src/` 就停下——这不是纯发版 PR。`Cargo.lock` 必须跟着改：漏了它，CI 的
+期望只有 `.release-please-manifest.json`、`.release-please-version`、`CHANGELOG.md`、
+`Cargo.toml`、`Cargo.lock`、`ROADMAP.md`。**`Cargo.toml` 只能改一行**：出现
+`@@ -1,32 +1 @@` 这种整文件替换就是配错了 `version-file`，立刻关 PR。
+出现 `src/` 也停下——这不是纯发版 PR。`Cargo.lock` 必须跟着改：漏了它，CI 的
 `--locked` 立刻红。
 
 **假发版 PR**：合并发版 PR 之后、把草稿发布出去之前，release-please 找不到锚点，

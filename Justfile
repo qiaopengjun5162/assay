@@ -85,8 +85,12 @@ verify-evidence:
 verify-reports:
     cargo run --release -q -p assay -- verify-reports web/data.json web/reports web/evidence
 
+# 门禁负向自测：故意破坏产物，确认每道门禁真的会红（全在临时副本上做）
+gate-negative:
+    ./scripts/gate-negative.sh
+
 # 本地完整检查（提交前跑这个）
-check: fmt-check clippy typos test deny verify-evidence verify-reports proofs
+check: fmt-check clippy typos test deny verify-evidence verify-reports proofs gate-negative
     echo "全部通过"
 
 # 无障碍复查（axe-core + WCAG 2.1 A/AA，五个视图）

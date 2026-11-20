@@ -60,7 +60,7 @@ jobs:
             echo "文档漂移：引用了不存在的路径"; exit 1
           fi
 
-      - name: 证据复核（入库的 100 份，逐份重算 SHA-256）
+      - name: 证据复核（入库的 500 份，逐份重算 SHA-256）
         run: cargo run --release -q -p assay -- verify-evidence web/data.json web/evidence
 
       - name: Build release
@@ -187,6 +187,17 @@ jobs:
 
       - name: 内核校验（拒绝 sorry / admit）
         run: cargo run --release -p assay -- check-proofs fixtures/expected.lean
+
+      # 反过来的一半：改一位数字，内核必须拒绝。命令自身退出 0 表示演示成功，
+      # 屏幕上打印的「lean 退出码 1」才是内核的判定——别把两者混为一谈。
+      - name: 篡改演示（内核必须拒绝）
+        run: cargo run --release -q -p assay -- tamper --file fixtures/expected.lean
+
+      # 上面全是「正常产物能通过」。这道证明反过来的一半：故意改字节 / 删证据 /
+      # 改报告哈希 / 塞 sorry，确认各门禁真的会红。check-proofs 也要 lean，
+      # 所以整套自测放在本 job（rust job 没装 lean）。全在临时副本上做。
+      - name: 门禁负向自测（坏产物必须被拒）
+        run: bash scripts/gate-negative.sh
 
   secret-scan:
     name: 密钥扫描

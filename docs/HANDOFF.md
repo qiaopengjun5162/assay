@@ -23,6 +23,9 @@
 - 证明对齐：391 个可证数据集的 **SHA-256 与顺序全部一致**，`lean` PASS，4,970 条定理，39.5 秒
 - 导出对齐：500 条、前 200 条关键字段 0 差异
 - 前端：WASM 实测榜单 500 行、搜索过滤、详情六维、AI 解读、证据包、证明页 PASS、浏览器返回正常
+- 门禁有效性：`just gate-negative` 11/11——正向基线过；改证据 1 字节、删 1 份证据、
+  改报告 SHA、证明塞 `sorry` 后各门禁均退出 1；`tamper` 自身退出 0（Lean 内核退出 1）、
+  `drift` 三态 0/1/2 语义正确。全在临时副本上做，不碰冻结产物。
 
 ## 2. 已完成 / 待办
 
@@ -215,7 +218,8 @@ cargo install wasm-bindgen-cli --version <与 Cargo.lock 一致>
 ## 3. 必跑命令
 
 ```bash
-just check        # fmt(Rust+TOML) + clippy + nextest + cargo-deny + typos + 证明门禁，必须全绿
+just check        # fmt(Rust+TOML) + clippy + nextest + cargo-deny + typos + 证据/报告/证明门禁 + 门禁负向自测，必须全绿
+just gate-negative # 单独跑负向自测：故意改字节/删证据/改哈希/塞 sorry，确认门禁真的会红
 just clippy-wasm  # 前端也在门禁内
 just lint-docs    # Markdown lint
 just smoke        # 200 条端到端（联网，约 90 秒），产物进 out-smoke/，不覆盖正式产物

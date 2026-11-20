@@ -2,6 +2,30 @@
 
 > 只记「当时为什么这么选」。每条都能在文章里展开成一段。
 
+## D36 发版用「双 workflow + 五平台矩阵」，不上 cargo-dist（暂缓）
+
+**背景**：ROADMAP 写过「v0.1.0 tag + release-please + cargo-dist」，但源码版本其实
+已经是 `0.2.0`，仓库一个 tag 都没有；现场演示靠 `cargo build --release` 就够。
+真要让人不装 Rust 也能复核，缺的是**下载即得**的二进制，不是发布框架本身。
+
+**决定**：
+
+1. 抄本机 moonpub 已跑通的双 workflow：`release-please` 开纯发版 PR，
+   `release` 在 tag / 手动触发时构建并上传资产。不引入 cargo-dist：本项目只发一个
+   `assay` 二进制，cargo-dist 带来的生成文件与 GitHub App 依赖大于收益；等真要发
+   多个 crate 或做包管理器分发时再评估。
+2. 五个目标（linux amd64/arm64、macOS intel/arm64、Windows amd64）各出
+   **二进制包 + `.sha256`**，共 10 个资产；资产齐了才把 draft 发布出去，
+   不让 `latest` 指向 0 资产的空壳。
+3. 打包后 smoke 必须从压缩包里解出来跑 `assay --version/--help`，再跑
+   `verify-evidence` 与 `verify-reports`——验的是用户下载到的字节，不是 `target/` 里的。
+4. 默认仍靠人工点火：GITHUB_TOKEN 建的 tag 不触发下游 workflow。提供
+   `RELEASE_PAT` 可选 secret 走全自动；配了 PAT 就要注意双 run 去重。
+
+**代价**：发版要人按 `docs/RELEASE_CHECKLIST.md` 走一遍，不能推完就忘。
+**为什么值**：这一步的失败模式是「release 存在但下载链接 404 / 资产是别的批次」，
+只能靠清单逐项核对，不能靠 workflow 显示绿色。
+
 ## D35 报告必须能走回站点，且哈希只能来自入库的那批证据
 
 **背景**：报告是 `.md`，会被下载、转发、贴进评审材料。原来的报告离开站点后就是一张孤岛：

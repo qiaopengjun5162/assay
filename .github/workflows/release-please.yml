@@ -1,0 +1,29 @@
+name: release-please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    # ⚠️ 不要在这里加 `if:` 跳过「合并发版 PR」那一次 push（moonpub 2026-11-19 踩过，
+    # 见其 revert 提交）：release-please 在**同一次 run 里**既建 draft release、
+    # 又计算下一个发版 PR；整个 job 跳过会让 draft 建不出来，链条断在第一环。
+    # 代价是「合并发版 PR 之后、人工把 draft 发出去之前」这个窗口里可能开出一个
+    # CHANGELOG 上百行的假发版 PR。判据与处置见 docs/RELEASE_CHECKLIST.md：
+    # 看 CHANGELOG 增量，个位数是真、几十上百行是假，关掉即可。
+    #
+    # 默认 GITHUB_TOKEN 建的 tag 不会触发其它 workflow，所以 release.yml 需要
+    # 人工点火；配了 RELEASE_PAT 才全自动（token 改由 PAT 创建 tag）。
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json

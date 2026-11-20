@@ -1,12 +1,12 @@
 # HANDOFF — 接手须知
 
 > 给接手的 AI 或开发者。读完这份再动代码，能省掉大部分返工。
-> 最后更新：2026-11-15
+> 最后更新：2026-11-20
 
 ## 0. 项目位置
 
 ```
-/Users/qiaopengjun/Code/assay
+/Users/qiaopengjun/Code/Rust/assay
 ```
 
 远程：`https://github.com/qiaopengjun5162/assay`
@@ -25,6 +25,21 @@
 - 前端：WASM 实测榜单 500 行、搜索过滤、详情六维、AI 解读、证据包、证明页 PASS、浏览器返回正常
 
 ## 2. 已完成 / 待办
+
+已完成（2026-11-20 · 发布工程化配置，尚未发版）：
+
+- 新增 `.github/workflows/release-please.yml` + `release.yml`：前者开纯发版 PR，
+  后者在 tag / 手动触发时构建 **5 平台**二进制（linux amd64/arm64、macOS intel/arm64、
+  Windows amd64），每平台出包 + `.sha256`，共 **10 个资产**；资产齐了才把 draft 发出去。
+- 打包 smoke 从压缩包里解出来跑 `--version/--help` + `verify-evidence` + `verify-reports`，
+  验的是用户下载到的字节，不是 `target/` 里的。
+- 配置：`.release-please-config.json`（`bootstrap-sha` = `6532b3a`，`release-type: rust`，
+  `draft: true`）+ `.release-please-manifest.json`（`0.2.0`）。
+  ROADMAP 里带 `x-release-please-version` 标记的那一行由发版 PR 自动抬版本。
+- ⚠️ 默认 `GITHUB_TOKEN` 建的 tag **不会触发** `release.yml`。发版必须按
+  `docs/RELEASE_CHECKLIST.md` 人工点火；可选 `RELEASE_PAT` secret 走全自动。
+  仓库至今**没有 tag、没有 release**，这一步只算「准备好」。理由见 D36。
+- 改 workflow 后必跑 `actionlint .github/workflows/*.yml`（本机已装）。
 
 已完成（2026-11-15）：
 
@@ -251,6 +266,7 @@ just api-ingest 2026-11-18     # 把 out-full 灌进库（幂等，同一天重�
 | 前端样式 / 响应式断点 | `crates/web/style.css` |
 | 分享卡片 / favicon | `web/og.png`、`web/favicon.svg`（`index.html` 里 copy-file） |
 | 无障碍门禁 | `scripts/a11y.sh`（`just a11y`） |
+| 发版 PR / 二进制资产 | `.github/workflows/release-please.yml`、`release.yml`、`.release-please-{config,manifest}.json`、`docs/RELEASE_CHECKLIST.md` |
 
 ## 6. 环境坑
 

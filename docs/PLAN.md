@@ -63,7 +63,7 @@
 |---|---|---|
 | `Rust/rust-template` | `deny.toml`、`.pre-commit-config.yaml`、`.rustfmt.toml`、`Makefile` 思路、`cliff.toml` | 直接复制，改成 Justfile 驱动 |
 | `Rust/moonpub` | CI 六件事：fmt / clippy -D warnings / nextest / cargo-audit / **gitleaks 密钥扫描** / MSRV；`Justfile`；`scripts/coverage.sh` 覆盖率地板 | 抄成 `.github/workflows/ci.yml`；密钥扫描必留（我们脚本读 API key） |
-| `Rust/moonpub` | release-please + tag 触发 release 的双 workflow 结构（含 GITHUB_TOKEN 不触发下游的坑注释） | 决赛前打 v0.1.0 时用；不阻塞开发 |
+| `Rust/moonpub` | release-please + tag 触发 release 的双 workflow 结构（含 GITHUB_TOKEN 不触发下游的坑注释） | 已落成 `.github/workflows/release-please.yml` + `release.yml`；版本号以发版 PR 为准（源码当前 0.2.0），步骤见 `docs/RELEASE_CHECKLIST.md` |
 | `Web3/kite-rust-axum-template` | axum 分层（router/service/config） | 只在需要 HTTP 时启用；当前静态站不需要 |
 | `Lean/ZkProof` | Lean 项目骨架、`lakefile` 组织方式 | 证明模块的目录约定 |
 | `Rust/taiyin-guqin` | Rust 核心 + Next.js 前端的构建顺序（先 wasm/lib 后前端） | 前端构建顺序 |
@@ -77,7 +77,7 @@
 | `sodadata/soda-core` | YAML 声明式检查，人能读、能 review | 后续支持 `checks.yaml`，让数据提供方自己写检查 |
 | `DQOPS`（约 150 个内置检查） | 内置检查目录，按维度分组 | 我们首批 12 条检查按国标六维分组，不贪多 |
 | `Elementary` | 用历史做异常检测（volume/freshness anomalies） | v2 再加；5 天内不做时间序列模型 |
-| `axodotdev/cargo-dist` | 跨平台二进制打包 + release 资产 | 打 v0.1.0 时再上；现场用 `cargo build --release` 即可 |
+| `axodotdev/cargo-dist` | 跨平台二进制打包 + release 资产 | 暂不引入：只发一个 `assay` 二进制，矩阵构建已够；理由见 D36 |
 
 **不借鉴的**：Soda 的 Elastic License（我们保持 MIT/Apache-2.0 兼容）、任何需要 Spark 的重量级方案。
 
@@ -144,11 +144,12 @@ assay/
 退出码三档（0 正常 / 1 漂移 / 2 跑批不可信），口径见 `docs/audit/README.md` 与 D19。
 小样本手动试跑（`limit > 0`）会跳过漂移判定，只验证链路。
 
-### `release.yml`（打 tag 时）—— 尚未实现
+### `release.yml`（打 tag 时）—— 已配置，尚未发版
 
-仓库至今没有任何 tag，所以这个 workflow 还没写。真要打 v0.1.0 时再补，
-抄 moonpub 的结构，并在注释里保留那个坑：**release-please 用 GITHUB_TOKEN
-创建的 release 不会触发下游 workflow**，需要手动 `gh workflow run` 或用 PAT。
+已抄 moonpub 的双 workflow 结构，注释里保留那个坑：**release-please 用
+GITHUB_TOKEN 创建的 release 不会触发下游 workflow**，需要手动点火或用 PAT。
+五平台矩阵 + 打包 smoke + 10 个资产自检；完整发版步骤与失败处置见
+`docs/RELEASE_CHECKLIST.md`。仓库至今仍没有 tag，配置就绪不等于已发布。
 
 ---
 

@@ -1,0 +1,198 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  # release-please 用 GITHUB_TOKEN 建 release + tag，而 GitHub 规定
+  # 「GITHUB_TOKEN 产生的事件不会触发其它 workflow」。因此默认配置下
+  # 上面那条 push 不会自动点火；合并发版 PR、把 draft 发布出去之后，
+  # 要手动 `gh workflow run release.yml --ref vX.Y.Z`（见 docs/RELEASE_CHECKLIST.md）。
+  # 配了 RELEASE_PAT 时 tag 由 PAT 创建，才会自动触发。
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  # 本机 .cargo/config.toml 有 -C target-cpu=native；runner 不保证编译机与运行机
+  # 同代 CPU，缓存跨代命中会 SIGILL。空串覆盖 config（CI 同样这么做）。
+  RUSTFLAGS: ""
+
+jobs:
+  verify:
+    name: verify · 发版提交必须过门禁
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
+
+      - name: Format（Rust）
+        run: cargo fmt --all -- --check
+
+      - name: Clippy（零容忍）
+        run: cargo clippy -p assay-core -p assay -p assay-api --all-targets --all-features -- -D warnings
+
+      - name: Test（nextest）
+        run: cargo nextest run -p assay-core -p assay -p assay-api -p assay-web --all-features
+
+      - name: 产物门禁（证据 + 报告哈希）
+        run: |
+          cargo run --release -q -p assay -- verify-evidence web/data.json web/evidence
+          cargo run --release -q -p assay -- verify-reports web/data.json web/reports web/evidence
+
+  build:
+    name: build · ${{ matrix.suffix }}
+    needs: verify
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            suffix: linux-amd64
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-24.04-arm
+            suffix: linux-arm64
+          - target: x86_64-apple-darwin
+            os: macos-15-intel
+            suffix: macos-amd64
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            suffix: macos-arm64
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            suffix: windows-amd64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build（--locked，与仓库依赖树一致）
+        run: cargo build --release --locked -p assay --target ${{ matrix.target }}
+
+      - name: Package（Unix）
+        if: runner.os != 'Windows'
+        run: |
+          set -euo pipefail
+          cd target/${{ matrix.target }}/release
+          tar czf assay-${{ matrix.suffix }}.tar.gz assay
+          shasum -a 256 assay-${{ matrix.suffix }}.tar.gz > assay-${{ matrix.suffix }}.tar.gz.sha256
+
+      - name: Package（Windows）
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          cd target\${{ matrix.target }}\release
+          Compress-Archive -Path assay.exe -DestinationPath assay-${{ matrix.suffix }}.zip
+          $hash = (Get-FileHash assay-${{ matrix.suffix }}.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  assay-${{ matrix.suffix }}.zip" | Out-File -Encoding ASCII assay-${{ matrix.suffix }}.zip.sha256
+
+      # 只验「能跑」不够：打包后从 tar.gz 里解出来再跑，验的是用户真正下载到的东西。
+      - name: Smoke（Unix 打包产物）
+        if: runner.os != 'Windows'
+        run: |
+          set -euo pipefail
+          release_dir="target/${{ matrix.target }}/release"
+          archive="$release_dir/assay-${{ matrix.suffix }}.tar.gz"
+          extract_dir="$RUNNER_TEMP/assay-release-archive"
+          rm -rf "$extract_dir"
+          mkdir -p "$extract_dir"
+          tar xzf "$archive" -C "$extract_dir"
+          binary="$extract_dir/assay"
+          "$binary" --version
+          "$binary" --help
+          # 用入库产物跑一次真校验：换平台后哈希与报告回链仍须全部通过
+          "$binary" verify-evidence web/data.json web/evidence
+          "$binary" verify-reports web/data.json web/reports web/evidence
+
+      - name: Smoke（Windows 打包产物）
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $releaseDir = Join-Path $env:GITHUB_WORKSPACE "target\${{ matrix.target }}\release"
+          $zipPath = Join-Path $releaseDir "assay-${{ matrix.suffix }}.zip"
+          $extractDir = Join-Path $env:RUNNER_TEMP "assay-release-zip"
+          Remove-Item -Recurse -Force $extractDir -ErrorAction SilentlyContinue
+          Expand-Archive -Path $zipPath -DestinationPath $extractDir
+          $binary = Join-Path $extractDir "assay.exe"
+          & $binary --version
+          & $binary --help
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: assay-${{ matrix.suffix }}
+          path: |
+            target/${{ matrix.target }}/release/assay-${{ matrix.suffix }}.tar.gz
+            target/${{ matrix.target }}/release/assay-${{ matrix.suffix }}.tar.gz.sha256
+            target/${{ matrix.target }}/release/assay-${{ matrix.suffix }}.zip
+            target/${{ matrix.target }}/release/assay-${{ matrix.suffix }}.zip.sha256
+
+  release:
+    name: release · 上传资产并发布
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: assay-*
+          merge-multiple: true
+
+      - name: 资产自检（5 平台 × 二进制 + SHA-256）
+        run: |
+          set -euo pipefail
+          count=$(find dist -maxdepth 1 -type f | wc -l | tr -d ' ')
+          echo "release assets: $count"
+          test "$count" -eq 10
+          for f in dist/*.sha256; do
+            (cd dist && shasum -a 256 -c "$(basename "$f")")
+          done
+
+      - name: 生成发布说明
+        uses: orhun/git-cliff-action@v4
+        id: git-cliff
+        with:
+          config: cliff.toml
+          args: -vv --latest --strip header
+        env:
+          OUTPUT: CHANGELOG.md
+
+      # release-please 建的是 draft release：草稿不计入 latest，所以资产没上传完
+      # 之前 releases/latest/download/... 仍指向上一个可用版本。这里显式
+      # draft: false —— 资产齐了才发布，一步到位，不让 latest 指向 0 资产的空壳。
+      - name: 上传资产并发布
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
+          draft: false
+          body: ${{ steps.git-cliff.outputs.content }}
+          files: dist/*
+          fail_on_unmatched_files: true

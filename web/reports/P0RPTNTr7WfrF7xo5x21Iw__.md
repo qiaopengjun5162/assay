@@ -1,5 +1,7 @@
 # 象山县低保公示名单信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/P0RPTNTr7WfrF7xo5x21Iw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/P0RPTNTr7WfrF7xo5x21Iw%3D%3D
 - 数据集 ID：`P0RPTNTr7WfrF7xo5x21Iw==`
 - 提供部门：象山县
 - 开放类型：A

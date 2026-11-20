@@ -1,5 +1,7 @@
 # 余姚市市级入库科技型中小企业信息（2021-2024）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/qJDI2eFp34eyZREoduHD5A%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/qJDI2eFp34eyZREoduHD5A%3D%3D
 - 数据集 ID：`qJDI2eFp34eyZREoduHD5A==`
 - 提供部门：余姚市
 - 开放类型：A

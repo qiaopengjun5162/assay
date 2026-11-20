@@ -1,5 +1,7 @@
 # 奉化区馆藏资料-历史报纸信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/a6V%2B2z5WK1idMNG9ax133w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/a6V%2B2z5WK1idMNG9ax133w%3D%3D
 - 数据集 ID：`a6V+2z5WK1idMNG9ax133w==`
 - 提供部门：奉化区
 - 开放类型：A

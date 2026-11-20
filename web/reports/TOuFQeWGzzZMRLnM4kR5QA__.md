@@ -1,5 +1,7 @@
 # 蝴蝶-线索奖励信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/TOuFQeWGzzZMRLnM4kR5QA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/TOuFQeWGzzZMRLnM4kR5QA%3D%3D
 - 数据集 ID：`TOuFQeWGzzZMRLnM4kR5QA==`
 - 提供部门：湖州市公安局
 - 开放类型：A

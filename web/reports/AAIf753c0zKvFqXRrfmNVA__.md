@@ -1,5 +1,7 @@
 # 市级企业工程（技术）中心信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/AAIf753c0zKvFqXRrfmNVA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/AAIf753c0zKvFqXRrfmNVA%3D%3D
 - 数据集 ID：`AAIf753c0zKvFqXRrfmNVA==`
 - 提供部门：宁波市科技局
 - 开放类型：A

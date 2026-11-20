@@ -1,5 +1,7 @@
 # 17-19年高新技术企业信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/gZVuRF37SeAGUg1vr7u_rQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/gZVuRF37SeAGUg1vr7u_rQ%3D%3D
 - 数据集 ID：`gZVuRF37SeAGUg1vr7u_rQ==`
 - 提供部门：象山县
 - 开放类型：A

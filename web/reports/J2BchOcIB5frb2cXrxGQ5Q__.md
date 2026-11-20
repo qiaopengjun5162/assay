@@ -1,5 +1,7 @@
 # 北仑区农机购置补贴申请信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/J2BchOcIB5frb2cXrxGQ5Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/J2BchOcIB5frb2cXrxGQ5Q%3D%3D
 - 数据集 ID：`J2BchOcIB5frb2cXrxGQ5Q==`
 - 提供部门：北仑区
 - 开放类型：A

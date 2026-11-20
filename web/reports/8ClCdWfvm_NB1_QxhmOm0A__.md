@@ -1,5 +1,7 @@
 # 非法行医行政处罚信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/8ClCdWfvm%2BNB1%2BQxhmOm0A%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/8ClCdWfvm%2BNB1%2BQxhmOm0A%3D%3D
 - 数据集 ID：`8ClCdWfvm+NB1+QxhmOm0A==`
 - 提供部门：宁波市卫生健康委
 - 开放类型：A

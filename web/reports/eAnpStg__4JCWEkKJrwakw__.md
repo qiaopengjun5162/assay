@@ -1,5 +1,7 @@
 # 宁波市危险化学品安全使用许可证信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/eAnpStg_%2B4JCWEkKJrwakw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/eAnpStg_%2B4JCWEkKJrwakw%3D%3D
 - 数据集 ID：`eAnpStg_+4JCWEkKJrwakw==`
 - 提供部门：宁波市应急管理局
 - 开放类型：A

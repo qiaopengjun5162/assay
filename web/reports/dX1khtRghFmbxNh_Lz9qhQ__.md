@@ -1,5 +1,7 @@
 # 洞头空间中心-洞头区各季度城镇、农村居民人均可支配收入信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/dX1khtRghFmbxNh_Lz9qhQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/dX1khtRghFmbxNh_Lz9qhQ%3D%3D
 - 数据集 ID：`dX1khtRghFmbxNh_Lz9qhQ==`
 - 提供部门：洞头区大数据管理中心
 - 开放类型：A

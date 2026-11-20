@@ -1,5 +1,7 @@
 # 北仑区学校招生计划信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/uVJNpqz0FV0fuT87xEEawA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/uVJNpqz0FV0fuT87xEEawA%3D%3D
 - 数据集 ID：`uVJNpqz0FV0fuT87xEEawA==`
 - 提供部门：北仑区
 - 开放类型：A

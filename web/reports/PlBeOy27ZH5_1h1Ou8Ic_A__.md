@@ -1,5 +1,7 @@
 # 海曙区新认定无公害农产品公示名单信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/PlBeOy27ZH5%2B1h1Ou8Ic%2BA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/PlBeOy27ZH5%2B1h1Ou8Ic%2BA%3D%3D
 - 数据集 ID：`PlBeOy27ZH5+1h1Ou8Ic+A==`
 - 提供部门：海曙区
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 宁波市景区数字孪生综合系统文旅晓灵通考古探秘基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/GR6Qq9rlq0nH2tEJYjVe%2BA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/GR6Qq9rlq0nH2tEJYjVe%2BA%3D%3D
 - 数据集 ID：`GR6Qq9rlq0nH2tEJYjVe+A==`
 - 提供部门：宁波市文化广电旅游局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 数字政协_提案交办信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Xx4ydQKuGMa5U02qzFicoQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Xx4ydQKuGMa5U02qzFicoQ%3D%3D
 - 数据集 ID：`Xx4ydQKuGMa5U02qzFicoQ==`
 - 提供部门：南浔区政协办公室
 - 开放类型：A

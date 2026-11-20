@@ -1,5 +1,7 @@
 # 洞头空间中心-洞头区花园村庄信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/uh%2BPqG2kctMFF_f0SwboMA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/uh%2BPqG2kctMFF_f0SwboMA%3D%3D
 - 数据集 ID：`uh+PqG2kctMFF_f0SwboMA==`
 - 提供部门：洞头区大数据管理中心
 - 开放类型：A

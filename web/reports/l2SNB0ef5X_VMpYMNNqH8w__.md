@@ -1,5 +1,7 @@
 # 宁海县文化广播档案文书目录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/l2SNB0ef5X%2BVMpYMNNqH8w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/l2SNB0ef5X%2BVMpYMNNqH8w%3D%3D
 - 数据集 ID：`l2SNB0ef5X+VMpYMNNqH8w==`
 - 提供部门：宁海县
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 农资零售店信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/5OmciTHX%2BYOJLDdyCsbUFg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/5OmciTHX%2BYOJLDdyCsbUFg%3D%3D
 - 数据集 ID：`5OmciTHX+YOJLDdyCsbUFg==`
 - 提供部门：宁波市市农业农村局
 - 开放类型：A

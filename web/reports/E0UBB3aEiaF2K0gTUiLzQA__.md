@@ -1,5 +1,7 @@
 # 中小学校区信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/E0UBB3aEiaF2K0gTUiLzQA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/E0UBB3aEiaF2K0gTUiLzQA%3D%3D
 - 数据集 ID：`E0UBB3aEiaF2K0gTUiLzQA==`
 - 提供部门：宁波市教育局
 - 开放类型：A

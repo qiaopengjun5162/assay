@@ -1,5 +1,7 @@
 # 宁波市标准地名地址桥梁信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/0u8ZMZJI%2BlbIp6NMdDw7fg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/0u8ZMZJI%2BlbIp6NMdDw7fg%3D%3D
 - 数据集 ID：`0u8ZMZJI+lbIp6NMdDw7fg==`
 - 提供部门：宁波市民政局
 - 开放类型：A

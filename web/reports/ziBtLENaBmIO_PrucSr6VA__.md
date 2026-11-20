@@ -1,5 +1,7 @@
 # 宁波市民政领域行政区划名称信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ziBtLENaBmIO_PrucSr6VA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ziBtLENaBmIO_PrucSr6VA%3D%3D
 - 数据集 ID：`ziBtLENaBmIO_PrucSr6VA==`
 - 提供部门：宁波市民政局
 - 开放类型：A

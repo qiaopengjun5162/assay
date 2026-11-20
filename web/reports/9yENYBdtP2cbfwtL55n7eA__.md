@@ -1,5 +1,7 @@
 # 宁波市标准地名地址河流信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/9yENYBdtP2cbfwtL55n7eA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/9yENYBdtP2cbfwtL55n7eA%3D%3D
 - 数据集 ID：`9yENYBdtP2cbfwtL55n7eA==`
 - 提供部门：宁波市民政局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 省市回流_高新技术企业信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/lBB5GAtA5E1XWM5trjXgEw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/lBB5GAtA5E1XWM5trjXgEw%3D%3D
 - 数据集 ID：`lBB5GAtA5E1XWM5trjXgEw==`
 - 提供部门：龙湾区政府办公室
 - 开放类型：A

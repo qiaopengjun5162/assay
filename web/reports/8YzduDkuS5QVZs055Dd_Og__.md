@@ -1,5 +1,7 @@
 # 吴兴区智慧应急综合指挥平台运输资源信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/8YzduDkuS5QVZs055Dd%2BOg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/8YzduDkuS5QVZs055Dd%2BOg%3D%3D
 - 数据集 ID：`8YzduDkuS5QVZs055Dd+Og==`
 - 提供部门：吴兴区应急管理局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 专业技术人员职称评审违纪违规信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/kU1dG1j5ZdAzEq%2Bd1ay7ug%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/kU1dG1j5ZdAzEq%2Bd1ay7ug%3D%3D
 - 数据集 ID：`kU1dG1j5ZdAzEq+d1ay7ug==`
 - 提供部门：省政府机构/省人力社保厅
 - 开放类型：B

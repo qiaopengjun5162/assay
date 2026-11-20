@@ -1,5 +1,7 @@
 # 浙江省首台（套）产品推广应用指导目录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/niKbxGZnKNEoqGiz9c_ySQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/niKbxGZnKNEoqGiz9c_ySQ%3D%3D
 - 数据集 ID：`niKbxGZnKNEoqGiz9c_ySQ==`
 - 提供部门：省政府机构/省经信厅
 - 开放类型：A

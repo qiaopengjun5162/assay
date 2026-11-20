@@ -1,5 +1,7 @@
 # 龙湾区空间中心系统公共厕所地理信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/UHGSt45SUBa8CV_CQmCWDQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/UHGSt45SUBa8CV_CQmCWDQ%3D%3D
 - 数据集 ID：`UHGSt45SUBa8CV_CQmCWDQ==`
 - 提供部门：龙湾区政府办公室
 - 开放类型：A

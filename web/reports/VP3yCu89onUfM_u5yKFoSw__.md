@@ -1,5 +1,7 @@
 # 典当行机构信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/VP3yCu89onUfM_u5yKFoSw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/VP3yCu89onUfM_u5yKFoSw%3D%3D
 - 数据集 ID：`VP3yCu89onUfM_u5yKFoSw==`
 - 提供部门：宁波市委金融办
 - 开放类型：A

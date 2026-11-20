@@ -1,5 +1,7 @@
 # 宁波市汽车零件出口额信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/c9eeMLSYmIuGK2P7PRCUww%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/c9eeMLSYmIuGK2P7PRCUww%3D%3D
 - 数据集 ID：`c9eeMLSYmIuGK2P7PRCUww==`
 - 提供部门：宁波海关
 - 开放类型：A

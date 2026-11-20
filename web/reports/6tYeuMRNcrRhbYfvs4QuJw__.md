@@ -1,5 +1,7 @@
 # 宁波市存栏5000以上生猪养殖场信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/6tYeuMRNcrRhbYfvs4QuJw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/6tYeuMRNcrRhbYfvs4QuJw%3D%3D
 - 数据集 ID：`6tYeuMRNcrRhbYfvs4QuJw==`
 - 提供部门：宁波市市农业农村局
 - 开放类型：A

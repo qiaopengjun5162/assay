@@ -1,5 +1,7 @@
 # 北仑区本级主要经济指标月度统计信息(2019年）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/OLwJgviCG%2B36AGPMm1Stpw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/OLwJgviCG%2B36AGPMm1Stpw%3D%3D
 - 数据集 ID：`OLwJgviCG+36AGPMm1Stpw==`
 - 提供部门：北仑区
 - 开放类型：A

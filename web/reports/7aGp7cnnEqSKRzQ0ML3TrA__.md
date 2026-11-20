@@ -1,5 +1,7 @@
 # 户口、身份证办理点信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/7aGp7cnnEqSKRzQ0ML3TrA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/7aGp7cnnEqSKRzQ0ML3TrA%3D%3D
 - 数据集 ID：`7aGp7cnnEqSKRzQ0ML3TrA==`
 - 提供部门：宁波市公安局
 - 开放类型：A

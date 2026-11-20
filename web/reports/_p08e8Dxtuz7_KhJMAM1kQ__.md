@@ -1,5 +1,7 @@
 # 学校基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/_p08e8Dxtuz7%2BKhJMAM1kQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/_p08e8Dxtuz7%2BKhJMAM1kQ%3D%3D
 - 数据集 ID：`_p08e8Dxtuz7+KhJMAM1kQ==`
 - 提供部门：宁波市教育局
 - 开放类型：A

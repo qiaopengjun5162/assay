@@ -1,5 +1,7 @@
 # 违反女职工和未成年工特殊保护规定的处罚
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/YY71WFrD5kV2NHecYdLdPg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/YY71WFrD5kV2NHecYdLdPg%3D%3D
 - 数据集 ID：`YY71WFrD5kV2NHecYdLdPg==`
 - 提供部门：宁波市人力社保局
 - 开放类型：A

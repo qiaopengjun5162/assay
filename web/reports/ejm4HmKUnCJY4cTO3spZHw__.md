@@ -1,5 +1,7 @@
 # 宁波市公众健康服务平台医生信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ejm4HmKUnCJY4cTO3spZHw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ejm4HmKUnCJY4cTO3spZHw%3D%3D
 - 数据集 ID：`ejm4HmKUnCJY4cTO3spZHw==`
 - 提供部门：宁波市卫生健康委
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 宁波市酒类及饮料进口额信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/aP2YKZImBO%2B8zRvDyS90xQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/aP2YKZImBO%2B8zRvDyS90xQ%3D%3D
 - 数据集 ID：`aP2YKZImBO+8zRvDyS90xQ==`
 - 提供部门：宁波海关
 - 开放类型：A

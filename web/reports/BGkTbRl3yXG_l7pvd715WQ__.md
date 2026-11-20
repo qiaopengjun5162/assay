@@ -1,5 +1,7 @@
 # 宁波市市区超市商品价格信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/BGkTbRl3yXG%2Bl7pvd715WQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/BGkTbRl3yXG%2Bl7pvd715WQ%3D%3D
 - 数据集 ID：`BGkTbRl3yXG+l7pvd715WQ==`
 - 提供部门：宁波市发改委
 - 开放类型：A

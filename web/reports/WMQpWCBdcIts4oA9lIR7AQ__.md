@@ -1,5 +1,7 @@
 # 省回流_高新技术企业信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/WMQpWCBdcIts4oA9lIR7AQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/WMQpWCBdcIts4oA9lIR7AQ%3D%3D
 - 数据集 ID：`WMQpWCBdcIts4oA9lIR7AQ==`
 - 提供部门：温州市科技局
 - 开放类型：A

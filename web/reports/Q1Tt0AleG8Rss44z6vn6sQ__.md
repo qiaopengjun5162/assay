@@ -1,5 +1,7 @@
 # 产业链数据中心系统-企业基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Q1Tt0AleG8Rss44z6vn6sQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Q1Tt0AleG8Rss44z6vn6sQ%3D%3D
 - 数据集 ID：`Q1Tt0AleG8Rss44z6vn6sQ==`
 - 提供部门：鹿城区经信局
 - 开放类型：A

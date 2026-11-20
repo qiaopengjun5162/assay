@@ -1,5 +1,7 @@
 # 北仑区慢性病常用药品清单信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/2bbnROS86Bk3AXas6eVG4w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/2bbnROS86Bk3AXas6eVG4w%3D%3D
 - 数据集 ID：`2bbnROS86Bk3AXas6eVG4w==`
 - 提供部门：北仑区
 - 开放类型：A

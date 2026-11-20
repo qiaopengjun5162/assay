@@ -1,5 +1,7 @@
 # 产权交易项目数据信息-慈溪市
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/9azOs%2BZRxpSVVsEMOOBHlg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/9azOs%2BZRxpSVVsEMOOBHlg%3D%3D
 - 数据集 ID：`9azOs+ZRxpSVVsEMOOBHlg==`
 - 提供部门：慈溪市
 - 开放类型：A

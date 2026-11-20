@@ -1,5 +1,7 @@
 # 教育事业统计-技工学校基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/WNuuHAkHSDdH7R3zN8v97w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/WNuuHAkHSDdH7R3zN8v97w%3D%3D
 - 数据集 ID：`WNuuHAkHSDdH7R3zN8v97w==`
 - 提供部门：省政府机构/省教育厅
 - 开放类型：A

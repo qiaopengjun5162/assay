@@ -1,5 +1,7 @@
 # 2019重点用能企业信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/U94t2a_MCpmtuB9zTPzgig%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/U94t2a_MCpmtuB9zTPzgig%3D%3D
 - 数据集 ID：`U94t2a_MCpmtuB9zTPzgig==`
 - 提供部门：宁波市能源局
 - 开放类型：A

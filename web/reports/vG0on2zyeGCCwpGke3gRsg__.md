@@ -1,5 +1,7 @@
 # 临平区企业年报社保公共开放信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/vG0on2zyeGCCwpGke3gRsg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/vG0on2zyeGCCwpGke3gRsg%3D%3D
 - 数据集 ID：`vG0on2zyeGCCwpGke3gRsg==`
 - 提供部门：临平区数据资源管理局
 - 开放类型：A

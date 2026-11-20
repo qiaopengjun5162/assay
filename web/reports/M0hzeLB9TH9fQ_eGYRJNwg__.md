@@ -1,5 +1,7 @@
 # 公交线路站点明细信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/M0hzeLB9TH9fQ_eGYRJNwg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/M0hzeLB9TH9fQ_eGYRJNwg%3D%3D
 - 数据集 ID：`M0hzeLB9TH9fQ_eGYRJNwg==`
 - 提供部门：宁波市交通局
 - 开放类型：A

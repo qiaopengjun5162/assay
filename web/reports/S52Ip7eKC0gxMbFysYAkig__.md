@@ -1,5 +1,7 @@
 # 北仑区农旅融合式共富工坊信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/S52Ip7eKC0gxMbFysYAkig%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/S52Ip7eKC0gxMbFysYAkig%3D%3D
 - 数据集 ID：`S52Ip7eKC0gxMbFysYAkig==`
 - 提供部门：北仑区
 - 开放类型：A

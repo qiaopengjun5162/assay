@@ -1,5 +1,7 @@
 # 龙湾区空间中心系统港口码头地理信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/gfiDiyXtGgDE_DWcreX5DQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/gfiDiyXtGgDE_DWcreX5DQ%3D%3D
 - 数据集 ID：`gfiDiyXtGgDE_DWcreX5DQ==`
 - 提供部门：龙湾区政府办公室
 - 开放类型：A

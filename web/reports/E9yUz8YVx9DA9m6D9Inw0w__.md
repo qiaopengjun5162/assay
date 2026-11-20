@@ -1,5 +1,7 @@
 # 温州中秋赏月地图地理信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/E9yUz8YVx9DA9m6D9Inw0w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/E9yUz8YVx9DA9m6D9Inw0w%3D%3D
 - 数据集 ID：`E9yUz8YVx9DA9m6D9Inw0w==`
 - 提供部门：温州市自然资源和规划局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 文体服务中心信息（2018-2020）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Umrv7IcQJvTa0Iz3mmgvTw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Umrv7IcQJvTa0Iz3mmgvTw%3D%3D
 - 数据集 ID：`Umrv7IcQJvTa0Iz3mmgvTw==`
 - 提供部门：宁波市数据局
 - 开放类型：A

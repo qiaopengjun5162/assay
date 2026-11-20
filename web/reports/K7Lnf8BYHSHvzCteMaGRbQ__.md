@@ -1,5 +1,7 @@
 # 省市回流_“互联网+监管”企业基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/K7Lnf8BYHSHvzCteMaGRbQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/K7Lnf8BYHSHvzCteMaGRbQ%3D%3D
 - 数据集 ID：`K7Lnf8BYHSHvzCteMaGRbQ==`
 - 提供部门：平阳县市场监管局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 鄞州区智慧水利系统河道水情信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/2%2BG1IhooWGrq7jaCN%2BnFjw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/2%2BG1IhooWGrq7jaCN%2BnFjw%3D%3D
 - 数据集 ID：`2+G1IhooWGrq7jaCN+nFjw==`
 - 提供部门：鄞州区
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 地类面积分类汇总信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/TXIGXsyNLYFIYvbvJp61cA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/TXIGXsyNLYFIYvbvJp61cA%3D%3D
 - 数据集 ID：`TXIGXsyNLYFIYvbvJp61cA==`
 - 提供部门：省自然资源厅
 - 开放类型：A

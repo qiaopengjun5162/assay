@@ -1,5 +1,7 @@
 # 地址标准化信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/St94oyaWc5VCrorwy9uZUA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/St94oyaWc5VCrorwy9uZUA%3D%3D
 - 数据集 ID：`St94oyaWc5VCrorwy9uZUA==`
 - 提供部门：宁波市自然资源和规划局（市海洋局、市林业局）
 - 开放类型：A

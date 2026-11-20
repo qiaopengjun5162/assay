@@ -1,5 +1,7 @@
 # 数据开放_出店占道经营信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/e14awywTZP1n2JT1_KdQTw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/e14awywTZP1n2JT1_KdQTw%3D%3D
 - 数据集 ID：`e14awywTZP1n2JT1_KdQTw==`
 - 提供部门：钱塘区政府办公室
 - 开放类型：A

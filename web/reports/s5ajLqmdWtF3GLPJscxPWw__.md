@@ -1,5 +1,7 @@
 # 南浔区智慧城管系统_案件流转记录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/s5ajLqmdWtF3GLPJscxPWw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/s5ajLqmdWtF3GLPJscxPWw%3D%3D
 - 数据集 ID：`s5ajLqmdWtF3GLPJscxPWw==`
 - 提供部门：南浔区综合行政执法局
 - 开放类型：A

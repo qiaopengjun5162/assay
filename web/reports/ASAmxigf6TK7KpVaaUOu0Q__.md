@@ -1,5 +1,7 @@
 # 慈溪市智慧垃圾住户积分明细信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ASAmxigf6TK7KpVaaUOu0Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ASAmxigf6TK7KpVaaUOu0Q%3D%3D
 - 数据集 ID：`ASAmxigf6TK7KpVaaUOu0Q==`
 - 提供部门：慈溪市
 - 开放类型：A

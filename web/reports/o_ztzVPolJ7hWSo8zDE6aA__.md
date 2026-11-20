@@ -1,5 +1,7 @@
 # 安吉县交投集团快点出行系统-公交线路信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/o%2BztzVPolJ7hWSo8zDE6aA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/o%2BztzVPolJ7hWSo8zDE6aA%3D%3D
 - 数据集 ID：`o+ztzVPolJ7hWSo8zDE6aA==`
 - 提供部门：安吉县交投集团
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 派出所基本信息（2015-2022）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/cha3oVL2JDxC8hUb4ljslQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/cha3oVL2JDxC8hUb4ljslQ%3D%3D
 - 数据集 ID：`cha3oVL2JDxC8hUb4ljslQ==`
 - 提供部门：宁波市公安局
 - 开放类型：A

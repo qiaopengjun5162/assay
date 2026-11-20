@@ -1,5 +1,7 @@
 # 数字政协_基层协商信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/M8wqdCZcLWpXJ2K5STF%2BEA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/M8wqdCZcLWpXJ2K5STF%2BEA%3D%3D
 - 数据集 ID：`M8wqdCZcLWpXJ2K5STF+EA==`
 - 提供部门：南浔区政协办公室
 - 开放类型：A

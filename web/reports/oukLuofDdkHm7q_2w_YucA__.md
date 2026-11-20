@@ -1,5 +1,7 @@
 # 嘉兴云执车车辆布控信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/oukLuofDdkHm7q%2B2w%2BYucA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/oukLuofDdkHm7q%2B2w%2BYucA%3D%3D
 - 数据集 ID：`oukLuofDdkHm7q+2w+YucA==`
 - 提供部门：省法院/省法院
 - 开放类型：B

@@ -1,5 +1,7 @@
 # 拓展采购开评标明细信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/XIArIxO4DYWbdKGh33T9vw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/XIArIxO4DYWbdKGh33T9vw%3D%3D
 - 数据集 ID：`XIArIxO4DYWbdKGh33T9vw==`
 - 提供部门：三门县公共资源交易中心
 - 开放类型：A

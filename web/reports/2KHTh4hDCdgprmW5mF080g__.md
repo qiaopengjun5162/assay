@@ -1,5 +1,7 @@
 # 海曙区规模种粮补贴信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/2KHTh4hDCdgprmW5mF080g%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/2KHTh4hDCdgprmW5mF080g%3D%3D
 - 数据集 ID：`2KHTh4hDCdgprmW5mF080g==`
 - 提供部门：海曙区
 - 开放类型：A

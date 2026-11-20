@@ -1,5 +1,7 @@
 # 安吉县灵峰度假区街道综合管理系统-景区基础信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/LKwrsRw%2BJpwWY41hdrvTwg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/LKwrsRw%2BJpwWY41hdrvTwg%3D%3D
 - 数据集 ID：`LKwrsRw+JpwWY41hdrvTwg==`
 - 提供部门：安吉县灵峰街道
 - 开放类型：A

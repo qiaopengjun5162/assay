@@ -87,6 +87,12 @@ enum Command {
         /// 输出目录（默认 web/reports）；export 从这里判断哪些条有报告
         #[arg(long, default_value = "web/reports")]
         dest: String,
+        /// 证据根目录：必须与入库 web/evidence 同一批，否则报告里的哈希全部对不上
+        #[arg(long)]
+        evidence_dir: Option<String>,
+        /// 不把 AI 解读写进报告：报告只放可核对的事实，解读留在网页
+        #[arg(long)]
+        no_explain: bool,
     },
     /// 单数据集报告：渲染成 Markdown（可直接贴进评审流程）
     ReportOne {
@@ -95,6 +101,9 @@ enum Command {
         /// 输出文件；省略则打印到标准输出
         #[arg(long)]
         to: Option<String>,
+        /// 证据根目录，同上
+        #[arg(long)]
+        evidence_dir: Option<String>,
     },
 
     /// 证明门禁：拒绝 sorry/admit，只接受 Lean 内核 PASS
@@ -352,19 +361,46 @@ fn run(cli: Cli) -> assay_core::Result<()> {
                 );
             }
         }
-        Command::Reports { top, dest } => {
+        Command::Reports {
+            top,
+            dest,
+            evidence_dir,
+            no_explain,
+        } => {
             let items = assay_core::audit::read_items(&format!("{out}/items.jsonl"))?;
-            let explanations = assay_core::single::load_explanations(&out);
-            let o = assay_core::single::render_top(&items, top, &out, &dest, &explanations)?;
-            println!("报告: {} 条 → {dest}", o.written);
+            let explanations = if no_explain {
+                std::collections::HashMap::new()
+            } else {
+                assay_core::single::load_explanations(&out)
+            };
+            let evidence_dir =
+                std::path::PathBuf::from(evidence_dir.unwrap_or_else(|| format!("{out}/evidence")));
+            let o = assay_core::single::render_top_with_evidence(
+                &items,
+                top,
+                &evidence_dir,
+                &dest,
+                &explanations,
+            )?;
+            println!(
+                "报告: {} 条 → {dest}（证据来自 {}）",
+                o.written,
+                evidence_dir.display()
+            );
         }
-        Command::ReportOne { id, to } => {
+        Command::ReportOne {
+            id,
+            to,
+            evidence_dir,
+        } => {
             let items = assay_core::audit::read_items(&format!("{out}/items.jsonl"))?;
             let d = items
                 .iter()
                 .find(|d| d.id == id)
                 .ok_or_else(|| assay_core::Error::Other(format!("未找到数据集 {id}")))?;
-            let (ev, rows) = assay_core::single::load_evidence(&out, &id);
+            let evidence_dir =
+                std::path::PathBuf::from(evidence_dir.unwrap_or_else(|| format!("{out}/evidence")));
+            let (ev, rows) = assay_core::single::load_evidence_dir(&evidence_dir, &id);
             let explain = assay_core::single::load_explanations(&out);
             let md = assay_core::single::render(
                 d,

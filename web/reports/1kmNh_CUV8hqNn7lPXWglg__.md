@@ -1,5 +1,7 @@
 # 省回流_中华人民共和国采矿许可证
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/1kmNh%2BCUV8hqNn7lPXWglg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/1kmNh%2BCUV8hqNn7lPXWglg%3D%3D
 - 数据集 ID：`1kmNh+CUV8hqNn7lPXWglg==`
 - 提供部门：温州市自然资源和规划局
 - 开放类型：A

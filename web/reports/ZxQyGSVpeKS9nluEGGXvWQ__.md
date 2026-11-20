@@ -1,5 +1,7 @@
 # 鄞州区移动数据分析数据粒度信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ZxQyGSVpeKS9nluEGGXvWQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ZxQyGSVpeKS9nluEGGXvWQ%3D%3D
 - 数据集 ID：`ZxQyGSVpeKS9nluEGGXvWQ==`
 - 提供部门：鄞州区
 - 开放类型：A

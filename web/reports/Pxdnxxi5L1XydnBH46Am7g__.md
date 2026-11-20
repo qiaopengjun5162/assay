@@ -1,5 +1,7 @@
 # 宁波市猪肉进出口额信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Pxdnxxi5L1XydnBH46Am7g%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Pxdnxxi5L1XydnBH46Am7g%3D%3D
 - 数据集 ID：`Pxdnxxi5L1XydnBH46Am7g==`
 - 提供部门：宁波海关
 - 开放类型：A

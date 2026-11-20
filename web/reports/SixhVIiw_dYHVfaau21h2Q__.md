@@ -1,5 +1,7 @@
 # 德清县生态环境局-智慧环保-数据中心-清洁生产-基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/SixhVIiw%2BdYHVfaau21h2Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/SixhVIiw%2BdYHVfaau21h2Q%3D%3D
 - 数据集 ID：`SixhVIiw+dYHVfaau21h2Q==`
 - 提供部门：市生态环境局德清分局
 - 开放类型：A

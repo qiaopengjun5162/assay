@@ -1,5 +1,7 @@
 # 宁波公厕信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/tTYt%2BqPogOYCF2%2BsGuWBoA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/tTYt%2BqPogOYCF2%2BsGuWBoA%3D%3D
 - 数据集 ID：`tTYt+qPogOYCF2+sGuWBoA==`
 - 提供部门：宁波市综合行政执法局
 - 开放类型：A

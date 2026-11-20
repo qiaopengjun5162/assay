@@ -1,5 +1,7 @@
 # 宁波市标准地名地址公园信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/FO495FRe1UISHs6oo9wp2w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/FO495FRe1UISHs6oo9wp2w%3D%3D
 - 数据集 ID：`FO495FRe1UISHs6oo9wp2w==`
 - 提供部门：宁波市民政局
 - 开放类型：A

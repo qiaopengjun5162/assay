@@ -1,5 +1,7 @@
 # 慈溪市茶社地理位置信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/qutZJSIE%2BR2iO9Pj7eMZtA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/qutZJSIE%2BR2iO9Pj7eMZtA%3D%3D
 - 数据集 ID：`qutZJSIE+R2iO9Pj7eMZtA==`
 - 提供部门：慈溪市
 - 开放类型：A

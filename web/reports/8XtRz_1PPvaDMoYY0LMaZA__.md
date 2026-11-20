@@ -1,5 +1,7 @@
 # 领队人员信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/8XtRz%2B1PPvaDMoYY0LMaZA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/8XtRz%2B1PPvaDMoYY0LMaZA%3D%3D
 - 数据集 ID：`8XtRz+1PPvaDMoYY0LMaZA==`
 - 提供部门：宁波市文化广电旅游局
 - 开放类型：A

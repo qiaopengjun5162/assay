@@ -1,5 +1,7 @@
 # 宁波市县市区退役军人服务中心地理信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/da%2B0Ql4V0WxUHBr9hVmuGw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/da%2B0Ql4V0WxUHBr9hVmuGw%3D%3D
 - 数据集 ID：`da+0Ql4V0WxUHBr9hVmuGw==`
 - 提供部门：宁波市退役军人事务局
 - 开放类型：A

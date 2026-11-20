@@ -1,5 +1,7 @@
 # 宁波市异地就医直接结算平台本地医疗机构信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/1Qq0wWSL9FQat5EOozmZJw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/1Qq0wWSL9FQat5EOozmZJw%3D%3D
 - 数据集 ID：`1Qq0wWSL9FQat5EOozmZJw==`
 - 提供部门：宁波市医保局
 - 开放类型：A

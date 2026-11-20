@@ -1,5 +1,7 @@
 # 新设企业数信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/2StTF0NwiI0XI4Y6KO28Bg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/2StTF0NwiI0XI4Y6KO28Bg%3D%3D
 - 数据集 ID：`2StTF0NwiI0XI4Y6KO28Bg==`
 - 提供部门：温州市市场监管局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # “浙实干”任务信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Mk3oA5BN93JOEd6mLVOqbA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Mk3oA5BN93JOEd6mLVOqbA%3D%3D
 - 数据集 ID：`Mk3oA5BN93JOEd6mLVOqbA==`
 - 提供部门：省政府机构/省数据局（省政务服务办）
 - 开放类型：B

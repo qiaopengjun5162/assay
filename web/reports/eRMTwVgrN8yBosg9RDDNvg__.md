@@ -1,5 +1,7 @@
 # 北仑区特种设备信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/eRMTwVgrN8yBosg9RDDNvg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/eRMTwVgrN8yBosg9RDDNvg%3D%3D
 - 数据集 ID：`eRMTwVgrN8yBosg9RDDNvg==`
 - 提供部门：北仑区
 - 开放类型：A

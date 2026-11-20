@@ -1,5 +1,7 @@
 # 商品房开发企业信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/q64fBeQJVB3BJsSofoJ5oQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/q64fBeQJVB3BJsSofoJ5oQ%3D%3D
 - 数据集 ID：`q64fBeQJVB3BJsSofoJ5oQ==`
 - 提供部门：温州市住建局
 - 开放类型：A

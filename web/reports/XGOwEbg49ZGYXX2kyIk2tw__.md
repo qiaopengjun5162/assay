@@ -1,5 +1,7 @@
 # 医疗保险材料目录信息(2006-2022)
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/XGOwEbg49ZGYXX2kyIk2tw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/XGOwEbg49ZGYXX2kyIk2tw%3D%3D
 - 数据集 ID：`XGOwEbg49ZGYXX2kyIk2tw==`
 - 提供部门：宁波市医保局
 - 开放类型：A

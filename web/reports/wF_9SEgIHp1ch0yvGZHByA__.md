@@ -1,5 +1,7 @@
 # 全社会用电量信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/wF%2B9SEgIHp1ch0yvGZHByA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/wF%2B9SEgIHp1ch0yvGZHByA%3D%3D
 - 数据集 ID：`wF+9SEgIHp1ch0yvGZHByA==`
 - 提供部门：宁波市统计局
 - 开放类型：A

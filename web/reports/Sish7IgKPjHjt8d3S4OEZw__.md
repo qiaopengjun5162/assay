@@ -1,5 +1,7 @@
 # 余姚市红十字会社会捐赠信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Sish7IgKPjHjt8d3S4OEZw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Sish7IgKPjHjt8d3S4OEZw%3D%3D
 - 数据集 ID：`Sish7IgKPjHjt8d3S4OEZw==`
 - 提供部门：余姚市
 - 开放类型：A

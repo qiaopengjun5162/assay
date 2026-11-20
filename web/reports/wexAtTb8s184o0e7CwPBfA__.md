@@ -1,5 +1,7 @@
 # 镇海区全域旅游系统景区名册信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/wexAtTb8s184o0e7CwPBfA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/wexAtTb8s184o0e7CwPBfA%3D%3D
 - 数据集 ID：`wexAtTb8s184o0e7CwPBfA==`
 - 提供部门：镇海区
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 省回流_污染源基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/64KHcSLvB5gyyc8VWRXiUQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/64KHcSLvB5gyyc8VWRXiUQ%3D%3D
 - 数据集 ID：`64KHcSLvB5gyyc8VWRXiUQ==`
 - 提供部门：温州市生态环境局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 北仑区食品经营许可证
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/zKvPpJuGUie3cHoVdccVTA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/zKvPpJuGUie3cHoVdccVTA%3D%3D
 - 数据集 ID：`zKvPpJuGUie3cHoVdccVTA==`
 - 提供部门：北仑区
 - 开放类型：A

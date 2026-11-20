@@ -1,5 +1,7 @@
 # 潮位预报数据
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/u2I84pIDXkWFUXZWmQU0SA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/u2I84pIDXkWFUXZWmQU0SA%3D%3D
 - 数据集 ID：`u2I84pIDXkWFUXZWmQU0SA==`
 - 提供部门：宁波市水利局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 兰企望-日志调用次数信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Wmff0XVnJ%2B8ZqADDZMWgcQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Wmff0XVnJ%2B8ZqADDZMWgcQ%3D%3D
 - 数据集 ID：`Wmff0XVnJ+8ZqADDZMWgcQ==`
 - 提供部门：兰溪市营商办（作风办、三服务办）
 - 开放类型：A

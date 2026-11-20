@@ -1,5 +1,7 @@
 # 宁波市医保疾病目录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/aPLPC11gFpctY0OY%2B0PVKg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/aPLPC11gFpctY0OY%2B0PVKg%3D%3D
 - 数据集 ID：`aPLPC11gFpctY0OY+0PVKg==`
 - 提供部门：宁波市医保局
 - 开放类型：A

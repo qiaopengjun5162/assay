@@ -1,5 +1,7 @@
 # poi信息（2015-2022）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/r%2B%2B3a_8e4yZwAibs9oFpmg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/r%2B%2B3a_8e4yZwAibs9oFpmg%3D%3D
 - 数据集 ID：`r++3a_8e4yZwAibs9oFpmg==`
 - 提供部门：宁波市自然资源和规划局（市海洋局、市林业局）
 - 开放类型：A

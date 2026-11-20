@@ -1,5 +1,7 @@
 # 余姚市应急管理局避灾安置场信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/4IzIT2Oyxyhjo2LgpyHuIw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/4IzIT2Oyxyhjo2LgpyHuIw%3D%3D
 - 数据集 ID：`4IzIT2Oyxyhjo2LgpyHuIw==`
 - 提供部门：余姚市
 - 开放类型：A

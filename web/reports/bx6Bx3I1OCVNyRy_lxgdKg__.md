@@ -1,5 +1,7 @@
 # 产后42天健康检查服务信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/bx6Bx3I1OCVNyRy_lxgdKg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/bx6Bx3I1OCVNyRy_lxgdKg%3D%3D
 - 数据集 ID：`bx6Bx3I1OCVNyRy_lxgdKg==`
 - 提供部门：省政府机构/省卫生健康委
 - 开放类型：B

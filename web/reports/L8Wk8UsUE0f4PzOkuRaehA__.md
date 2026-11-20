@@ -1,5 +1,7 @@
 # 普高教育单位信息（2018-2020）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/L8Wk8UsUE0f4PzOkuRaehA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/L8Wk8UsUE0f4PzOkuRaehA%3D%3D
 - 数据集 ID：`L8Wk8UsUE0f4PzOkuRaehA==`
 - 提供部门：宁波市数据局
 - 开放类型：A

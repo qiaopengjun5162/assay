@@ -1,5 +1,7 @@
 # 宁波市网络零售额信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Od4EdIcQfexuyL6Bt8kAaA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Od4EdIcQfexuyL6Bt8kAaA%3D%3D
 - 数据集 ID：`Od4EdIcQfexuyL6Bt8kAaA==`
 - 提供部门：宁波市商务局
 - 开放类型：A

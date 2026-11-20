@@ -1,5 +1,7 @@
 # 北仑区港口危险货物作业附证内容信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/8w_shIRLT3omOak_WiJ4kA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/8w_shIRLT3omOak_WiJ4kA%3D%3D
 - 数据集 ID：`8w_shIRLT3omOak_WiJ4kA==`
 - 提供部门：北仑区
 - 开放类型：A

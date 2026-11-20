@@ -1,5 +1,7 @@
 # 城管义工象山办事处个人会员注册汇总表（新增人员)
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/EGpQvxNdAlRlfYFNdsZvlg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/EGpQvxNdAlRlfYFNdsZvlg%3D%3D
 - 数据集 ID：`EGpQvxNdAlRlfYFNdsZvlg==`
 - 提供部门：象山县
 - 开放类型：A

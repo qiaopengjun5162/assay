@@ -1,5 +1,7 @@
 # 省市回流_危化品生产企业信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ThYCpZchnkQISa3E4cOtmg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ThYCpZchnkQISa3E4cOtmg%3D%3D
 - 数据集 ID：`ThYCpZchnkQISa3E4cOtmg==`
 - 提供部门：平阳县应急管理局
 - 开放类型：A

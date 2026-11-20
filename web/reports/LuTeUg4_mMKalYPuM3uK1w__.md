@@ -1,5 +1,7 @@
 # 交通事故快速处理、交通违法处理站点信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/LuTeUg4%2BmMKalYPuM3uK1w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/LuTeUg4%2BmMKalYPuM3uK1w%3D%3D
 - 数据集 ID：`LuTeUg4+mMKalYPuM3uK1w==`
 - 提供部门：宁波市公安局
 - 开放类型：A

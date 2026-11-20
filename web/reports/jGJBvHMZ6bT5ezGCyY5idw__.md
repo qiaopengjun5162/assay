@@ -1,5 +1,7 @@
 # 综合测绘-日志信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/jGJBvHMZ6bT5ezGCyY5idw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/jGJBvHMZ6bT5ezGCyY5idw%3D%3D
 - 数据集 ID：`jGJBvHMZ6bT5ezGCyY5idw==`
 - 提供部门：湖州市自然资源和规划局南浔分局
 - 开放类型：A

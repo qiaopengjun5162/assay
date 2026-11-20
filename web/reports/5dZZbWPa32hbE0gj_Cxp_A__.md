@@ -1,5 +1,7 @@
 # 交通应急指挥_三防突发事件信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/5dZZbWPa32hbE0gj%2BCxp_A%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/5dZZbWPa32hbE0gj%2BCxp_A%3D%3D
 - 数据集 ID：`5dZZbWPa32hbE0gj+Cxp_A==`
 - 提供部门：南浔区交通局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 慈溪市青慈云青瓷旅游线路信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/mKzwf%2BzCVpZC6ibxhLh06Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/mKzwf%2BzCVpZC6ibxhLh06Q%3D%3D
 - 数据集 ID：`mKzwf+zCVpZC6ibxhLh06Q==`
 - 提供部门：慈溪市
 - 开放类型：A

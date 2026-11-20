@@ -1,5 +1,7 @@
 # 宁波市机构团体领域最美退役军人信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/KbMa79KIc_lDi66kRqdF3Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/KbMa79KIc_lDi66kRqdF3Q%3D%3D
 - 数据集 ID：`KbMa79KIc_lDi66kRqdF3Q==`
 - 提供部门：宁波市退役军人事务局
 - 开放类型：A

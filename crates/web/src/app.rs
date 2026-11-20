@@ -873,6 +873,7 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
             " · 问题分只用于排序，不是科学指标。准确性不在评价范围内。"
             <ShareLinkButton />
             {report.then(|| view! {
+                <a class="btn" href=report_href.clone() target="_blank" rel="noopener">"新标签看报告（.md）"</a>
                 <a class="btn" href=report_href.clone() download>"下载报告（.md 纯文本）"</a>
             })}
         </div>
@@ -1165,13 +1166,29 @@ fn proof_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
          -- 等号右边是内核要验的结论，改一位数字就报错。",
         p.cols
     );
+    // 证明页的读者多半是从报告或群里直接点进来的，必须能一步回到判定现场。
+    let back_id = r.id.clone();
+    let xref_id = r.id.clone();
+    let report_href = r.report_path();
     view! {
-        <nav class="crumb" aria-label="面包屑"><a href="#/" on:click=move |_| route.set(Route::List)>"榜单"</a>" / 证明"</nav>
+        <nav class="crumb" aria-label="面包屑">
+            <a href="#/" on:click=move |_| route.set(Route::List)>"榜单"</a>" / "
+            <a href=format!("#/detail/{}", urlencoding(&back_id))
+               on:click=move |_| route.set(Route::Detail(back_id.clone()))>"详情"</a>" / 证明"
+        </nav>
         <h1 class="detail-title">{r.name.clone()}</h1>
         <div class="pass-card">
             <div class="stamp">"PASS"</div>
             <div><b>"Lean 4 内核已复核"</b><p class="hint">"报告的每个计数都由定理证明器独立校验：改一个数字，内核立即报错。"</p></div>
         </div>
+        <nav class="xrefs" aria-label="相关材料">
+            <a class="btn" href=format!("#/detail/{}", urlencoding(&xref_id))
+               on:click=move |_| route.set(Route::Detail(xref_id.clone()))>"← 返回详情"</a>
+            {r.report.then(|| view! {
+                <a class="btn" href=report_href.clone() target="_blank" rel="noopener">"新标签看报告（.md）"</a>
+                <a class="btn" href=report_href.clone() download>"下载报告（.md 纯文本）"</a>
+            })}
+        </nav>
         <section class="panel">
             <h2>"内核复核明细"</h2>
             <table class="kv">

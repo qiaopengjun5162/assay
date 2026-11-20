@@ -1,5 +1,7 @@
 # 技术服务机构业主信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/1JruYgNBThxbjc9ZJGzf%2BQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/1JruYgNBThxbjc9ZJGzf%2BQ%3D%3D
 - 数据集 ID：`1JruYgNBThxbjc9ZJGzf+Q==`
 - 提供部门：省部属单位/省消防救援总队
 - 开放类型：B

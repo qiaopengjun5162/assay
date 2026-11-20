@@ -1,5 +1,7 @@
 # 农资产品基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/vyK1Y1CEQTCbi7e%2BUusw2Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/vyK1Y1CEQTCbi7e%2BUusw2Q%3D%3D
 - 数据集 ID：`vyK1Y1CEQTCbi7e+Uusw2Q==`
 - 提供部门：宁海县
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 镇海区分级诊疗住院科室信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/dM7T04ILMBCxYD8TzED5PA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/dM7T04ILMBCxYD8TzED5PA%3D%3D
 - 数据集 ID：`dM7T04ILMBCxYD8TzED5PA==`
 - 提供部门：镇海区
 - 开放类型：A

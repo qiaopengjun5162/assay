@@ -1,5 +1,7 @@
 # 纳税信用A级纳税人信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/GUSHrACnMBs6M0LER6ex_Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/GUSHrACnMBs6M0LER6ex_Q%3D%3D
 - 数据集 ID：`GUSHrACnMBs6M0LER6ex_Q==`
 - 提供部门：奉化区
 - 开放类型：A

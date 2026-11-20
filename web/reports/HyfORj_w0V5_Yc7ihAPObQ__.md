@@ -1,5 +1,7 @@
 # 乐清市省A级景区村庄信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/HyfORj%2Bw0V5%2BYc7ihAPObQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/HyfORj%2Bw0V5%2BYc7ihAPObQ%3D%3D
 - 数据集 ID：`HyfORj+w0V5+Yc7ihAPObQ==`
 - 提供部门：乐清市文化和广电旅游体育局
 - 开放类型：A

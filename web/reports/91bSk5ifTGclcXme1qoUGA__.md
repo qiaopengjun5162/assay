@@ -1,5 +1,7 @@
 # 招聘会参会企业
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/91bSk5ifTGclcXme1qoUGA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/91bSk5ifTGclcXme1qoUGA%3D%3D
 - 数据集 ID：`91bSk5ifTGclcXme1qoUGA==`
 - 提供部门：宁波市人力社保局
 - 开放类型：A

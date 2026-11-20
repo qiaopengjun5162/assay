@@ -1,5 +1,7 @@
 # 省回流_浙江省劳动保障监察行政检查行为信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/7PwIpcztHukundZUY%2B1AVA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/7PwIpcztHukundZUY%2B1AVA%3D%3D
 - 数据集 ID：`7PwIpcztHukundZUY+1AVA==`
 - 提供部门：温州市人力社保局
 - 开放类型：A

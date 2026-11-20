@@ -1,5 +1,7 @@
 # 奉化区基本医疗保险定点医疗机构信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/OJtVo2GkGs1NnnCpw4HdrA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/OJtVo2GkGs1NnnCpw4HdrA%3D%3D
 - 数据集 ID：`OJtVo2GkGs1NnnCpw4HdrA==`
 - 提供部门：奉化区
 - 开放类型：A

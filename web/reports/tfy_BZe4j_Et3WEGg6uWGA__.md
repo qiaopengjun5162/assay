@@ -1,5 +1,7 @@
 # 政腾专家信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/tfy%2BBZe4j_Et3WEGg6uWGA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/tfy%2BBZe4j_Et3WEGg6uWGA%3D%3D
 - 数据集 ID：`tfy+BZe4j_Et3WEGg6uWGA==`
 - 提供部门：台州市政务服务办
 - 开放类型：A

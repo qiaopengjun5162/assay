@@ -1,5 +1,7 @@
 # 温州市瓯海区环保云管家系统-评价结果信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/iH7_Q_U3sSRYhp9hhV3vNw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/iH7_Q_U3sSRYhp9hhV3vNw%3D%3D
 - 数据集 ID：`iH7_Q_U3sSRYhp9hhV3vNw==`
 - 提供部门：瓯海区生态环境分局
 - 开放类型：A

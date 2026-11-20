@@ -1,5 +1,7 @@
 # 安吉县综合执法局农家乐监管一件事协同应用系统-机构主体信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/nVSVs606VcHw6NLpyyjr3Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/nVSVs606VcHw6NLpyyjr3Q%3D%3D
 - 数据集 ID：`nVSVs606VcHw6NLpyyjr3Q==`
 - 提供部门：安吉县综合行政执法局
 - 开放类型：A

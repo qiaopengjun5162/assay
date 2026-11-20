@@ -1,5 +1,7 @@
 # 运行监测综合指标说明信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Mh24xAa3EdBXGdTGNvzAUA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Mh24xAa3EdBXGdTGNvzAUA%3D%3D
 - 数据集 ID：`Mh24xAa3EdBXGdTGNvzAUA==`
 - 提供部门：省政府机构/省经信厅
 - 开放类型：A

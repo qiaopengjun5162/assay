@@ -1,5 +1,7 @@
 # 南浔区_对外贸易经营者备案登记信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Mt_Z8mebcmNE3WiYFNmwDw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Mt_Z8mebcmNE3WiYFNmwDw%3D%3D
 - 数据集 ID：`Mt_Z8mebcmNE3WiYFNmwDw==`
 - 提供部门：南浔区商务局
 - 开放类型：A

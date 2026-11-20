@@ -1,5 +1,7 @@
 # 慈溪市市场经营服务主体信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/j1hxsEmF3ZeRz5ECW3RUOQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/j1hxsEmF3ZeRz5ECW3RUOQ%3D%3D
 - 数据集 ID：`j1hxsEmF3ZeRz5ECW3RUOQ==`
 - 提供部门：慈溪市
 - 开放类型：A

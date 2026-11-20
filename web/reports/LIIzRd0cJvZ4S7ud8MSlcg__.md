@@ -1,5 +1,7 @@
 # 全区医疗机构信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/LIIzRd0cJvZ4S7ud8MSlcg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/LIIzRd0cJvZ4S7ud8MSlcg%3D%3D
 - 数据集 ID：`LIIzRd0cJvZ4S7ud8MSlcg==`
 - 提供部门：奉化区
 - 开放类型：A

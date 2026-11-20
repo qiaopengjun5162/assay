@@ -1,5 +1,7 @@
 # 交通出行-停车场信息（历史数据）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/dkSXqfkxRyKckSPYwQH0Xw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/dkSXqfkxRyKckSPYwQH0Xw%3D%3D
 - 数据集 ID：`dkSXqfkxRyKckSPYwQH0Xw==`
 - 提供部门：宁波市综合行政执法局
 - 开放类型：A

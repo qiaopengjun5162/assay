@@ -1,5 +1,7 @@
 # 慈溪市智慧垃圾所属村镇信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/RXJvXo0PImIyHHy%2BJMSRSQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/RXJvXo0PImIyHHy%2BJMSRSQ%3D%3D
 - 数据集 ID：`RXJvXo0PImIyHHy+JMSRSQ==`
 - 提供部门：慈溪市
 - 开放类型：A

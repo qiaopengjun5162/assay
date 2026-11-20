@@ -1,5 +1,7 @@
 # 涉企行政事业性收费目录清单
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/OjCKLDpMK%2BDUJD7GxNzo3A%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/OjCKLDpMK%2BDUJD7GxNzo3A%3D%3D
 - 数据集 ID：`OjCKLDpMK+DUJD7GxNzo3A==`
 - 提供部门：宁波市财政局
 - 开放类型：A

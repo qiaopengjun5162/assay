@@ -1,5 +1,7 @@
 # 宁波市应急救援应急联络机构信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ClG9NSBjHBi9DCsaGICXFg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ClG9NSBjHBi9DCsaGICXFg%3D%3D
 - 数据集 ID：`ClG9NSBjHBi9DCsaGICXFg==`
 - 提供部门：宁波市应急管理局
 - 开放类型：A

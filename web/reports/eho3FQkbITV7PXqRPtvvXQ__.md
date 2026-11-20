@@ -1,5 +1,7 @@
 # 浙江省农村危房信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/eho3FQkbITV7PXqRPtvvXQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/eho3FQkbITV7PXqRPtvvXQ%3D%3D
 - 数据集 ID：`eho3FQkbITV7PXqRPtvvXQ==`
 - 提供部门：省政府机构/省建设厅
 - 开放类型：B

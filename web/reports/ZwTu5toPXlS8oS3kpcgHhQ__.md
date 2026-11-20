@@ -1,5 +1,7 @@
 # 宁波市医疗机构信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/ZwTu5toPXlS8oS3kpcgHhQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/ZwTu5toPXlS8oS3kpcgHhQ%3D%3D
 - 数据集 ID：`ZwTu5toPXlS8oS3kpcgHhQ==`
 - 提供部门：宁波市卫生健康委
 - 开放类型：A

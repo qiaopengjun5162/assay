@@ -1,5 +1,7 @@
 # 宁波市港域集装箱吞吐量统计信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/3s4oH2B%2BZ7IuBXtg4fkJrQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/3s4oH2B%2BZ7IuBXtg4fkJrQ%3D%3D
 - 数据集 ID：`3s4oH2B+Z7IuBXtg4fkJrQ==`
 - 提供部门：宁波市交通局
 - 开放类型：A

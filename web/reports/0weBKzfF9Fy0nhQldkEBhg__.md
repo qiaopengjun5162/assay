@@ -1,5 +1,7 @@
 # 南浔区-电子发票申请结果信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/0weBKzfF9Fy0nhQldkEBhg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/0weBKzfF9Fy0nhQldkEBhg%3D%3D
 - 数据集 ID：`0weBKzfF9Fy0nhQldkEBhg==`
 - 提供部门：南浔交通投资集团
 - 开放类型：A

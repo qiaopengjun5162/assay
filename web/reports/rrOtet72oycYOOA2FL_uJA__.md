@@ -1,5 +1,7 @@
 # 鹿城综合行政执法局非现场执法系统-违停记录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/rrOtet72oycYOOA2FL%2BuJA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/rrOtet72oycYOOA2FL%2BuJA%3D%3D
 - 数据集 ID：`rrOtet72oycYOOA2FL+uJA==`
 - 提供部门：鹿城区综合行政执法局
 - 开放类型：A

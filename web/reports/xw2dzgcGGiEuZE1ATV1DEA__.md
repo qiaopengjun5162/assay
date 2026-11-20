@@ -1,5 +1,7 @@
 # 南浔区旅游月客流量信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/xw2dzgcGGiEuZE1ATV1DEA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/xw2dzgcGGiEuZE1ATV1DEA%3D%3D
 - 数据集 ID：`xw2dzgcGGiEuZE1ATV1DEA==`
 - 提供部门：南浔区文化和广电旅游体育局
 - 开放类型：A

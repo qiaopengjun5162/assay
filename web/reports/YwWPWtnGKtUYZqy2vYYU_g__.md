@@ -1,5 +1,7 @@
 # 安吉县文体旅游局文物好管家系统-区域信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/YwWPWtnGKtUYZqy2vYYU%2Bg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/YwWPWtnGKtUYZqy2vYYU%2Bg%3D%3D
 - 数据集 ID：`YwWPWtnGKtUYZqy2vYYU+g==`
 - 提供部门：安吉县文体旅游局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 宁海县国土资源地名信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/WKUOPOjb1Q3XaCucgpqmfg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/WKUOPOjb1Q3XaCucgpqmfg%3D%3D
 - 数据集 ID：`WKUOPOjb1Q3XaCucgpqmfg==`
 - 提供部门：宁海县
 - 开放类型：A

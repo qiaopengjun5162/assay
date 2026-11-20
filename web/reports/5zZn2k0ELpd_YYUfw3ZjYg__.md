@@ -1,5 +1,7 @@
 # 北仑区省农博会参展企业信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/5zZn2k0ELpd%2BYYUfw3ZjYg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/5zZn2k0ELpd%2BYYUfw3ZjYg%3D%3D
 - 数据集 ID：`5zZn2k0ELpd+YYUfw3ZjYg==`
 - 提供部门：北仑区
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 地表水环境监测_监测点位信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/qI8cVoV3%2BEm5XAsAI3wZNA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/qI8cVoV3%2BEm5XAsAI3wZNA%3D%3D
 - 数据集 ID：`qI8cVoV3+Em5XAsAI3wZNA==`
 - 提供部门：省政府机构/省生态环境厅
 - 开放类型：A

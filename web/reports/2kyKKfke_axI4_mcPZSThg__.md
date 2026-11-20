@@ -1,5 +1,7 @@
 # 宁波市科技管理工作目录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/2kyKKfke_axI4_mcPZSThg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/2kyKKfke_axI4_mcPZSThg%3D%3D
 - 数据集 ID：`2kyKKfke_axI4_mcPZSThg==`
 - 提供部门：宁波市科技局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 宁海县30亩以上桃、梨生产主体信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/spQ5HbzLB6OZtEQc7QY9Dw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/spQ5HbzLB6OZtEQc7QY9Dw%3D%3D
 - 数据集 ID：`spQ5HbzLB6OZtEQc7QY9Dw==`
 - 提供部门：宁海县
 - 开放类型：A

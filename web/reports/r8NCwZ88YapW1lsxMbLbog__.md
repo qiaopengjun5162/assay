@@ -1,5 +1,7 @@
 # 涉爆粉尘_涉粉场所信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/r8NCwZ88YapW1lsxMbLbog%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/r8NCwZ88YapW1lsxMbLbog%3D%3D
 - 数据集 ID：`r8NCwZ88YapW1lsxMbLbog==`
 - 提供部门：南浔区应急管理局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 全市小额贷款公司信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/VsjkeuQOkDBpIgmsf7Y0QA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/VsjkeuQOkDBpIgmsf7Y0QA%3D%3D
 - 数据集 ID：`VsjkeuQOkDBpIgmsf7Y0QA==`
 - 提供部门：宁波市委金融办
 - 开放类型：A

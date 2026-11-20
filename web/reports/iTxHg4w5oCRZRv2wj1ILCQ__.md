@@ -1,5 +1,7 @@
 # 象山县中心城区桥涵基础状况信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/iTxHg4w5oCRZRv2wj1ILCQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/iTxHg4w5oCRZRv2wj1ILCQ%3D%3D
 - 数据集 ID：`iTxHg4w5oCRZRv2wj1ILCQ==`
 - 提供部门：象山县
 - 开放类型：A

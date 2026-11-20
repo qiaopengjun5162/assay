@@ -1,5 +1,7 @@
 # 余姚市城乡居家养老服务机构基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/U1mSGdfK0_ldvvy397C4Pw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/U1mSGdfK0_ldvvy397C4Pw%3D%3D
 - 数据集 ID：`U1mSGdfK0_ldvvy397C4Pw==`
 - 提供部门：余姚市
 - 开放类型：A

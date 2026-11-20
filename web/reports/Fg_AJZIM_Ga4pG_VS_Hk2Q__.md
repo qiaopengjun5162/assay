@@ -1,5 +1,7 @@
 # 象山县无人机调度指挥系统天气预警信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Fg%2BAJZIM_Ga4pG_VS_Hk2Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Fg%2BAJZIM_Ga4pG_VS_Hk2Q%3D%3D
 - 数据集 ID：`Fg+AJZIM_Ga4pG_VS_Hk2Q==`
 - 提供部门：象山县
 - 开放类型：A

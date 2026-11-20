@@ -1,5 +1,7 @@
 # 全市省级国家级健康示范场信息（2019年）
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/hKDOoYlx49dA2D4fc_aVMw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/hKDOoYlx49dA2D4fc_aVMw%3D%3D
 - 数据集 ID：`hKDOoYlx49dA2D4fc_aVMw==`
 - 提供部门：宁波市市农业农村局
 - 开放类型：A

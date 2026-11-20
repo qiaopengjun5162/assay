@@ -1,5 +1,7 @@
 # 浙江省现代农业科技示范基地信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/I6Vq0KfBMbxxHhuEu6K93w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/I6Vq0KfBMbxxHhuEu6K93w%3D%3D
 - 数据集 ID：`I6Vq0KfBMbxxHhuEu6K93w==`
 - 提供部门：宁波市市农业农村局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 民间信仰信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/Uda4PYNlU4J2_HcU68WkHQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/Uda4PYNlU4J2_HcU68WkHQ%3D%3D
 - 数据集 ID：`Uda4PYNlU4J2_HcU68WkHQ==`
 - 提供部门：奉化区
 - 开放类型：A

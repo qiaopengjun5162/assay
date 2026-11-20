@@ -1,5 +1,7 @@
 # 海曙区电信营业网点信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/AiXrQM3fFCaNBiPBk1FF%2Bw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/AiXrQM3fFCaNBiPBk1FF%2Bw%3D%3D
 - 数据集 ID：`AiXrQM3fFCaNBiPBk1FF+w==`
 - 提供部门：海曙区
 - 开放类型：A

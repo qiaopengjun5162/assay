@@ -1,5 +1,7 @@
 # 镇海区小区信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/8PtSObMOnQxHoqy_9y2Fww%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/8PtSObMOnQxHoqy_9y2Fww%3D%3D
 - 数据集 ID：`8PtSObMOnQxHoqy_9y2Fww==`
 - 提供部门：镇海区
 - 开放类型：A

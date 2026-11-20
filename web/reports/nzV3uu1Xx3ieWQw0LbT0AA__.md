@@ -1,5 +1,7 @@
 # 德清县-水利局-智慧水利-水库基础信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/nzV3uu1Xx3ieWQw0LbT0AA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/nzV3uu1Xx3ieWQw0LbT0AA%3D%3D
 - 数据集 ID：`nzV3uu1Xx3ieWQw0LbT0AA==`
 - 提供部门：德清县水利局
 - 开放类型：A

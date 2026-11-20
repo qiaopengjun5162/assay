@@ -1,5 +1,7 @@
 # 宁波市最低生活保障标准信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/9hr3dPkYLUvSyP6cD%2B2nhA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/9hr3dPkYLUvSyP6cD%2B2nhA%3D%3D
 - 数据集 ID：`9hr3dPkYLUvSyP6cD+2nhA==`
 - 提供部门：宁波市民政局
 - 开放类型：A

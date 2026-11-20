@@ -1,5 +1,7 @@
 # 象山县公厕信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/lP1QAEVEx0wBl9eWPyQIWw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/lP1QAEVEx0wBl9eWPyQIWw%3D%3D
 - 数据集 ID：`lP1QAEVEx0wBl9eWPyQIWw==`
 - 提供部门：象山县
 - 开放类型：A

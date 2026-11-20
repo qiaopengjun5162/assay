@@ -1,5 +1,7 @@
 # 温州市鹿城区经济地图-楼宇基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/YymoIxus8shcRnqGoqY_3w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/YymoIxus8shcRnqGoqY_3w%3D%3D
 - 数据集 ID：`YymoIxus8shcRnqGoqY_3w==`
 - 提供部门：鹿城区发改局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 副食品店地理位置信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/RfvlF34Fso3W45cIMJ_TUw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/RfvlF34Fso3W45cIMJ_TUw%3D%3D
 - 数据集 ID：`RfvlF34Fso3W45cIMJ_TUw==`
 - 提供部门：慈溪市
 - 开放类型：A

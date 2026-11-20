@@ -1,5 +1,7 @@
 # 慈溪市青慈云旅游线路游览线路点信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/IiewfX5lpZxne6qxLrye%2Bw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/IiewfX5lpZxne6qxLrye%2Bw%3D%3D
 - 数据集 ID：`IiewfX5lpZxne6qxLrye+w==`
 - 提供部门：慈溪市
 - 开放类型：A

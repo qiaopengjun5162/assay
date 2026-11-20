@@ -1,5 +1,7 @@
 # 余姚市慢性病门诊常用药品名单信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/yWwjjmIddDwcYriSKcWP_Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/yWwjjmIddDwcYriSKcWP_Q%3D%3D
 - 数据集 ID：`yWwjjmIddDwcYriSKcWP_Q==`
 - 提供部门：余姚市
 - 开放类型：A

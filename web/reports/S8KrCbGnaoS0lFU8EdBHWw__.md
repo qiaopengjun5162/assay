@@ -1,5 +1,7 @@
 # 宁波市充电设施站点信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/S8KrCbGnaoS0lFU8EdBHWw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/S8KrCbGnaoS0lFU8EdBHWw%3D%3D
 - 数据集 ID：`S8KrCbGnaoS0lFU8EdBHWw==`
 - 提供部门：宁波市能源局
 - 开放类型：A

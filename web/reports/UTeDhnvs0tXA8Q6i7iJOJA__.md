@@ -1,5 +1,7 @@
 # 食品安全-农村家宴放心厨房信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/UTeDhnvs0tXA8Q6i7iJOJA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/UTeDhnvs0tXA8Q6i7iJOJA%3D%3D
 - 数据集 ID：`UTeDhnvs0tXA8Q6i7iJOJA==`
 - 提供部门：瑞安市市场监管局
 - 开放类型：A

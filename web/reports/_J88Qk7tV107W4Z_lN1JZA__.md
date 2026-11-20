@@ -1,5 +1,7 @@
 # 基本医疗保险服务项目信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/%2BJ88Qk7tV107W4Z%2BlN1JZA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/%2BJ88Qk7tV107W4Z%2BlN1JZA%3D%3D
 - 数据集 ID：`+J88Qk7tV107W4Z+lN1JZA==`
 - 提供部门：奉化区
 - 开放类型：A

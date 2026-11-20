@@ -1,5 +1,7 @@
 # 奉化区企业工程（技术）中心信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/U3m0tHRXSvh2cGt9n2I4mw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/U3m0tHRXSvh2cGt9n2I4mw%3D%3D
 - 数据集 ID：`U3m0tHRXSvh2cGt9n2I4mw==`
 - 提供部门：奉化区
 - 开放类型：A

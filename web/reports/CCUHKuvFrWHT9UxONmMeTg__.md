@@ -1,5 +1,7 @@
 # 教育局民办学校信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/CCUHKuvFrWHT9UxONmMeTg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/CCUHKuvFrWHT9UxONmMeTg%3D%3D
 - 数据集 ID：`CCUHKuvFrWHT9UxONmMeTg==`
 - 提供部门：宁波市教育局
 - 开放类型：A

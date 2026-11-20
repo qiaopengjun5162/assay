@@ -1,5 +1,7 @@
 # 城市管理网格
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/zjt3rWl9nKZ_HCjgSNdz0w%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/zjt3rWl9nKZ_HCjgSNdz0w%3D%3D
 - 数据集 ID：`zjt3rWl9nKZ_HCjgSNdz0w==`
 - 提供部门：象山县
 - 开放类型：A

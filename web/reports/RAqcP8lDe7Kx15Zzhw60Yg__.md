@@ -1,5 +1,7 @@
 # 博物馆纪念馆名录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/RAqcP8lDe7Kx15Zzhw60Yg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/RAqcP8lDe7Kx15Zzhw60Yg%3D%3D
 - 数据集 ID：`RAqcP8lDe7Kx15Zzhw60Yg==`
 - 提供部门：奉化区
 - 开放类型：A

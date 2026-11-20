@@ -1,5 +1,7 @@
 # 省市回流_污染源基本信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/DQuOXGv2ybBOWp9QbWWHgA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/DQuOXGv2ybBOWp9QbWWHgA%3D%3D
 - 数据集 ID：`DQuOXGv2ybBOWp9QbWWHgA==`
 - 提供部门：龙港市社会治理中心
 - 开放类型：A

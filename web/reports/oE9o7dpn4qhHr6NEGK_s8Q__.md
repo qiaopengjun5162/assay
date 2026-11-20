@@ -1,5 +1,7 @@
 # 北仑区特种作业技能人才信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/oE9o7dpn4qhHr6NEGK_s8Q%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/oE9o7dpn4qhHr6NEGK_s8Q%3D%3D
 - 数据集 ID：`oE9o7dpn4qhHr6NEGK_s8Q==`
 - 提供部门：北仑区
 - 开放类型：A

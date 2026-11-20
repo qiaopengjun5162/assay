@@ -1,5 +1,7 @@
 # 违停抓拍_卡口相机信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/coJIpKSzfdKImvv6lQLAhw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/coJIpKSzfdKImvv6lQLAhw%3D%3D
 - 数据集 ID：`coJIpKSzfdKImvv6lQLAhw==`
 - 提供部门：南浔区综合行政执法局
 - 开放类型：A

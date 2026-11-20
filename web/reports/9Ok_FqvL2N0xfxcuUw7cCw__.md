@@ -1,5 +1,7 @@
 # 就业见习人员登记信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/9Ok_FqvL2N0xfxcuUw7cCw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/9Ok_FqvL2N0xfxcuUw7cCw%3D%3D
 - 数据集 ID：`9Ok_FqvL2N0xfxcuUw7cCw==`
 - 提供部门：省政府机构/省人力社保厅
 - 开放类型：B

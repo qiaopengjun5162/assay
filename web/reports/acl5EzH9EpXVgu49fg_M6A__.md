@@ -1,5 +1,7 @@
 # 奉化区馆藏资料-地方志信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/acl5EzH9EpXVgu49fg_M6A%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/acl5EzH9EpXVgu49fg_M6A%3D%3D
 - 数据集 ID：`acl5EzH9EpXVgu49fg_M6A==`
 - 提供部门：奉化区
 - 开放类型：A

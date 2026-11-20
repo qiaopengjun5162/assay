@@ -1,5 +1,7 @@
 # 镇海区分级诊疗平台注册医院信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/2u8Gc70DWnMSKy%2B%2BPWY0tg%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/2u8Gc70DWnMSKy%2B%2BPWY0tg%3D%3D
 - 数据集 ID：`2u8Gc70DWnMSKy++PWY0tg==`
 - 提供部门：镇海区
 - 开放类型：A

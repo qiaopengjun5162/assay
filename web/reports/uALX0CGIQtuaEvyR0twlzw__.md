@@ -1,5 +1,7 @@
 # 龙湾区智慧监管系统药监企业信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/uALX0CGIQtuaEvyR0twlzw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/uALX0CGIQtuaEvyR0twlzw%3D%3D
 - 数据集 ID：`uALX0CGIQtuaEvyR0twlzw==`
 - 提供部门：龙湾区市场监督管理局
 - 开放类型：A

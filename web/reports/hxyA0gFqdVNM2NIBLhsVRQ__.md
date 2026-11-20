@@ -1,5 +1,7 @@
 # 海曙区移动营业厅信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/hxyA0gFqdVNM2NIBLhsVRQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/hxyA0gFqdVNM2NIBLhsVRQ%3D%3D
 - 数据集 ID：`hxyA0gFqdVNM2NIBLhsVRQ==`
 - 提供部门：海曙区
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 宁波市智慧井盖设备信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/vr1ww8%2BIr98jP3WPwY1cCw%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/vr1ww8%2BIr98jP3WPwY1cCw%3D%3D
 - 数据集 ID：`vr1ww8+Ir98jP3WPwY1cCw==`
 - 提供部门：宁波市综合行政执法局
 - 开放类型：A

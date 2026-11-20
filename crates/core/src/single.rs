@@ -12,14 +12,45 @@ use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 use std::path::Path;
 
+/// 站点根地址，与 `crates/web/index.html` 的 canonical / og:url 保持一致。
+/// 报告会被下载到本机，回链必须是绝对 URL：相对路径在 file:// 下没有共同根目录。
+pub const SITE_ROOT: &str = "https://qiaopengjun5162.github.io/assay/";
+
+/// hash 路由里的 id 必须逐字节百分号编码。id 常带 `+` `/` `=`：
+/// `+` 不编码会在 URL 里变成空格，`=` 和 `/` 会改变 hash 的解析结果。
+/// 与前端 `urlencoding()` 同一套规则（RFC 3986 unreserved 字符原样保留）。
+pub fn hash_id(id: &str) -> String {
+    id.bytes()
+        .map(|b| match b {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                (b as char).to_string()
+            }
+            other => format!("%{other:02X}"),
+        })
+        .collect()
+}
+
+/// 报告的「在线详情」回链。门禁按这个函数逐份核对，别改格式。
+pub fn detail_url(id: &str) -> String {
+    format!("{SITE_ROOT}#/detail/{}", hash_id(id))
+}
+
+/// 报告的「在线证明」回链。没有证明的条目页面会说明原因，所以这里不判断覆盖范围。
+pub fn proof_url(id: &str) -> String {
+    format!("{SITE_ROOT}#/proof/{}", hash_id(id))
+}
+
 pub struct Evidence {
     pub detail_sha: String,
     pub preview_sha: String,
 }
 
-/// 从证据包里读证据哈希与样例行（存在才读，不存在返回 None）。
-pub fn load_evidence(out_dir: &str, id: &str) -> (Option<Evidence>, Option<Vec<Vec<String>>>) {
-    let dir = Path::new(out_dir).join("evidence").join(safe_id(id));
+/// 从指定证据根目录读证据哈希与样例行（存在才读，不存在返回 None）。
+pub fn load_evidence_dir(
+    evidence_dir: &Path,
+    id: &str,
+) -> (Option<Evidence>, Option<Vec<Vec<String>>>) {
+    let dir = evidence_dir.join(safe_id(id));
     let hash_of = |name: &str| {
         std::fs::read(dir.join(name))
             .ok()
@@ -38,6 +69,11 @@ pub fn load_evidence(out_dir: &str, id: &str) -> (Option<Evidence>, Option<Vec<V
         .map(|v| preview_rows(&v))
         .filter(|r| !r.is_empty());
     (ev, rows)
+}
+
+/// 从 `<out>/evidence` 读。保留这个入口给早期调用方。
+pub fn load_evidence(out_dir: &str, id: &str) -> (Option<Evidence>, Option<Vec<Vec<String>>>) {
+    load_evidence_dir(&Path::new(out_dir).join("evidence"), id)
 }
 
 /// 读解释层产物，只留通过护栏的条目（`status == "pass"`）。
@@ -68,6 +104,26 @@ pub fn render_top(
     dest: &str,
     explanations: &HashMap<String, String>,
 ) -> Result<RenderOutcome> {
+    render_top_with_evidence(
+        items,
+        top,
+        &Path::new(out_dir).join("evidence"),
+        dest,
+        explanations,
+    )
+}
+
+/// 同上，但证据根目录可指定。
+///
+/// 为什么需要：11-14 的 `out-full/evidence` 只有 100 份，11-18 重抓的 500 份
+/// 入库在 `web/evidence`。报告里的哈希必须来自**入库的那批**，否则读者逐个核对全部失败。
+pub fn render_top_with_evidence(
+    items: &[Dataset],
+    top: usize,
+    evidence_dir: &Path,
+    dest: &str,
+    explanations: &HashMap<String, String>,
+) -> Result<RenderOutcome> {
     let mut picked: Vec<&Dataset> = items.iter().filter(|d| d.has_preview == 1).collect();
     picked.sort_by(|a, b| {
         score(b)
@@ -79,7 +135,7 @@ pub fn render_top(
     std::fs::create_dir_all(dest)?;
     let mut written = 0;
     for d in &picked {
-        let (ev, rows) = load_evidence(out_dir, &d.id);
+        let (ev, rows) = load_evidence_dir(evidence_dir, &d.id);
         let md = render(
             d,
             d.lag_days,
@@ -106,6 +162,10 @@ pub fn render(
 ) -> String {
     let mut s = String::new();
     s.push_str(&format!("# {}\n\n", d.name));
+    // 报告会被下载/转发，离开站点后读者没法回到这一条。两条回链放在最上面：
+    // 详情页看判定过程，证明页看内核复核。URL 用绝对地址，file:// 下也能点。
+    s.push_str(&format!("- 在线详情：{}\n", detail_url(&d.id)));
+    s.push_str(&format!("- 在线证明：{}\n", proof_url(&d.id)));
     s.push_str(&format!("- 数据集 ID：`{}`\n", d.id));
     s.push_str(&format!(
         "- 提供部门：{}\n",
@@ -258,6 +318,15 @@ pub fn verify_reports(
             continue;
         };
         let got = parse_report_hashes(&md);
+        // 回链也是产物的一部分：报告离开站点后，读者靠这两行回到详情页和证明页。
+        // 只对有证据的报告校验——报告集合与证据集合同口径。
+        let missing_link = if !md.contains(&format!("- 在线详情：{}", detail_url(id))) {
+            Some(format!("报告缺在线详情回链（id={id}）"))
+        } else if !md.contains(&format!("- 在线证明：{}", proof_url(id))) {
+            Some(format!("报告缺在线证明回链（id={id}）"))
+        } else {
+            None
+        };
         let dir = evidence_dir.join(&safe);
         let actual = |f: &str| -> Option<String> {
             std::fs::read(dir.join(f))
@@ -287,7 +356,8 @@ pub fn verify_reports(
                     None
                 }
             }
-        };
+        }
+        .or(missing_link);
         out.push(ReportCheck { name, problem });
     }
     Ok(out)
@@ -337,5 +407,22 @@ mod tests {
             "- detail.json SHA-256：`{D}`\n- detail.json SHA-256：`{P}`\n- preview.json SHA-256：`{P}`\n"
         );
         assert_eq!(parse_report_hashes(&md).detail.as_deref(), Some(D));
+    }
+
+    // id 里的 '+' 若不编码，会被浏览器当空格，深链直接落在「找不到这个数据集」。
+    #[test]
+    fn backlinks_encode_id_bytes_like_the_frontend() {
+        assert_eq!(
+            hash_id("ab+cd/ef=中文"),
+            "ab%2Bcd%2Fef%3D%E4%B8%AD%E6%96%87"
+        );
+        assert_eq!(
+            detail_url("a+b=="),
+            format!("{SITE_ROOT}#/detail/a%2Bb%3D%3D")
+        );
+        assert_eq!(
+            proof_url("a+b=="),
+            format!("{SITE_ROOT}#/proof/a%2Bb%3D%3D")
+        );
     }
 }

@@ -1,5 +1,7 @@
 # 南浔区_教育文化类培训机构登记信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/YkO3va81O9nw4kb3VagkjA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/YkO3va81O9nw4kb3VagkjA%3D%3D
 - 数据集 ID：`YkO3va81O9nw4kb3VagkjA==`
 - 提供部门：南浔区教育局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 宁海县宗谱目录信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/lQX3J%2BvLsNFo0ZVJhZRzew%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/lQX3J%2BvLsNFo0ZVJhZRzew%3D%3D
 - 数据集 ID：`lQX3J+vLsNFo0ZVJhZRzew==`
 - 提供部门：宁海县
 - 开放类型：A

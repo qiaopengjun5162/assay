@@ -1,5 +1,7 @@
 # 企业资质信息表
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/8fo9ED1dSvDM1jVNnlhWXA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/8fo9ED1dSvDM1jVNnlhWXA%3D%3D
 - 数据集 ID：`8fo9ED1dSvDM1jVNnlhWXA==`
 - 提供部门：宁波市水利局
 - 开放类型：A

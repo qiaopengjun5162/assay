@@ -1,5 +1,7 @@
 # 阻挠劳动保障监察员依法进入工作场所检查、调查的，销毁或转移先行登记保存证据、拒不执行询问通知书的处罚
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/EjLZZI6T8u_bZE7ZakjnhQ%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/EjLZZI6T8u_bZE7ZakjnhQ%3D%3D
 - 数据集 ID：`EjLZZI6T8u_bZE7ZakjnhQ==`
 - 提供部门：宁波市人力社保局
 - 开放类型：A

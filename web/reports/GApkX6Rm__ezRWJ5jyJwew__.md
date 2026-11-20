@@ -1,5 +1,7 @@
 # 药品注册信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/GApkX6Rm__ezRWJ5jyJwew%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/GApkX6Rm__ezRWJ5jyJwew%3D%3D
 - 数据集 ID：`GApkX6Rm__ezRWJ5jyJwew==`
 - 提供部门：省市场监管局/省药监局
 - 开放类型：A

@@ -1,5 +1,7 @@
 # 在册民营企业数信息
 
+- 在线详情：https://qiaopengjun5162.github.io/assay/#/detail/NsJEoYAS7Joan7vwzaublA%3D%3D
+- 在线证明：https://qiaopengjun5162.github.io/assay/#/proof/NsJEoYAS7Joan7vwzaublA%3D%3D
 - 数据集 ID：`NsJEoYAS7Joan7vwzaublA==`
 - 提供部门：温州市市场监管局
 - 开放类型：A

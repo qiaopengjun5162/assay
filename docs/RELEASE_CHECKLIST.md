@@ -13,6 +13,10 @@ release-please 从 `bootstrap-sha`（`6532b3a`，全 Rust 工作区那一版）�
 Conventional Commits，自己算出下一个版本号并开 PR。发布以**那个 PR 写版本号为准**，
 不手工挑一个顺眼的数字。
 
+用的是 `release-type: simple`：根 `Cargo.toml` 的 `[workspace.package] version`
+带 `x-release-please-version` 标记，`Cargo.lock` 里 4 个 assay 包靠 `toml` extra-files
+同步。rust 策略处理不了虚拟 workspace + `version.workspace = true`，原因见 D36。
+
 `release-please` 配置的 `"draft": true`：发版 PR 合并后先生成**草稿 release**，
 草稿不计入 `latest`，`releases/latest/download/...` 在构建期间仍指向上一版可用资产。
 
@@ -41,8 +45,9 @@ gh pr diff <num> --name-only
 ```
 
 期望只有 `.release-please-manifest.json`、`CHANGELOG.md`、`Cargo.toml`、
-`ROADMAP.md`（带 `x-release-please-version` 标记那一行）。出现 `src/` 就停下——
-这不是纯发版 PR。
+`Cargo.lock`、`ROADMAP.md`（带 `x-release-please-version` 标记那一行）。
+出现 `src/` 就停下——这不是纯发版 PR。`Cargo.lock` 必须跟着改：漏了它，CI 的
+`--locked` 立刻红。
 
 **假发版 PR**：合并发版 PR 之后、把草稿发布出去之前，release-please 找不到锚点，
 有时会开出一个 CHANGELOG 上百行的 PR。判据是增量行数：个位数是真，几十上百行是假，
@@ -127,3 +132,6 @@ gh api repos/qiaopengjun5162/assay/actions/runs/<run_id>/artifacts \
 - 不在 PR CI 里访问政府网站（D6）；发布构建只用冻结产物。
 - 不把 key、token 或 `out-full/` 打进资产包。
 - 不为了让 `latest` 好看而先发布后构建：空壳 release 会让所有下载链接 404。
+- 不在脏工作区上跑 `release-please release-pr --local --local-path .`：它会
+  `git checkout main && git reset --hard origin/main`，把未提交改动清掉。
+  要验证配置，先提交到分支再用 `--target-branch <分支>` 干跑。

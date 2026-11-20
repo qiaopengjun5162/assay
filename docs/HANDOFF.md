@@ -33,9 +33,15 @@
   Windows amd64），每平台出包 + `.sha256`，共 **10 个资产**；资产齐了才把 draft 发出去。
 - 打包 smoke 从压缩包里解出来跑 `--version/--help` + `verify-evidence` + `verify-reports`，
   验的是用户下载到的字节，不是 `target/` 里的。
-- 配置：`.release-please-config.json`（`bootstrap-sha` = `6532b3a`，`release-type: rust`，
-  `draft: true`）+ `.release-please-manifest.json`（`0.2.0`）。
-  ROADMAP 里带 `x-release-please-version` 标记的那一行由发版 PR 自动抬版本。
+- 配置：`.release-please-config.json`（`bootstrap-sha` = `6532b3a`，`release-type: simple`，
+  `draft: true`）+ `.release-please-manifest.json`（`0.2.0`）。`release-type: rust` **不能用**：
+  它是虚拟 workspace（根 `Cargo.toml` 没有 `[package]`），子 crate 又用
+  `version.workspace = true`，rust 策略会报 `value at path package.version is not tagged`。
+  改用 `simple` + `version-file: Cargo.toml`（根版本行带 `x-release-please-version` 标记），
+  并用 4 条 `toml` extra-files 抬 `Cargo.lock` 里的 assay 版本，才能守住 CI 的 `--locked`。
+- ⚠️ 本机调试 `release-please release-pr --local --local-path .` 会执行
+  `git checkout main && git reset --hard origin/main`，**把未提交改动全清掉**（已踩过一次）。
+  要验证配置先提交到分支、用 `--target-branch <分支>` 干跑，别在脏工作区上跑。
 - ⚠️ 默认 `GITHUB_TOKEN` 建的 tag **不会触发** `release.yml`。发版必须按
   `docs/RELEASE_CHECKLIST.md` 人工点火；可选 `RELEASE_PAT` secret 走全自动。
   仓库至今**没有 tag、没有 release**，这一步只算「准备好」。理由见 D36。

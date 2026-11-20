@@ -21,6 +21,12 @@
    `verify-evidence` 与 `verify-reports`——验的是用户下载到的字节，不是 `target/` 里的。
 4. 默认仍靠人工点火：GITHUB_TOKEN 建的 tag 不触发下游 workflow。提供
    `RELEASE_PAT` 可选 secret 走全自动；配了 PAT 就要注意双 run 去重。
+5. `release-type: rust` 在本仓库**跑不通**：根 `Cargo.toml` 是虚拟 workspace
+   （没有 `[package]`），子 crate 又写 `version.workspace = true`，rust 策略在
+   `crates/core/Cargo.toml` 上报 `value at path package.version is not tagged`。
+   改用 `simple` + `version-file: Cargo.toml`，根版本行加
+   `x-release-please-version` 标记；再用 4 条 `toml` extra-files 同步 `Cargo.lock`
+   里 assay 四个包的版本——否则发版 PR 一合并，CI 的 `--locked` 就红。
 
 **代价**：发版要人按 `docs/RELEASE_CHECKLIST.md` 走一遍，不能推完就忘。
 **为什么值**：这一步的失败模式是「release 存在但下载链接 404 / 资产是别的批次」，

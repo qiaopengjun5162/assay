@@ -119,6 +119,7 @@ echo "── 退出码语义 ─────────────────
 # 这条断言同时钉住口径，避免讲稿把它写成「命令退出码 1」。
 # 必须显式给 --file：默认路径是 $out/TopProofs.lean，而 out-full/ 不入库，
 # CI checkout 后根本不存在——本地绿、CI 红就栽在这里。
+# 本脚本整体依赖 lean（check-proofs 也要），CI 里放在装了 elan 的 lean job。
 run_expect tamper-demo 0 "内核拒绝（预期）—— lean 退出码 1" -- \
   "$BIN" tamper --file "$PROOFS"
 

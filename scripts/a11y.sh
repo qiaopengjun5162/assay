@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# 无障碍复查：对四个视图跑 axe-core（WCAG 2.1 A/AA + best-practice）。
+# 无障碍复查：对五个视图跑 axe-core（WCAG 2.1 A/AA + best-practice）。
 #
 # 为什么不在 CI 跑：GitHub 的 rust job 里没有浏览器，装 Chromium 要额外几百 MB，
 # 为一条前端规则拖慢整条流水线不划算。这是**交付前本地门禁**，和「按用户的路径走一遍」配套。
 #
 # 用法：just a11y          （或 scripts/a11y.sh）
 #       CHROME=/path/to/chrome scripts/a11y.sh
-# 退出码：0 = 四个视图 violations 均为 0；非 0 = 有违规或扫描没跑完。
+# 退出码：0 = 五个视图 violations 均为 0；非 0 = 有违规或扫描没跑完。
 set -euo pipefail
 
 PORT="${PORT:-8098}"

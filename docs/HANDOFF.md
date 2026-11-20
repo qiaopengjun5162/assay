@@ -26,7 +26,7 @@
 
 ## 2. 已完成 / 待办
 
-已完成（2026-11-20 · 发布工程化配置，尚未发版）：
+已完成（2026-11-20 · 发布工程化 + 已发版 v0.2.2）：
 
 - 新增 `.github/workflows/release-please.yml` + `release.yml`：前者开纯发版 PR，
   后者在 tag / 手动触发时构建 **5 平台**二进制（linux amd64/arm64、macOS intel/arm64、
@@ -76,7 +76,7 @@
   全量（含 api）73.81% 地板 72。原因写在脚本头部与 D32：`crates/api` 917 行
   从来没进过分母（它自己 34%），一个数字被当成整个项目的覆盖率在引用。
 - `just test` 补上 `-p assay-api`——它原来只在 CI 跑，本地 `just test` 是 123 绿、
-  CI 是 132 绿，「本地过了」是假信号。现在两边同为 **142**。
+  CI 是 132 绿，「本地过了」是假信号。现在两边同为 **154**（core 118 / cli 2 / api 14 / web 20）。
 - api 补 5 条不依赖数据库的测试：`read_run_meta` 的三种失败各自点名
   （读不到 / 不是合法 JSON / 缺哪个字段）、计数超出 i32 范围（顺带修了报错
   把「超出」说成「缺字段」）、`ApiError` 的 404 带原因、500 **不外泄**数据库原文。
@@ -136,8 +136,8 @@
 - 本地起法：`docker compose up -d db` → `just api`（或本机 postgres 建库，
   启动时自动跑 migrations）
 - 实测过：4 个端点、分页夹紧、两个 404 分支、中文搜索、两次 run 的历史序列
-- **尚未做**：任务提交、审计包签发、账号体系，以及对 `assay-api` 的覆盖率门禁
-  （`scripts/coverage.sh` 目前只统计 core 与 cli）
+- **尚未做**：任务提交、审计包签发、账号体系。`assay-api` 的覆盖率门禁已补进
+  `scripts/coverage.sh` 的第二个口径（全量含 api，地板 72），不再是缺口。
 
 已完成（2026-11-18 · 灌库闭环）：
 
@@ -218,7 +218,7 @@ just lint-docs    # Markdown lint
 just smoke        # 200 条端到端（联网，约 90 秒），产物进 out-smoke/，不覆盖正式产物
 just all          # 全量（联网，约 14 分钟）
 just drift        # 周度漂移对比：基线 vs 本轮 summary.json（0 正常 / 1 漂移 / 2 不可信）
-just coverage     # 行覆盖率地板 74%（实测 76.81%）
+just coverage     # 两数两地板：core+cli 76.88%（74）/ 全量含 api 73.81%（72）
 just serve        # 本地预览 crates/web/dist
 ```
 

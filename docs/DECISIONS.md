@@ -24,9 +24,16 @@
 5. `release-type: rust` 在本仓库**跑不通**：根 `Cargo.toml` 是虚拟 workspace
    （没有 `[package]`），子 crate 又写 `version.workspace = true`，rust 策略在
    `crates/core/Cargo.toml` 上报 `value at path package.version is not tagged`。
-   改用 `simple` + `version-file: Cargo.toml`，根版本行加
-   `x-release-please-version` 标记；再用 4 条 `toml` extra-files 同步 `Cargo.lock`
-   里 assay 四个包的版本——否则发版 PR 一合并，CI 的 `--locked` 就红。
+   改用 `simple` + `.release-please-version` 作版本源，根 `Cargo.toml` 与 ROADMAP
+   版本行加 `x-release-please-version` 标记、由 `generic` extra-files 只改那一行；
+   再用 4 条 `toml` extra-files 同步 `Cargo.lock` 里 assay 四个包的版本——否则发版
+   PR 一合并，CI 的 `--locked` 就红。
+   ⚠️ `version-file` 不能指到 `Cargo.toml`：simple 策略用 DefaultUpdater 更新版本文件，
+   会把整个文件替换成一行（实测发版 PR 的 diff 是 `@@ -1,32 +1 @@`，已关闭重做）。
+6. 仓库要打开 `Allow GitHub Actions to create and approve pull requests`
+   （`can_approve_pull_request_reviews=true`）。默认关闭时 release-please 能建分支、
+   能改文件，却在开 PR 那一步报权限错——workflow 里写 `pull-requests: write` 不够，
+   这是仓库级开关。默认 workflow 权限仍保持 `read`，不整体放宽。
 
 **代价**：发版要人按 `docs/RELEASE_CHECKLIST.md` 走一遍，不能推完就忘。
 **为什么值**：这一步的失败模式是「release 存在但下载链接 404 / 资产是别的批次」，

@@ -37,8 +37,11 @@
   `draft: true`）+ `.release-please-manifest.json`（`0.2.0`）。`release-type: rust` **不能用**：
   它是虚拟 workspace（根 `Cargo.toml` 没有 `[package]`），子 crate 又用
   `version.workspace = true`，rust 策略会报 `value at path package.version is not tagged`。
-  改用 `simple` + `version-file: Cargo.toml`（根版本行带 `x-release-please-version` 标记），
-  并用 4 条 `toml` extra-files 抬 `Cargo.lock` 里的 assay 版本，才能守住 CI 的 `--locked`。
+  改用 `simple` + 单独的 `.release-please-version` 作版本源，根 `Cargo.toml` 与
+  ROADMAP 的版本行带 `x-release-please-version` 标记，由 `generic` extra-files
+  只改那一行；并用 4 条 `toml` extra-files 抬 `Cargo.lock` 里的 assay 版本，
+  才能守住 CI 的 `--locked`。⚠️ `version-file` **不能**指到 `Cargo.toml`：
+  simple 策略的 DefaultUpdater 会把整个文件替换成一行（PR #37 的教训）。
 - ⚠️ 本机调试 `release-please release-pr --local --local-path .` 会执行
   `git checkout main && git reset --hard origin/main`，**把未提交改动全清掉**（已踩过一次）。
   要验证配置先提交到分支、用 `--target-branch <分支>` 干跑，别在脏工作区上跑。

@@ -3,6 +3,13 @@
 本项目所有值得记录的变更。格式参考 [Keep a Changelog](https://keepachangelog.com/)，
 版本号遵循 [SemVer](https://semver.org/)。
 
+## [0.2.2](https://github.com/qiaopengjun5162/assay/compare/v0.2.1...v0.2.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* **release:** Windows sha256 用 LF，修发版资产自检 ([#41](https://github.com/qiaopengjun5162/assay/issues/41)) ([0a64b7c](https://github.com/qiaopengjun5162/assay/commit/0a64b7cf5ce20261a03d9da3a64edf0e5aeef2de))
+
 ## [0.2.1](https://github.com/qiaopengjun5162/assay/compare/v0.2.0...v0.2.1) (2026-11-20)
 
 

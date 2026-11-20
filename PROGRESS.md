@@ -40,9 +40,11 @@
 - 日期口径：`generatedAt` 不再写死，改由 `run.json` → 证据时间推出，来源记录在 `generatedAtFrom`。
   实测这次冻结的两批动作分别是 **11-14 17:49（体检）** 与 **11-18 16:25（证据复核）**，
   页头因此写「体检于」而不是「抓取于」。
-- 发布工程化：双 workflow（`release-please` + `release`）已配置，`actionlint` 通过；
-  五平台矩阵 + 10 个资产 + 打包 smoke。仓库仍无 tag / release，**配置就绪不等于已发布**，
-  步骤见 `docs/RELEASE_CHECKLIST.md`，取舍见 D36。
+- 发布工程化：双 workflow（`release-please` + `release`）已跑通，`actionlint` 通过；
+  五平台矩阵 + 10 个资产 + 打包 smoke。**已发版**：首个正式 release `v0.2.1`
+  （手工补齐资产），当前 `latest=v0.2.2`（10 资产全自动构建上传）。下载链接拉的
+  macos-arm64 包 smoke：`assay 0.2.2`、两条产物门禁 500/500。步骤见
+  `docs/RELEASE_CHECKLIST.md`，取舍见 D36。
 - 按用户路径实测（2026-11-19，390px 视口）：榜单 / 详情 / 判定规则三页 `scrollWidth` 都是 390、
   无元素溢出（修前详情页 525、榜单 442，元凶是 `SHA-256` 长串不换行与两张宽表）；
   部门卡点击后下拉同步、榜单筛到该部门并写明「其余 N 个不在前 500 名内」；

@@ -6,8 +6,9 @@
 
 ## 0. 版本号口径
 
-仓库当前源码版本是 `0.2.0`（`Cargo.toml` 的 `[workspace.package]`），
-manifest 里写的也是 `0.2.0`。ROADMAP 早期写的 `v0.1.0` 是旧计划，**不要再按它打 tag**。
+当前已发布 `v0.2.2`（`latest`，10 资产），源码与 manifest 都是 `0.2.2`；
+`v0.2.1` 是首个正式 release（首次发版踩过 Windows CRLF 坑，资产已人工补齐）。
+ROADMAP 早期写的 `v0.1.0` 是作废的旧计划，**不要再按它打 tag**。
 
 release-please 从 `bootstrap-sha`（`6532b3a`，全 Rust 工作区那一版）之后扫描
 Conventional Commits，自己算出下一个版本号并开 PR。发布以**那个 PR 写版本号为准**，

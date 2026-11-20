@@ -17,7 +17,7 @@
 `just check` 与 `just clippy-wasm` 全绿；CI 四关（rust / wasm / lean / secret-scan）
 与 Pages 两段式部署都跑通。
 
-当前源码版本：0.2.0 <!-- x-release-please-version -->
+当前源码版本：0.2.1 <!-- x-release-please-version -->
 
 ## 已完成
 

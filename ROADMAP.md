@@ -17,6 +17,8 @@
 `just check` 与 `just clippy-wasm` 全绿；CI 四关（rust / wasm / lean / secret-scan）
 与 Pages 两段式部署都跑通。
 
+当前源码版本：0.2.0 <!-- x-release-please-version -->
+
 ## 已完成
 
 - GB/T 36344 六维映射，只实现可自动计算的五维。
@@ -82,11 +84,16 @@
 - ~~部门页（当前只有首页 Top12）~~ 已完成：`#/dept/<部门名>`，全量统计 + 榜上条目 + 口径说明
 - ~~无障碍与移动端排版复查~~ 已完成：390px 无横向溢出，五视图 axe `violations=0`（`just a11y`）
 
-### 5. 发布工程化
+### 5. 发布工程化 ✅（配置完成，尚未发版）
 
-打 `v0.1.0` tag，接 release-please + cargo-dist 出跨平台二进制。
-注意：release-please 用 `GITHUB_TOKEN` 创建的 release 不会触发下游 workflow，
-需要 PAT 或手动 `gh workflow run`。
+`release-please` + `release` 双 workflow 已就位：前者开纯发版 PR，后者在 tag /
+手动触发时出 5 平台二进制与 `.sha256`（共 10 个资产），并从压缩包里解出来跑
+`--version/--help` + `verify-evidence` + `verify-reports` 的 smoke。
+版本号以发版 PR 为准（源码当前 `0.2.0`，早期写的 `v0.1.0` 已作废），理由见 D36。
+
+默认 GITHUB_TOKEN 建的 tag 不触发下游 workflow，所以发版要按
+`docs/RELEASE_CHECKLIST.md` 人工点火；可选 `RELEASE_PAT` 走全自动。
+没打 tag、没建 release 之前，这一项只算「准备好」，不算已发布。
 
 ## 明确不做
 

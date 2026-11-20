@@ -147,8 +147,10 @@ just pack 2026-11-18  # 审计包：打成交付用单文件（含 shasum 清单
 
 `out-full/` 不入库（全量明细 8.7MB），换目录跑批用变量覆盖：`just out=out-smoke audit 8 200`。
 
-**审计包**（`just pack <日期>`）产出 `dist/assay-audit-<日期>.tar.gz`，包内自带
-`VERIFY.md` 与标准 `MANIFEST.sha256`。对方解压后一条命令验完全部文件，不需要装本工具：
+**审计包**（`just pack <日期> [commit]`）产出 `dist/assay-audit-<日期>.tar.gz`，包内自带
+`VERIFY.md` 与标准 `MANIFEST.sha256`。对方解压后一条命令验完全部文件，不需要装本工具。
+**对外交付时把 commit 带上**（`just pack 2026-11-18 $(git rev-parse --short HEAD)`），
+清单里的 `commit` 字段就钉住了这包对应哪版代码；不传也能打，只是追溯信息留空：
 
 ```bash
 tar xzf assay-audit-2026-11-18.tar.gz && cd assay-audit-2026-11-18

@@ -3,7 +3,7 @@
 ## 状态
 
 已上线并冻结快照（2026-11-14 抓取）。站点是静态 WASM，无后端。
-`just check`、`just clippy-wasm`、`just smoke` 全绿；CI 四关与 Pages 两阶段部署可用。
+`just check`、`just clippy-wasm`、`just smoke` 全绿；CI 八关与 Pages 两阶段部署可用。
 
 整体完成度（交付口径，不是产品化口径）：`█████████░` 94%
 ——差的是第二平台（要 appKey）与曲线的数据点（要等周报），不是主干。

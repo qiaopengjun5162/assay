@@ -261,9 +261,12 @@ pub fn append(path: &str, point: Point) -> Result<Vec<Point>>;
 
 ### 3.11 `crates/web`
 
-- Leptos 0.7 CSR，trunk 打包；hash 路由：`#/`、`#/detail/<urlencoded id>`、`#/proof/<id>`。
+- Leptos 0.7 CSR，trunk 打包；hash 路由：`#/`、`#/detail/<urlencoded id>`、`#/proof/<id>`、
+  `#/checks`、`#/dept/<urlencoded 部门名>`。
 - 数据只读 `data.json`；不做任何写操作、不调平台接口。
-- 三个视图：榜单（搜索/部门/排序/三个筛选）、详情（六维 + 字段差异 + AI 解读 + 证据 + 证明入口 + 报告下载）、证明（PASS、哈希、定理示例、下载）。
+- 五个视图：榜单（搜索/部门/排序/三个筛选）、详情（六维体检卡 + 字段差异 + AI 解读 +
+  证据 + 证明入口 + 报告下载）、证明（PASS、哈希、定理示例、下载）、判定规则（10 条
+  检查项与全量命中数）、部门（全量统计 + 榜上条目）。
 - 浏览器前进/后退通过 `hashchange` 监听同步。
 
 ### 3.12 `crates/api`

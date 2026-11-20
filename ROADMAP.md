@@ -14,14 +14,15 @@
 ## 现状
 
 榜单、证明、证据、报告、站点都已上线冻结在 2026-11-14 的快照上；
-`just check` 与 `just clippy-wasm` 全绿；CI 四关（rust / wasm / lean / secret-scan）
-与 Pages 两段式部署都跑通。
+`just check` 与 `just clippy-wasm` 全绿；CI 八关（rust / msrv / coverage / wasm /
+lean / secret-scan / commit-lint / docs）与 Pages 两段式部署都跑通；
+`latest=v0.2.2` 已发布（10 资产全自动）。
 
 当前源码版本：0.2.2 <!-- x-release-please-version -->
 
 ## 已完成
 
-- GB/T 36344 六维映射，只实现可自动计算的五维。
+- GB/T 36344 六维映射：评分只算可自动计算的五维，页面展示六维体检卡（准确性标「不评价」）。
 - 全量 24,322 条确定性体检，8 线程 26 秒枚举、11.7 分钟跑完、0 条详情失败。
 - 391 个可证数据集 4,970 条 Lean 定理，内核 PASS（39.5 秒）。
 - 500 份证据包（原始响应 + SHA-256）、500 条 AI 解读（护栏 500/500 通过）、500 份 Markdown 报告。

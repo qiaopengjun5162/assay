@@ -217,9 +217,9 @@ GITHUB_TOKEN 创建的 release 不会触发下游 workflow**，需要手动点�
 文章素材：notes/tech/ai/2026-11-14-assay-build-log.md（全过程留痕）
 ```
 
-## 完成状态（2026-11-14）
+## 完成状态（2026-11-14 基线；当前实际见 PROGRESS.md）
 
 - 全流水线：`just audit` → `just report` → `just explain` → `just evidence` → `just prove` → `just reports` → `just export` → `just web`
 - 端到端自检：`just smoke`（200 条，约 40 秒，产物独立在 out-smoke/）
 - 数字冻结在 2026-11-14 的快照；`just all` 会刷新快照，**路演前别重跑**，否则文章与榜单的对不上
-- CI 四关：fmt/clippy/test、黄金文件、Lean 内核、密钥扫描
+- CI 八关（原四关已扩）：rust（fmt/clippy/test/build）、msrv、coverage、wasm、lean、secret-scan、commit-lint、docs

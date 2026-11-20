@@ -89,7 +89,7 @@ verify-reports:
 check: fmt-check clippy typos test deny verify-evidence verify-reports proofs
     echo "全部通过"
 
-# 无障碍复查（axe-core + WCAG 2.1 A/AA，四个视图）
+# 无障碍复查（axe-core + WCAG 2.1 A/AA，五个视图）
 # 不进 check：CI 的 rust job 没有浏览器，装 Chromium 会拖慢整条流水线。
 # 交付前手动跑；改前端结构（地标 / 标题层级 / 表单控件）之后必跑。
 a11y:

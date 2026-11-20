@@ -107,7 +107,10 @@ jobs:
           cd target\${{ matrix.target }}\release
           Compress-Archive -Path assay.exe -DestinationPath assay-${{ matrix.suffix }}.zip
           $hash = (Get-FileHash assay-${{ matrix.suffix }}.zip -Algorithm SHA256).Hash.ToLowerInvariant()
-          "$hash  assay-${{ matrix.suffix }}.zip" | Out-File -Encoding ASCII assay-${{ matrix.suffix }}.zip.sha256
+          # Out-File 在 Windows 写 CRLF；shasum -a 256 -c 会把行尾的 \r 当成文件名一部分，
+          # 报 "FAILED open or read"。用 WriteAllText + `n 强制 LF，与 Unix 侧格式一致。
+          $line = "$hash  assay-${{ matrix.suffix }}.zip`n"
+          [System.IO.File]::WriteAllText((Join-Path (Get-Location) "assay-${{ matrix.suffix }}.zip.sha256"), $line, [System.Text.Encoding]::ASCII)
 
       # 只验「能跑」不够：打包后从 tar.gz 里解出来再跑，验的是用户真正下载到的东西。
       - name: Smoke（Unix 打包产物）

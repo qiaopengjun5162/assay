@@ -3,11 +3,16 @@
   "bootstrap-sha": "6532b3ac742525d26dcad1637600663ecd6ff697",
   "packages": {
     ".": {
-      "release-type": "rust",
+      "release-type": "simple",
       "package-name": "assay",
+      "version-file": "Cargo.toml",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
-        { "type": "generic", "path": "ROADMAP.md" }
+        { "type": "generic", "path": "ROADMAP.md" },
+        { "type": "toml", "path": "Cargo.lock", "jsonpath": "$.package[?(@.name.value == 'assay')].version" },
+        { "type": "toml", "path": "Cargo.lock", "jsonpath": "$.package[?(@.name.value == 'assay-core')].version" },
+        { "type": "toml", "path": "Cargo.lock", "jsonpath": "$.package[?(@.name.value == 'assay-api')].version" },
+        { "type": "toml", "path": "Cargo.lock", "jsonpath": "$.package[?(@.name.value == 'assay-web')].version" }
       ],
       "include-component-in-tag": false,
       "include-v-in-tag": true,

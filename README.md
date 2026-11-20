@@ -11,6 +11,19 @@
 **打开榜单 → https://qiaopengjun5162.github.io/assay/**　不用注册、不用装东西。
 本地跑：`just serve` → http://127.0.0.1:8080
 
+想离线复核？[下载现成二进制（免装 Rust）→ releases/latest](https://github.com/qiaopengjun5162/assay/releases/latest)
+（Linux / macOS / Windows 五平台，每个带 `.sha256`）。解压后在本仓库根目录跑：
+
+```bash
+shasum -a 256 -c assay-*.sha256      # 先验包没被动过
+./assay verify-evidence web/data.json web/evidence   # 500 份证据逐份重算
+./assay verify-reports web/data.json web/reports web/evidence  # 500 份报告哈希 + 回链
+```
+
+两条门禁都输出 `500 / 500 份一致`，即离线复核通过——不需要信网页，也不需要联网。
+Windows 把 `./assay` 换成 `assay.exe`、`shasum` 换成 `certutil -hashfile <文件> SHA256`
+（或在 Git Bash 里照抄上面命令）。
+
 ---
 
 ## 30 秒看懂

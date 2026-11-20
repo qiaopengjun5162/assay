@@ -500,6 +500,9 @@ fn SiteFooter(generated_at: String, total: u64, shown: usize) -> impl IntoView {
                 " · "
                 <a href="https://github.com/qiaopengjun5162/assay" target="_blank" rel="noopener">"源码"</a>
                 " · "
+                <a href="https://github.com/qiaopengjun5162/assay/releases/latest"
+                   target="_blank" rel="noopener">"下载校验器（离线复核）"</a>
+                " · "
                 <a href="https://github.com/qiaopengjun5162/assay/blob/main/docs/DECISIONS.md"
                    target="_blank" rel="noopener">"方法与决策记录"</a>
                 " · "

@@ -34,7 +34,7 @@
 - 打包 smoke 从压缩包里解出来跑 `--version/--help` + `verify-evidence` + `verify-reports`，
   验的是用户下载到的字节，不是 `target/` 里的。
 - 配置：`.release-please-config.json`（`bootstrap-sha` = `6532b3a`，`release-type: simple`，
-  `draft: true`）+ `.release-please-manifest.json`（`0.2.0`）。`release-type: rust` **不能用**：
+  `draft: true`）+ `.release-please-manifest.json`（当前 `0.2.2`）。`release-type: rust` **不能用**：
   它是虚拟 workspace（根 `Cargo.toml` 没有 `[package]`），子 crate 又用
   `version.workspace = true`，rust 策略会报 `value at path package.version is not tagged`。
   改用 `simple` + 单独的 `.release-please-version` 作版本源，根 `Cargo.toml` 与
@@ -47,7 +47,11 @@
   要验证配置先提交到分支、用 `--target-branch <分支>` 干跑，别在脏工作区上跑。
 - ⚠️ 默认 `GITHUB_TOKEN` 建的 tag **不会触发** `release.yml`。发版必须按
   `docs/RELEASE_CHECKLIST.md` 人工点火；可选 `RELEASE_PAT` secret 走全自动。
-  仓库至今**没有 tag、没有 release**，这一步只算「准备好」。理由见 D36。
+  **已发版**：首个 `v0.2.1`、当前 `latest=v0.2.2`（10 资产全自动）。
+  发版后 release-please 常开「假发版 PR」（CHANGELOG 汇总历史、增量几十上百行），
+  关掉即可；小增量、只含真实 commit 的才是真发版 PR。理由见 D36。
+- Windows 侧 `.sha256` 必须 LF：`Out-File` 写 CRLF 会让 `shasum -c` 报
+  `FAILED open or read`（v0.2.1 踩过）；已改 `WriteAllText` + LF 根治。
 - 改 workflow 后必跑 `actionlint .github/workflows/*.yml`（本机已装）。
 
 已完成（2026-11-15）：

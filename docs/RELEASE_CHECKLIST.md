@@ -129,6 +129,13 @@ tar xzf assay-macos-arm64.tar.gz
 撤掉空壳 `gh release delete vX.Y.Z --yes --cleanup-tag`，修好根因后用**新版本号**重发，
 不要给同一个 tag 重传资产——那会让 tag 与代码版本对不上。
 
+**资产自检失败**（build 全绿、末尾 release job 红在「资产自检」这步，日志是
+`shasum: ... : FAILED open or read`）：资产本身是好的，只是某个 `.sha256` 行尾不对。
+首次发版踩过：Windows 的 `.sha256` 被 PowerShell `Out-File` 写成 CRLF，`shasum -c`
+把行尾的 `\r` 当文件名。临时处置：从 artifact 下载 10 个文件，`perl -pi -e 's/\r\n/\n/g'`
+修正后本地 5 个 sha256 全过，再手动 `gh release upload`；workflow 已改用
+`WriteAllText` + LF 根治（见 D36 第 7 条）。
+
 **上传失败**（build 全绿、只有末尾 release job 红，日志是
 `Resource not accessible by integration`）：资产是好的，只是 workflow 的 token
 无权更新 bot 建的那个 release。从这次 run 的 artifact 手动补：
@@ -138,8 +145,12 @@ gh api repos/qiaopengjun5162/assay/actions/runs/<run_id>/artifacts \
   --jq '.artifacts[] | "\(.id) \(.name)"'
 ```
 
-逐个下载（带认证头；每个单独一条命令，连着下容易被 SIGTERM），解压得到 10 个文件，
-用 `shasum -a 256 -c` 自检后再 `gh release upload vX.Y.Z <files...>`。
+下载用 `gh run download <run_id> -D <dir>` 一次拿全 5 个 artifact，再把文件平铺。
+上传**逐个单独一条命令**：`gh release upload` 传大包走代理会被 SIGTERM（实测），
+更稳的是 `curl --proxy http://127.0.0.1:7890 --data-binary @<file>` 直接 POST 到
+release 的 `upload_url?name=<file>`（带 `Authorization: Bearer <token>`）；
+单个包超时返回 408 就重试那一个，其余不受影响。
+用 `shasum -a 256 -c` 自检后再上传（若修过 CRLF，用修过的那份）。
 若仍报权限错，说明该 release 归 bot 所有——配 `RELEASE_PAT` 后重跑末段，
 或由仓库管理员手工上传。
 

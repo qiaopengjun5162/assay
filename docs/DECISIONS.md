@@ -34,6 +34,10 @@
    （`can_approve_pull_request_reviews=true`）。默认关闭时 release-please 能建分支、
    能改文件，却在开 PR 那一步报权限错——workflow 里写 `pull-requests: write` 不够，
    这是仓库级开关。默认 workflow 权限仍保持 `read`，不整体放宽。
+7. Windows 侧 `.sha256` 不能用 PowerShell `Out-File` 写：它在 Windows 上写 CRLF，
+   `shasum -a 256 -c` 会把行尾的 `\r` 当成文件名一部分，报 `FAILED open or read`
+   （首次发版实测：5 个平台 build 全绿，只有 release 的资产自检挂在这一条）。
+   改成 `[System.IO.File]::WriteAllText` + `` `n `` 强制 LF，与 Unix 侧一致。
 
 **代价**：发版要人按 `docs/RELEASE_CHECKLIST.md` 走一遍，不能推完就忘。
 **为什么值**：这一步的失败模式是「release 存在但下载链接 404 / 资产是别的批次」，

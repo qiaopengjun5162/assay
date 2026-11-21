@@ -2,8 +2,9 @@
 # 深圳市政府数据开放平台探针：只读、不需要账号、不打印任何密钥。
 #
 # 为什么要这个脚本：`docs/audit/SHENZHEN.md` 里写了一串「实测」，包括
-# 「目录能匿名枚举 2,791 条」「没 key 报 10009」「错 key 报 10001」。
+# 「目录能匿名枚举 2,791 条」「163 条已过期」「没 key 报 10009」「错 key 报 10001」。
 # 这类断言最怕变成传说，所以留一条不依赖本项目的命令，谁都能当场复核。
+# 第 1b 节直接解析已下载的两页目录重算统计数——它们以前只能人工复核。
 #
 # 用法：
 #   ./scripts/sz-probe.sh              # 只验「不需要 key」的部分
@@ -37,6 +38,52 @@ done
 # 分层计数是接口自己给的，不用我们算
 count() { grep -o "$1[^0-9]*[0-9]\+" "$2" | head -1 | grep -o '[0-9]\+$' || true; }
 say "   市级 $(count cityCount "$TMP/p1.json") / 区级 $(count countyCount "$TMP/p1.json")"
+
+say ""
+say "== 1b. 匿名目录当场能算出的结论（不需要 appKey）=="
+# 早期笔记只写了「163 条过期 / 2,563 条无条件」两个数，没有复核命令——
+# 与「别让实测变成传说」的初衷矛盾。目录两页已经下载好了，直接算。
+python3 - "$TMP/p1.json" "$TMP/p2.json" <<'PY'
+import json
+import sys
+from collections import Counter
+from datetime import date, datetime
+
+today = date.today()
+rows = []
+for path in sys.argv[1:]:
+    with open(path, encoding="utf-8") as f:
+        rows += json.loads(json.load(f)["apiList"])["list"]
+
+level = Counter(r.get("openLevelName") for r in rows)
+print(f"   共 {len(rows):,} 条；无条件开放 {level['无条件开放']:,} / 有条件开放 {level['有条件开放']:,}")
+
+# 深圳的 updateCycle 是中文，assay 的 BAD_CYCLE 表用数字编码（1/30/365）；
+# 这里按 docs/audit/SHENZHEN.md 的映射换算成同等阈值 7/45/400 天。
+threshold = {"按日": 7, "按月": 45, "按年": 400}
+unknown = Counter()
+stale = []
+for r in rows:
+    cycle = r.get("updateCycle")
+    if cycle not in threshold:
+        unknown[cycle] += 1
+        continue
+    try:
+        lag = (today - datetime.strptime(str(r.get("dataUpdateTime"))[:10], "%Y-%m-%d").date()).days
+    except (ValueError, TypeError):
+        unknown["日期不可解析"] += 1
+        continue
+    if lag > threshold[cycle]:
+        stale.append((lag, r.get("resTitle"), cycle))
+
+judgeable = len(rows) - sum(unknown.values())
+print(f"   可判定 {judgeable:,} 条；判不了 {sum(unknown.values()):,} 条：" +
+      " / ".join(f"{k} {v:,}" for k, v in unknown.most_common()))
+print(f"   按 assay 阈值已过期：{len(stale):,} 条")
+if stale:
+    lag, title, cycle = max(stale)
+    print(f"   最久未更新：{lag:,} 天（{title}，声称{cycle}）")
+PY
 
 say ""
 say "== 2. 不发 key 调数据（GET /api/$RES/1/service.xhtml）"

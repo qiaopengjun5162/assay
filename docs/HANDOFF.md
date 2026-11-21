@@ -194,7 +194,8 @@ cargo install wasm-bindgen-cli --version <与 Cargo.lock 一致>
    是瑞数类动态防护，连接口路径都进不去；江苏 403/504；山东、北京的目录页是服务端渲染 HTML。
    **改候选为深圳**（`opendata.sz.gov.cn`）：勘察已做完，见 `docs/audit/SHENZHEN.md`。
    两件事已经明确：目录 `POST /data/api/findPageByParams` **匿名**返回 2,791 条接口
-   （带字段数、数据量、更新周期），所以「停更」今天就能算；但**样例行要 appKey**，
+   （带字段数、数据量、更新周期），所以「停更」今天就能算——`./scripts/sz-probe.sh`
+   第 1b 节当场重算开放级别、周期覆盖率与过期数，不需要 key；但**样例行要 appKey**，
    而 appKey 不是注册就有，要提交一个「应用成果」（选 web 应用，我们已有站点）
    并逐个接口订阅。
    拿到 key 后只剩三步：

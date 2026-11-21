@@ -92,7 +92,7 @@ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
 
 [[package]]
 name = "assay"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "assay-core",
  "clap",
@@ -103,7 +103,7 @@ dependencies = [
 
 [[package]]
 name = "assay-api"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "assay-core",
  "axum",
@@ -120,7 +120,7 @@ dependencies = [
 
 [[package]]
 name = "assay-core"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "flate2",
  "serde",
@@ -133,7 +133,7 @@ dependencies = [
 
 [[package]]
 name = "assay-web"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "console_error_panic_hook",
  "gloo-net",

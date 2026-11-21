@@ -3,6 +3,13 @@
 本项目所有值得记录的变更。格式参考 [Keep a Changelog](https://keepachangelog.com/)，
 版本号遵循 [SemVer](https://semver.org/)。
 
+## [0.2.3](https://github.com/qiaopengjun5162/assay/compare/v0.2.2...v0.2.3) (2026-11-21)
+
+
+### Bug Fixes
+
+* **audit:** 深圳探针补匿名统计并更正最久滞后天数 ([#53](https://github.com/qiaopengjun5162/assay/issues/53)) ([4e19e13](https://github.com/qiaopengjun5162/assay/commit/4e19e13cfd950e13cc44c47ad9cb2e32b189586a))
+
 ## [0.2.2](https://github.com/qiaopengjun5162/assay/compare/v0.2.1...v0.2.2) (2026-11-20)
 
 

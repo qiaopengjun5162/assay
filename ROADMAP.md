@@ -16,7 +16,7 @@
 榜单、证明、证据、报告、站点都已上线冻结在 2026-11-14 的快照上；
 `just check` 与 `just clippy-wasm` 全绿；CI 八关（rust / msrv / coverage / wasm /
 lean / secret-scan / commit-lint / docs）与 Pages 两段式部署都跑通；
-`latest=v0.2.2` 已发布（10 资产全自动）。
+`latest=v0.2.3` 已发布（10 资产全自动）。
 
 当前源码版本：0.2.3 <!-- x-release-please-version -->
 
@@ -85,13 +85,13 @@ lean / secret-scan / commit-lint / docs）与 Pages 两段式部署都跑通；
 - ~~部门页（当前只有首页 Top12）~~ 已完成：`#/dept/<部门名>`，全量统计 + 榜上条目 + 口径说明
 - ~~无障碍与移动端排版复查~~ 已完成：390px 无横向溢出，五视图 axe `violations=0`（`just a11y`）
 
-### 5. 发布工程化 ✅（已发版 v0.2.2）
+### 5. 发布工程化 ✅（已发版 v0.2.3）
 
 `release-please` + `release` 双 workflow 已就位并跑通：前者开纯发版 PR，后者在 tag /
 手动触发时出 5 平台二进制与 `.sha256`（共 10 个资产），并从压缩包里解出来跑
 `--version/--help` + `verify-evidence` + `verify-reports` 的 smoke。
-首个正式 release 是 `v0.2.1`（手工补齐资产），当前 `latest=v0.2.2`（10 资产全自动构建
-上传，Windows CRLF 修复生效）；源码与 manifest 都是 `0.2.2`，早期写的 `v0.1.0` 已作废，
+首个正式 release 是 `v0.2.1`（手工补齐资产），当前 `latest=v0.2.3`（10 资产全自动构建
+上传，Windows CRLF 修复生效）；源码与 manifest 都是 `0.2.3`，早期写的 `v0.1.0` 已作废，
 理由见 D36。
 
 默认 GITHUB_TOKEN 建的 tag 不触发下游 workflow，发版要按 `docs/RELEASE_CHECKLIST.md`

@@ -21,13 +21,27 @@ if [[ -z "$TAG" ]]; then
   exit 2
 fi
 
+# gh api 也会抖（实测返回 EOF），和下面的下载一样要重试；否则脚本在
+# 网络最不稳的那一刻直接退出，反而让人以为 release 有问题。
+META=""
+for i in 1 2 3; do
+  if META="$(gh api "repos/$REPO/releases/tags/$TAG" 2>/dev/null)" && [[ -n "$META" ]]; then
+    break
+  fi
+  META=""
+  sleep 2
+done
+if [[ -z "$META" ]]; then
+  echo "读不到 release 元数据（重试 3 次仍失败），检查网络与 gh 登录" >&2
+  exit 2
+fi
+
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 cd "$TMP"
 
 echo "发布终检：$TAG"
 echo "── ① 资产数量与状态 ─────────────────────"
-META="$(gh api "repos/$REPO/releases/tags/$TAG")"
 READY="$(printf '%s' "$META" | jq -r '.draft == false and .prerelease == false')"
 N="$(printf '%s' "$META" | jq -r '.assets | length')"
 printf '  draft/prerelease 已发布: %s\n' "$READY"
@@ -48,11 +62,12 @@ echo "  10 个都在。"
 
 echo "── ② 下载 + 逐份验签 ────────────────────"
 # 10 个并发 curl 在本机代理下会撞 HTTP/2 framing 错误、静默丢文件；
-# 串行 + 强制 HTTP/1.1 + 重试三次，慢几秒但结果可信。
+# 改为串行 + 重试三次。**别加 --http1.1**：实测同一个包 HTTP/2 26 秒下完，
+# 强制 HTTP/1.1 则 60 秒才到一半（代理对长连接的处理有问题）。
 download() {
   local url="$1" dest="$2" i
   for i in 1 2 3; do
-    if curl -fsSL --http1.1 -o "$dest" "$url"; then
+    if curl -fsSL --max-time 60 -o "$dest" "$url"; then
       [[ -s "$dest" ]] && return 0
     fi
     rm -f "$dest"

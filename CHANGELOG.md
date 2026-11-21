@@ -3,6 +3,13 @@
 本项目所有值得记录的变更。格式参考 [Keep a Changelog](https://keepachangelog.com/)，
 版本号遵循 [SemVer](https://semver.org/)。
 
+## [0.2.4](https://github.com/qiaopengjun5162/assay/compare/v0.2.3...v0.2.4) (2026-11-21)
+
+
+### Bug Fixes
+
+* **release:** 终检脚本扛住网络抖动并同步 v0.2.3 口径 ([#56](https://github.com/qiaopengjun5162/assay/issues/56)) ([9a39c8c](https://github.com/qiaopengjun5162/assay/commit/9a39c8c86a0548d8ff333144f9bec66daba04f88))
+
 ## [0.2.3](https://github.com/qiaopengjun5162/assay/compare/v0.2.2...v0.2.3) (2026-11-21)
 
 

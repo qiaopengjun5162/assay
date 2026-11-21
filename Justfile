@@ -89,6 +89,10 @@ verify-reports:
 gate-negative:
     ./scripts/gate-negative.sh
 
+# 发布终检：把 tag 的全部资产下载回来验签、解压、跑本机二进制（省略 tag 取 latest）
+verify-release tag="":
+    ./scripts/verify-release.sh {{tag}}
+
 # 本地完整检查（提交前跑这个）
 check: fmt-check clippy typos test deny verify-evidence verify-reports proofs gate-negative
     echo "全部通过"

@@ -39,7 +39,7 @@ gh api repos/qiaopengjun5162/assay/actions/permissions/workflow \
 ## 1. 发版前
 
 ```bash
-just check              # fmt / clippy / nextest / deny / typos / 证明门禁
+just check              # fmt / clippy / nextest / deny / typos / 证据+报告+证明门禁 / 门禁负向自测
 just clippy-wasm
 just lint-docs
 ./scripts/coverage.sh   # 两个地板：74（core+cli）/ 72（全量）
@@ -107,7 +107,26 @@ gh release view vX.Y.Z \
 ```
 
 期望 `draft=false`、`pre=false`、`n=10`。workflow 里已经用 `shasum -a 256 -c`
-逐个自检过；下载后仍要在自己机器上再验一次：
+逐个自检过；下载后仍要在自己机器上再验一次。**别只验一个平台就算完**——旧清单
+只给了 macos-arm64 一条命令，其余 9 个靠 workflow 自检那句话带过，等于没验。
+一条命令跑完整终检：
+
+```bash
+bash scripts/verify-release.sh vX.Y.Z   # 或 just verify-release vX.Y.Z
+# 国内网络下载失败时：export HTTPS_PROXY=http://127.0.0.1:7890
+```
+
+它做四件事：① 核对 10 个资产齐、非草稿；② 全部下载回来逐份 `shasum -c`，
+并单独查 `.sha256` 行尾是不是 LF（CRLF 会让 shasum 误报）；③ 逐包解压，
+确认有且只有预期的那个二进制；④ 用匹配本机架构的那个二进制，在仓库根目录
+跑 `verify-evidence` 与 `verify-reports`——验的是**用户拿到的那个字节**还能不能
+复核 500 份证据与报告。
+
+2026-11-21 对 v0.2.2 实测：10 资产齐、5 份哈希全对且全 LF、5 个包内二进制齐全、
+macos-arm64 实跑两条门禁均 500/500。脚本用串行下载 + HTTP/1.1 + 重试三次：
+并发下载在本机代理下会撞 HTTP/2 framing 错误静默丢文件，别改回并发。
+
+只想快速看一个平台时，手工路径仍然是：
 
 ```bash
 curl -sSLO https://github.com/qiaopengjun5162/assay/releases/download/vX.Y.Z/assay-macos-arm64.tar.gz
@@ -115,12 +134,9 @@ curl -sSLO https://github.com/qiaopengjun5162/assay/releases/download/vX.Y.Z/ass
 shasum -a 256 -c assay-macos-arm64.tar.gz.sha256
 tar xzf assay-macos-arm64.tar.gz
 ./assay --version
-./assay verify-evidence web/data.json web/evidence
-./assay verify-reports web/data.json web/reports web/evidence
 ```
 
-最后两条要在仓库根目录跑，用的是入库的静态产物——验的是**用户拿到的那个二进制**
-还能不能复核 500 份证据与报告。
+最后两条门禁要在仓库根目录跑，用的是入库的静态产物。
 
 ## 5. 构建失败怎么办
 

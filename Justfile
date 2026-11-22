@@ -182,6 +182,11 @@ api:
 api-ingest date out="out-full":
     cargo run -p assay-api -- ingest --out {{out}} --captured-at {{date}}
 
+# 查询后端真库端到端：自带临时 Postgres（独立端口，不动 5432），
+# 灌库 → 起服务 → 验 12 项端点 → 自动清理。需要本机有 postgres 工具与 release 构建。
+api-e2e:
+    bash scripts/api-e2e.sh
+
 # 全流水线：体检 → 榜单 → 历史 → 解释 → 证据 → 证明 → 报告 → 导出 → 前端
 all: audit report history explain evidence prove reports export web
     echo "完成：just serve 预览"

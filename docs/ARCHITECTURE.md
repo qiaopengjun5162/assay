@@ -274,6 +274,7 @@ pub fn append(path: &str, point: Point) -> Result<Vec<Point>>;
 ```text
 assay-api                                    # 起服务（等价于 assay-api serve）
 assay-api ingest --out out-full --captured-at 2026-11-18 [--commit SHA]
+just api-e2e                                 # 真库端到端自测（自带临时 Postgres，自动清理）
 
 GET /health
 GET /v1/runs?platform=zj

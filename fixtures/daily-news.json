@@ -1,0 +1,39 @@
+{
+  "platform": "公众号日报·AI 新闻条目（演示）",
+  "declaredColumns": ["title", "source", "url", "summary", "author", "publishedAt", "category"],
+  "cycle": "按日",
+  "items": [
+    {
+      "id": "n001",
+      "title": "某模型发布新版本，推理成本下降 40%",
+      "source": "36氪",
+      "url": "https://example.com/news/001",
+      "summary": "厂商称新版本在标准基准上持平，但单次推理成本显著下降。",
+      "author": "记者甲",
+      "publishedAt": "2026-11-22",
+      "category": "模型"
+    },
+    {
+      "id": "n002",
+      "title": "开源社区发布 Agent 评测框架",
+      "source": "机器之心",
+      "url": "https://example.com/news/002",
+      "summary": "框架覆盖工具调用与长程任务两类基准。",
+      "publishedAt": "2026-11-21",
+      "category": "工具"
+    },
+    {
+      "id": "n003",
+      "title": "某地开放数据集更新频率调查",
+      "source": "数据观察",
+      "url": "https://example.com/news/003",
+      "publishedAt": "2025-04-10"
+    },
+    {
+      "id": "n004",
+      "title": "行业报告：可信数据基础设施成热点",
+      "source": "某某公众号",
+      "url": "https://example.com/news/004"
+    }
+  ]
+}

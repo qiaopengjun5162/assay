@@ -93,6 +93,11 @@ gate-negative:
 verify-release tag="":
     ./scripts/verify-release.sh {{tag}}
 
+# 线上终检：验 github.io 活站是不是仓库最新版、抽一条证据重算哈希、资源是否可达
+# 不进 check：依赖外网访问 github.io，交给交付前手动跑（可传自定义域名验镜像）
+verify-live base="":
+    ./scripts/verify-live.sh {{base}}
+
 # 本地完整检查（提交前跑这个）
 check: fmt-check clippy typos test deny verify-evidence verify-reports proofs gate-negative
     echo "全部通过"

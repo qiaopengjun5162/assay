@@ -103,6 +103,11 @@ verify-live base="":
 verify-live-negative:
     bash scripts/verify-live-negative.sh
 
+# 复用演示：用公众号日报形状的 fixture 走同一套内核，证明换数据源零改动
+# 不进 check：它是能力演示，不是门禁；产物写临时目录，不碰冻结快照。
+reuse-demo:
+    bash scripts/reuse-demo.sh
+
 # 本地完整检查（提交前跑这个）
 check: fmt-check clippy typos test deny verify-evidence verify-reports proofs gate-negative
     echo "全部通过"

@@ -2,9 +2,10 @@
 //!
 //! 所有子命令共享 `--out` 目录约定（默认 `out-full`），产物与旧版脚本一一对应。
 
-use assay_core::api::Client;
+use assay_core::api::{CatalogSource, Client};
 use assay_core::{
-    aggregate, audit, checks, drift, evidence, explain, export, history, pack, proof,
+    aggregate, audit, checks, drift, evidence, explain, export, fixture_source::FixtureSource,
+    history, pack, proof,
 };
 use clap::{Parser, Subcommand};
 use std::path::Path;
@@ -19,6 +20,11 @@ struct Cli {
     /// 产物目录
     #[arg(long, global = true, default_value = "out-full")]
     out: String,
+
+    /// 数据源：本地 JSON fixture 路径。省略则用内置浙江平台客户端。
+    /// 给路径即走离线适配器（不触网），用于复用演示与接自有数据。
+    #[arg(long, global = true)]
+    source: Option<String>,
 
     #[command(subcommand)]
     command: Command,
@@ -232,18 +238,30 @@ fn main() {
     }
 }
 
+/// 按 --source 构造数据源：给了路径走离线 fixture，否则用内置浙江客户端。
+///
+/// 内核（audit/evidence/prove）只认 `&dyn CatalogSource`，所以这里是我们唯一
+/// 需要知道「有哪几种数据源」的地方——换平台时只动这一处。
+fn make_source(source: Option<&str>) -> assay_core::Result<Box<dyn CatalogSource>> {
+    match source {
+        Some(p) => Ok(Box::new(FixtureSource::open(Path::new(p))?)),
+        None => Ok(Box::new(Client::new())),
+    }
+}
+
 fn run(cli: Cli) -> assay_core::Result<()> {
     let out = cli.out;
+    let source = cli.source;
     match cli.command {
         Command::Audit { threads, limit } => {
-            let client = Client::new();
+            let client = make_source(source.as_deref())?;
             let o = audit::audit(
                 &audit::AuditOptions {
                     threads,
                     limit,
                     out_dir: out,
                 },
-                &client,
+                client.as_ref(),
             )?;
             println!(
                 "audited={} failed={} elapsed={:.1}s",
@@ -292,16 +310,16 @@ fn run(cli: Cli) -> assay_core::Result<()> {
             );
         }
         Command::Evidence { top, threads } => {
-            let client = Client::new();
+            let client = make_source(source.as_deref())?;
             let items = audit::read_items(&Path::new(&out).join("items.jsonl").to_string_lossy())?;
-            let o = evidence::capture_top(&items, top, &out, &client, threads)?;
+            let o = evidence::capture_top(&items, top, &out, client.as_ref(), threads)?;
             println!("证据包: {}/{} 条", o.captured, o.total);
         }
         Command::Prove { top } => {
             proof::require_lean()?;
-            let client = Client::new();
+            let client = make_source(source.as_deref())?;
             let items = audit::read_items(&Path::new(&out).join("items.jsonl").to_string_lossy())?;
-            let o = proof::prove_top(&items, top, &out, &client)?;
+            let o = proof::prove_top(&items, top, &out, client.as_ref())?;
             println!(
                 "定理 {} 条 / {} 个数据集，lean 校验: {}",
                 o.theorems,

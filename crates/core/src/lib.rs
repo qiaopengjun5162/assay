@@ -15,6 +15,7 @@ pub mod drift;
 pub mod evidence;
 pub mod explain;
 pub mod export;
+pub mod fixture_source;
 pub mod guard;
 pub mod history;
 pub mod lean;

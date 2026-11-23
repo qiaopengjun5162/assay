@@ -403,6 +403,7 @@ Leptos 把 `{var}` 写进字符串字面量时编译不报错、页面也不报�
 - [ ] 窄视口（≈390px）无横向溢出，分享卡片能展开（见上一节）
 - [ ] `just a11y` 五个视图 `violations=0`，`incomplete` 项已人工确认
 - [ ] `just verify-live` 通过：线上 github.io 与仓库冻结版逐字节一致、抽一条证据重算哈希对得上、报告与静态资源非 404（交付前对活站验一次，可传自定义域名验镜像）
+- [ ] `just verify-live-negative` 通过：本地假站点上 7 项破坏（data/结构/证据/资源/不可达）都能让线上终检变红，证明它不是橡皮图章
 - [ ] `just verify-release <tag>` 通过：release 10 资产齐、哈希全对、包内二进制可用
 - [ ] `web/reports` 覆盖导出的前 N 名；`proofs.json` 是其中有数据行的那部分（现为 500 / 391）
 - [ ] 文档更新（README / ARCHITECTURE / DECISIONS 至少一处）

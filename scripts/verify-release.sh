@@ -61,17 +61,50 @@ done
 echo "  10 个都在。"
 
 echo "── ② 下载 + 逐份验签 ────────────────────"
-# 10 个并发 curl 在本机代理下会撞 HTTP/2 framing 错误、静默丢文件；
-# 改为串行 + 重试三次。**别加 --http1.1**：实测同一个包 HTTP/2 26 秒下完，
-# 强制 HTTP/1.1 则 60 秒才到一半（代理对长连接的处理有问题）。
+# 下载有两条通道，**curl CDN 优先、gh api 兜底**：
+#   github.com/<repo>/releases/download/... 走 release CDN，快（26 秒/包）但某些代理节点
+#     会间歇返回 502；实测多数包能下全，重试几次即可。
+#   api.github.com 的 asset 通道绕开 CDN 的 502，但下大文件(~1.6M)会静默截断，
+#     必须靠下面的 size 校验识别，且套 timeout 防止卡死。
+# 两条通道都做「字节数 == 元数据 size」校验，任何截断/半包都会被判失败并重试。
+# 串行 + 重试三次。**别给 curl 加 --http1.1**：实测 HTTP/2 26 秒下完、HTTP/1.1 60 秒才一半。
+asset_field() {
+  printf '%s' "$META" | jq -r --arg n "$1" --arg f "$2" '.assets[] | select(.name == $n)[$f]'
+}
+# 完整性校验必须按元数据里的 size 比字节数：gh api 下大文件（~1.6M）实测会
+# 中途静默截断成 893K 却仍返回 0，单看「文件非空」会把它当成成功，后面才报哈希不符。
+complete() {
+  local dest="$1" want="$2" got
+  [[ -s "$dest" ]] || return 1
+  got="$(wc -c < "$dest" | tr -d ' ')"
+  [[ "$got" == "$want" ]]
+}
 download() {
-  local url="$1" dest="$2" i
+  local name="$1" dest="$2" id url want i
+  id="$(asset_field "$name" id)"
+  want="$(asset_field "$name" size)"
+  # 通道一：curl release CDN（快，但代理可能间歇 502）
+  url="https://github.com/$REPO/releases/download/$TAG/$name"
   for i in 1 2 3; do
-    if curl -fsSL --max-time 60 -o "$dest" "$url"; then
-      [[ -s "$dest" ]] && return 0
+    curl -fsSL --max-time 60 -o "$dest" "$url" 2>/dev/null
+    if complete "$dest" "$want"; then
+      return 0
     fi
     rm -f "$dest"
   done
+  # 通道二：gh api asset（绕开 CDN 的 502；下大文件会静默截断，靠 size 校验拦，
+  # 且套 90 秒硬超时防止像实测那样卡在 893K 耗 8 分钟）
+  if [[ -n "$id" && "$id" != "null" ]]; then
+    for i in 1 2 3; do
+      timeout 90 gh api -H "Accept: application/octet-stream" "repos/$REPO/releases/assets/$id" \
+        >"$dest" 2>/dev/null
+      if complete "$dest" "$want"; then
+        return 0
+      fi
+      rm -f "$dest"
+      sleep 2
+    done
+  fi
   return 1
 }
 fail=0
@@ -80,8 +113,8 @@ for a in "${PLATFORMS[@]}"; do
   [[ "$a" == windows-* ]] && ext=zip
   base="assay-$a.$ext"
   for f in "$base" "$base.sha256"; do
-    if ! download "https://github.com/$REPO/releases/download/$TAG/$f" "$f"; then
-      printf '  FAIL %-42s 下载失败（重试 3 次仍无文件）\n' "$f"
+    if ! download "$f" "$f"; then
+      printf '  FAIL %-42s 下载失败/字节数不符（两通道各重试 3 次）\n' "$f"
       fail=$((fail + 1))
     fi
   done

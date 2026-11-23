@@ -3,7 +3,7 @@ members = ["crates/core", "crates/cli", "crates/web", "crates/api"]
 resolver = "2"
 
 [workspace.package]
-version = "0.2.3" # x-release-please-version
+version = "0.2.4" # x-release-please-version
 edition = "2021"
 # 实测下限，不是声明：1.86 过不了（icu_* 2.4 要求 1.88），1.88.0 通过。
 # CI 的 msrv job 会用这个版本真跑一次 --locked，别只改这里。

@@ -18,7 +18,7 @@
 lean / secret-scan / commit-lint / docs）与 Pages 两段式部署都跑通；
 `latest=v0.2.3` 已发布（10 资产全自动）。
 
-当前源码版本：0.2.3 <!-- x-release-please-version -->
+当前源码版本：0.2.4 <!-- x-release-please-version -->
 
 ## 已完成
 

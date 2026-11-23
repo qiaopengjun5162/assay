@@ -98,6 +98,11 @@ verify-release tag="":
 verify-live base="":
     ./scripts/verify-live.sh {{base}}
 
+# 线上终检的负向自测：本地搭假站点，证明每处破坏都会让 verify-live 变红
+# 纯本地、不访问外网；跟 gate-negative 同理——验工具本身有没有约束力
+verify-live-negative:
+    bash scripts/verify-live-negative.sh
+
 # 本地完整检查（提交前跑这个）
 check: fmt-check clippy typos test deny verify-evidence verify-reports proofs gate-negative
     echo "全部通过"

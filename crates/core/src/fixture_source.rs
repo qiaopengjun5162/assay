@@ -47,10 +47,9 @@ struct FixtureFile {
 /// 全部字段在 `open()` 时一次性读入内存，之后只读；`Value` / `BTreeMap` 本身
 /// 是 `Send + Sync`，所以不需要加锁就能满足 trait 的约束。
 pub struct FixtureSource {
-    // `platform()` 的返回类型是 &'static str（trait 定死），而平台名来自运行时的
-    // fixture 文件。只在 open() 里泄漏一次（进程生命周期内一份，不是每次调用），
-    // 把所有权转成 'static；这是不改 trait 的前提下最小的做法。
-    platform: &'static str,
+    // 平台名来自运行时的 fixture 文件，按值持有，随 source 一起释放。
+    // 不再需要 Box::leak——trait 的 platform() 已改为借用 &self。
+    platform: String,
     declared: Vec<String>,
     by_id: BTreeMap<String, Value>,
     catalog: Vec<CatalogRecord>,
@@ -68,8 +67,6 @@ impl FixtureSource {
         if f.declared_columns.is_empty() {
             return Err(Error::Other("fixture 的 declaredColumns 不能为空".into()));
         }
-        let platform: &'static str = Box::leak(f.platform.into_boxed_str());
-
         let mut by_id = BTreeMap::new();
         let mut catalog = Vec::with_capacity(f.items.len());
         for item in &f.items {
@@ -97,7 +94,7 @@ impl FixtureSource {
         }
 
         Ok(Self {
-            platform,
+            platform: f.platform,
             declared: f.declared_columns,
             by_id,
             catalog,
@@ -138,8 +135,8 @@ impl FixtureSource {
 }
 
 impl CatalogSource for FixtureSource {
-    fn platform(&self) -> &'static str {
-        self.platform
+    fn platform(&self) -> &str {
+        &self.platform
     }
 
     fn catalog_page(&self, current: usize) -> Result<(usize, usize, Vec<CatalogRecord>)> {
@@ -297,6 +294,23 @@ mod tests {
             .rows_from_raw(&src.preview_raw("n2", 10).unwrap())
             .unwrap();
         assert_eq!(fresh, from_raw, "证明针对的快照必须与实时表格一致");
+    }
+
+    #[test]
+    fn multiple_sources_keep_their_own_runtime_platform_name() {
+        // 服务化场景：同一进程里可能同时持有多份数据源，平台名各不相同。
+        // platform() 借用 &self，所以每份 source 的名字按值持有、互不覆盖；
+        // 旧的 Box::leak 方案虽也能返回不同值，但每构造一份就永久泄漏一份。
+        let a_body = SAMPLE.replace("公众号日报·AI 新闻条目", "源 A");
+        let b_body = SAMPLE.replace("公众号日报·AI 新闻条目", "源 B");
+        let a = FixtureSource::open(&write_fixture("plat-a", &a_body)).unwrap();
+        assert_eq!(a.platform(), "源 A");
+        {
+            let b = FixtureSource::open(&write_fixture("plat-b", &b_body)).unwrap();
+            assert_eq!(b.platform(), "源 B");
+            assert_eq!(a.platform(), "源 A", "新 source 不能盖掉旧 source 的平台名");
+        }
+        assert_eq!(a.platform(), "源 A", "另一份 source 释放后本份仍可读");
     }
 
     #[test]

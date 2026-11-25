@@ -220,7 +220,7 @@ mod tests {
     struct SnapshotSource;
 
     impl CatalogSource for SnapshotSource {
-        fn platform(&self) -> &'static str {
+        fn platform(&self) -> &str {
             "测试平台"
         }
         fn catalog_page(&self, _: usize) -> Result<(usize, usize, Vec<CatalogRecord>)> {

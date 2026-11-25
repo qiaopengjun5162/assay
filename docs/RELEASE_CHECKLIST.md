@@ -67,8 +67,20 @@ gh pr diff <num> --name-only
 `--locked` 立刻红。
 
 **假发版 PR**：合并发版 PR 之后、把草稿发布出去之前，release-please 找不到锚点，
-有时会开出一个 CHANGELOG 上百行的 PR。判据是增量行数：个位数是真，几十上百行是假，
-关掉即可，**不要合并**。
+有时会开出一个内容重复的 PR。判据是**新增的 CHANGELOG 条目是否已经在历史版本里出现过**，
+而不是行数——行数只是表象：
+
+```bash
+gh pr diff <num> -- CHANGELOG.md | grep '^+'   # 看新增条目
+# 逐条拿 PR 号或 commit 到已有 CHANGELOG 里 grep，命中即重复
+grep -n '#<号>\|<commit前7位>' CHANGELOG.md
+```
+
+2026-11-25 实测：#71 是 v0.2.5 发布后 2 分钟开的 `release 0.2.6`，
+CHANGELOG 唯一新增条目 `#56` 其实已在 v0.2.4 发布过（重复计入）。它只增了 1 行，
+用「个位数行数是真」的旧判据会误判为真——**本质判据是内容重复，不是行数**。
+关掉即可，**不要合并**；关之前确认 `gh release view` 的 latest 正确、CHANGELOG
+里该条目已有归属版本。
 
 ## 3. 点火（关键，容易漏）
 

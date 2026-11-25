@@ -262,11 +262,15 @@ pub fn append(path: &str, point: Point) -> Result<Vec<Point>>;
 ### 3.11 `crates/web`
 
 - Leptos 0.7 CSR，trunk 打包；hash 路由：`#/`、`#/detail/<urlencoded id>`、`#/proof/<id>`、
-  `#/checks`、`#/dept/<urlencoded 部门名>`。
+  `#/checks`、`#/dept/<urlencoded 部门名>`，新增两个全量索引 `#/depts`（全部部门）、
+  `#/proofs`（全部可证条目）。顶栏四个入口：榜单 / 部门索引 / 证明索引 / 判定规则。
 - 数据只读 `data.json`；不做任何写操作、不调平台接口。
 - 五个视图：榜单（搜索/部门/排序/三个筛选）、详情（六维体检卡 + 字段差异 + AI 解读 +
   证据 + 证明入口 + 报告下载）、证明（PASS、哈希、定理示例、下载）、判定规则（10 条
-  检查项与全量命中数）、部门（全量统计 + 榜上条目）。
+  检查项与全量命中数）、部门（全量统计 + 榜上条目）。部门与证明另各有全量索引页，
+  复用同一份 `data.json`，不是新口径。
+- 首屏「点这里，现场验一条」与详情页「跳到证据，当场重算」只做路由切换 + 滚动到
+  `#evidence` 锚点，不碰证据链；验证按钮的行为不变。
 - 浏览器前进/后退通过 `hashchange` 监听同步。
 
 ### 3.12 `crates/api`

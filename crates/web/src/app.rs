@@ -16,6 +16,8 @@ enum Route {
     Detail(String),
     Proof(String),
     Dept(String),
+    Depts,
+    Proofs,
     Checks,
 }
 
@@ -53,6 +55,13 @@ fn parse_route(hash: &str) -> Route {
     }
     if h == "checks" {
         return Route::Checks;
+    }
+    // 列表级视图：部门榜 / 证明索引。放在单条路由之后，避免吃掉 detail/dept 前缀。
+    if h == "depts" {
+        return Route::Depts;
+    }
+    if h == "proofs" {
+        return Route::Proofs;
     }
     Route::List
 }
@@ -95,6 +104,27 @@ fn fmt_num(n: u64) -> String {
         out.push(c);
     }
     out
+}
+
+/// 从首屏 CTA 跳到详情页的证据锚点。路由是 hash，浏览器不会等待新视图渲染，
+/// 所以延迟一个事件循环再 scrollIntoView，否则元素还不存在、滚了个空。
+fn scroll_to_evidence() {
+    use wasm_bindgen::prelude::*;
+    let cb = Closure::<dyn FnMut()>::new(move || {
+        let el = web_sys::window()
+            .and_then(|w| w.document())
+            .and_then(|d| d.get_element_by_id("evidence"));
+        if let Some(el) = el {
+            let _ = el.dyn_ref::<web_sys::Element>().map(|e| {
+                e.scroll_into_view_with_bool(true);
+            });
+        }
+    });
+    if let Some(w) = web_sys::window() {
+        let _ =
+            w.set_timeout_with_callback_and_timeout_and_arguments_0(cb.as_ref().unchecked_ref(), 0);
+    }
+    cb.forget();
 }
 
 #[component]
@@ -146,16 +176,31 @@ pub fn App() -> impl IntoView {
                 <div class="top-meta">"每条结论都能自己验"</div>
                 <nav class="top-nav" aria-label="主导航">
                     <a href="#/" on:click=move |_| { route.set(Route::List); }>"榜单"</a>
+                    <a href="#/depts" on:click=move |_| { route.set(Route::Depts); }>"部门"</a>
+                    <a href="#/proofs" on:click=move |_| { route.set(Route::Proofs); }>"证明"</a>
                     <a href="#/checks" on:click=move |_| { route.set(Route::Checks); }>"判定规则"</a>
                 </nav>
             </header>
             <main id="main" tabindex="-1">
             {move || match (data.get(), route.get()) {
-                (None, _) => view! { <p class="hint">"加载中…"</p> }.into_any(),
+                (None, _) => view! {
+                    <div class="skeleton" role="status" aria-label="正在加载榜单">
+                        <div class="sk-line sk-title"></div>
+                        <div class="sk-line sk-lede"></div>
+                        <div class="sk-card"></div>
+                        <div class="sk-grid">
+                            <div class="sk-stat"></div><div class="sk-stat"></div>
+                            <div class="sk-stat"></div><div class="sk-stat"></div>
+                        </div>
+                        <p class="hint">"正在加载榜单…"</p>
+                    </div>
+                }.into_any(),
                 (Some(d), Route::List) => list_view(d, route).into_any(),
                 (Some(d), Route::Detail(id)) => detail_view(d, &id, route).into_any(),
                 (Some(d), Route::Proof(id)) => proof_view(d, &id, route).into_any(),
                 (Some(d), Route::Dept(n)) => dept_view(d, &n, route).into_any(),
+                (Some(d), Route::Depts) => depts_index(d, route).into_any(),
+                (Some(d), Route::Proofs) => proofs_index(d, route).into_any(),
                 (Some(d), Route::Checks) => checks_page(d).into_any(),
             }}
             </main>
@@ -203,6 +248,7 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
         .cloned();
     let exhibit_view = exhibit.map(|e| {
         let id = e.id.clone();
+        let cta_id = e.id.clone();
         view! {
             <section class="exhibit">
                 <div class="exhibit-head">
@@ -224,10 +270,17 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
                         })}
                     </div>
                 </div>
-                <a class="exhibit-link" href=format!("#/detail/{}", urlencoding(&id))
-                   on:click=move |_| { route.set(Route::Detail(id.clone())); }>
-                    "看这条的原始证据和机器证明 →"
-                </a>
+                <div class="exhibit-actions">
+                    <a class="btn btn-primary" href=format!("#/detail/{}", urlencoding(&id))
+                       on:click=move |_| {
+                           route.set(Route::Detail(id.clone()));
+                           scroll_to_evidence();
+                       }>"点这里，现场验一条 →"</a>
+                    <a class="exhibit-link" href=format!("#/detail/{}", urlencoding(&cta_id))
+                       on:click=move |_| { route.set(Route::Detail(cta_id.clone())); }>
+                        "或先看完整分析"
+                    </a>
+                </div>
             </section>
         }
     });
@@ -456,23 +509,48 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             <label class="check"><input type="checkbox" on:change=move |e| only_mismatch.set(event_target_checked(&e)) />"字段对不上"</label>
         </section>
 
-        {/* 部门卡说的是「这个部门有多少数据集」，榜单只放了前 500 名。
-            两个数不是一回事，不写清楚就会被读成「藏了 268 条」。 */}
+        {/* 任何筛选生效都报命中数：搜一个词只剩 5 条时，读者需要知道「是筛出来的，不是只有 5 条」。
+            部门卡说的「这个部门有多少」是全量，榜单只放前 500 名，两个数不写清楚会被读成藏数据。 */}
         {move || {
+            let q = search.get();
             let dd = dept.get();
-            (!dd.is_empty()).then(|| {
-                let total = by_dept.get(&dd).map(|v| v.n).unwrap_or(0);
-                let shown = filtered().len() as u64;
-                let hidden = total.saturating_sub(shown);
+            let any = !q.is_empty()
+                || !dd.is_empty()
+                || only_stopped.get()
+                || only_empty.get()
+                || only_mismatch.get();
+            any.then(|| {
+                let n = filtered().len();
+                let listed = rows.get().len();
+                let kw = if q.is_empty() {
+                    String::new()
+                } else {
+                    format!(" · 关键词「{q}」")
+                };
+                // 部门全量 vs 榜上条数：用「只按部门筛」的数算隐藏条数，不受搜索词干扰
+                let dept_detail = if dd.is_empty() {
+                    None
+                } else {
+                    let total = by_dept.get(&dd).map(|v| v.n).unwrap_or(0);
+                    let in_board = rows.get().iter().filter(|r| r.dept == dd).count() as u64;
+                    let hidden = total.saturating_sub(in_board);
+                    Some(format!(
+                        " · 「{dd}」全量 {total} 个，其余 {hidden} 个不在前 {listed} 名内"
+                    ))
+                };
                 view! {
                     <p class="filter-note">
-                        "已筛选 " <b>{dd.clone()}</b>
-                        "：榜上 " <b>{shown.to_string()}</b> " 条"
-                        {(!dd.is_empty() && hidden > 0).then(|| format!(
-                            "；该部门共 {total} 个数据集，其余 {hidden} 个不在前 500 名内"
-                        ))}
+                        "筛出 " <b>{n.to_string()}</b> " 条（榜上共 "{listed.to_string()}" 条）"
+                        {kw}
+                        {dept_detail}
                         " "
-                        <button class="linkbtn" on:click=move |_| dept.set(String::new())>"查看全部"</button>
+                        <button class="linkbtn" on:click=move |_| {
+                            search.set(String::new());
+                            dept.set(String::new());
+                            only_stopped.set(false);
+                            only_empty.set(false);
+                            only_mismatch.set(false);
+                        }>"清除筛选"</button>
                     </p>
                 }
             })
@@ -533,6 +611,81 @@ fn checks_page(data: Data) -> impl IntoView {
         <p class="verify"><a class="btn" href="#/">"← 回榜单"</a></p>
         {checks_section(&data.checks, total_checked, shown)}
     }
+}
+
+/// 部门索引 `#/depts`：首页只放前 12 个部门，这里放全量部门表。
+/// 数字全部来自 `byDept`（覆盖全量），榜单条目仍只列前 500 名。
+fn depts_index(data: Data, route: RwSignal<Route>) -> impl IntoView {
+    let mut names: Vec<&String> = data.summary.by_dept.keys().collect();
+    names.sort_by(|a, b| {
+        let sa = data.summary.by_dept.get(*a).map(|v| v.stopped).unwrap_or(0);
+        let sb = data.summary.by_dept.get(*b).map(|v| v.stopped).unwrap_or(0);
+        sb.cmp(&sa).then(a.cmp(b))
+    });
+    let cards = names
+        .into_iter()
+        .map(|name| {
+            let d = data.summary.by_dept.get(name).cloned();
+            let href = format!("#/dept/{}", urlencoding(name));
+            let pick = name.clone();
+            let meta = d
+                .map(|v| {
+                    format!(
+                        "{} 个数据集 · 停更 {} · 字段对不上 {}",
+                        v.n, v.stopped, v.mismatch
+                    )
+                })
+                .unwrap_or_default();
+            view! {
+                <a class="deptcard" href=href on:click=move |_| route.set(Route::Dept(pick.clone()))>
+                    <div class="dname">{name.clone()}</div>
+                    <div class="dmeta">{meta}</div>
+                </a>
+            }
+        })
+        .collect_view();
+    view! {
+        <nav class="crumb" aria-label="面包屑"><a href="#/">"榜单"</a>" / 全部部门"</nav>
+        <h1 class="detail-title">"全部部门"</h1>
+        <p class="lede">
+            "共 "{fmt_num(data.summary.by_dept.len() as u64)}" 个部门，按停更数据集数量排序。"
+            "点部门看它的全量体检数字——这里统计覆盖全部数据集，不只是榜上前 500 名。"
+        </p>
+        <p class="verify"><a class="btn" href="#/">"← 回榜单"</a></p>
+        <div class="deptgrid">{cards}</div>
+    }
+    .into_any()
+}
+
+/// 证明索引 `#/proofs`：首页说「391 条有机器证明」却没给出处，这里把所有可证条目列出来。
+/// 只收录 `proof` 非空的行——口径与榜单、证据完全同源，不自己造数。
+fn proofs_index(data: Data, route: RwSignal<Route>) -> impl IntoView {
+    let proven: Vec<(usize, Row)> = data
+        .datasets
+        .iter()
+        .cloned()
+        .enumerate()
+        .filter(|(_, r)| r.proof.is_some())
+        .collect();
+    let count = proven.len();
+    let rows = proven
+        .into_iter()
+        .map(|(i, r)| row_view(i, r, route))
+        .collect_view();
+    view! {
+        <nav class="crumb" aria-label="面包屑"><a href="#/">"榜单"</a>" / 机器证明"</nav>
+        <h1 class="detail-title">"机器证明索引"</h1>
+        <p class="lede">
+            "榜上有 "{fmt_num(count as u64)}" 条数据集的数值结论由 Lean 4 内核复核过。"
+            "点开任意一条，进详情后点「查看证明详情」看定理与快照哈希。"
+        </p>
+        <p class="hint">
+            "这里只列能证的条目。其余数据集要么排在证明覆盖之外，要么平台只给了表头、没有数据行——没有可证的命题，不是漏做。"
+        </p>
+        <p class="verify"><a class="btn" href="#/">"← 回榜单"</a></p>
+        <section class="board">{rows}</section>
+    }
+    .into_any()
 }
 
 /// 10 条检查项的表格。榜单页尾和 `#/checks` 共用同一份渲染，
@@ -864,7 +1017,7 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
             <a class="chip" href=format!("#/?dept={}", urlencoding(&r.dept))
                title="回榜单，只看这个部门">{r.dept.clone()}</a>
             <span class="chip">{r.open_type.clone().unwrap_or_default()}</span>
-            <span class="chip">"问题分 " {format!("{:.1}", r.score)}</span>
+            <span class="chip" title="问题分只用于把问题排先后，不是科学评分，也不代表数据真假">"问题分 " {format!("{:.1}", r.score)}</span>
             {r.update_time.clone().map(|t| view! { <span class="chip">"最近更新 " {t}</span> })}
             {r.overdue.then(|| view! { <span class="chip bad">"超过声明更新周期"</span> })}
             {r.proof.is_some().then(|| view! { <span class="chip ok">"已生成证明"</span> })}
@@ -874,18 +1027,23 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
             <b>{verdict}</b>
             {(!why.is_empty()).then(|| view! { <span>"：" {why.clone()}</span> })}
             " · 问题分只用于排序，不是科学指标。准确性不在评价范围内。"
-            <ShareLinkButton />
-            {report.then(|| view! {
-                <a class="btn" href=report_href.clone() target="_blank" rel="noopener">"新标签看报告（.md）"</a>
-                <a class="btn" href=report_href.clone() download>"下载报告（.md 纯文本）"</a>
-            })}
+            <p class="verify">
+                <button class="btn btn-primary" on:click=move |_| scroll_to_evidence()>"↓ 跳到证据，当场重算"</button>
+                <ShareLinkButton />
+                {report.then(|| view! {
+                    <a class="btn" href=report_href.clone() target="_blank" rel="noopener">"新标签看报告（.md）"</a>
+                    <a class="btn" href=report_href.clone() download>"下载报告（.md 纯文本）"</a>
+                })}
+            </p>
         </div>
 
         <h2 class="section">"GB/T 36344 六维体检（准确性不评价）"</h2>
         <section class="dims">
             {dims.into_iter().map(|(n, std, v, note)| view! {
                 <div class=format!("dim{}", if n == "准确性" { " na" } else { "" })>
-                    <h3>{n}<span class="std">{std}</span></h3>
+                    // 国标条款号收进悬停：普通读者看「规范性/完整性」就够，
+                    // 要对着国标核查的人把鼠标放上去就能拿到编号。
+                    <h3 title=format!("GB/T 36344 对应条款：{std}")>{n}</h3>
                     <p class="verdict-inline">{v}</p>
                     <p class="hint">{note}</p>
                 </div>
@@ -915,7 +1073,7 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
         })}
 
         {evidence.map(|e| view! {
-            <section class="panel">
+            <section class="panel" id="evidence">
                 <h2>"证据包"</h2>
                 <p class="hint">"接口原始响应逐字节落盘，全程确定性抓取，不经过任何模型。"</p>
                 <table class="kv">
@@ -1239,5 +1397,19 @@ mod tests {
     fn dept_without_slash_is_not_a_dept_page() {
         assert_eq!(parse_route("#/dept"), Route::List);
         assert_eq!(parse_route(""), Route::List);
+    }
+
+    // 顶栏两个新入口必须能解析，否则点「部门」「证明」只会回到榜单。
+    #[test]
+    fn index_routes_parse() {
+        assert_eq!(parse_route("#/depts"), Route::Depts);
+        assert_eq!(parse_route("#/proofs"), Route::Proofs);
+    }
+
+    // 单条路由不能被列表路由吃掉：`dept/` 前缀 must win over `depts`。
+    #[test]
+    fn single_item_routes_win_over_index_routes() {
+        assert_eq!(parse_route("#/dept/foo"), Route::Dept("foo".into()));
+        assert_eq!(parse_route("#/proof/foo"), Route::Proof("foo".into()));
     }
 }

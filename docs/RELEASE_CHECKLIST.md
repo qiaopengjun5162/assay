@@ -6,7 +6,7 @@
 
 ## 0. 版本号口径
 
-当前已发布 `v0.2.3`（`latest`，10 资产），源码与 manifest 都是 `0.2.3`；
+当前已发布 `v0.2.5`（`latest`，10 资产），源码与 manifest 都是 `0.2.5`；
 `v0.2.1` 是首个正式 release（首次发版踩过 Windows CRLF 坑，资产已人工补齐）。
 ROADMAP 早期写的 `v0.1.0` 是作废的旧计划，**不要再按它打 tag**。
 
@@ -142,7 +142,44 @@ tar xzf assay-macos-arm64.tar.gz
 
 最后两条门禁要在仓库根目录跑，用的是入库的静态产物。
 
-## 5. 构建失败怎么办
+## 5. 确认站点真的更新了（别用 grep 判版本）
+
+release 发完不代表网页也换了。`pages.yml` 是另一条独立流程：
+推 `main` 且改到 `crates/web/**`、`web/data.json` 等路径才触发，
+在同一次 push 里先 build 再 deploy。判**线上是否更新**只有一条可靠链路：
+
+```bash
+# 1) pages 工作流成功，且部署的 commit 就是这次前端改动所在的 commit
+gh run list --workflow pages.yml --limit 3 \
+  --json databaseId,status,conclusion,headBranch
+gh run view <run_id> --log | grep pages_build_version   # 应为目标 commit sha
+
+# 2) 下载那次构建的 artifact，拿到它的 index.html 和 wasm
+gh api repos/qiaopengjun5162/assay/actions/runs/<run_id>/artifacts \
+  --jq '.artifacts[] | "\(.id) \(.name)"'
+# artifact 是 tar 套 zip：gh api .../actions/artifacts/<id>/zip 解出 artifact.tar，
+# 再 tar -xf 才见到 index.html 与 *.wasm
+
+# 3) 线上 index 与 artifact index 逐字节比，再比 wasm 的 sha256
+curl -sS "https://qiaopengjun5162.github.io/assay/index.html?cb=$(date +%s)" -o /tmp/live-index.html
+diff /tmp/live-index.html <解压目录>/index.html        # 无差异即线上=本次构建
+shasum -a 256 /tmp/live.wasm <解压目录>/*_bg.wasm        # 两个哈希必须相同
+```
+
+三个会让人误判「站点没更新」的坑，都踩过：
+
+- **中文文案在 `.wasm` 里，不在 `.js` 胶水层**。grep 新按钮文案要查
+  `*_bg.wasm`，grep `.js` 必然 0 命中——别据此判定线上还是旧版。
+- **下 wasm 别用短超时**。`curl --max-time 15` 下 1.7MB wasm 会中途截断，
+  看起来像「新文案命中 0」。用代理 `curl -sL --max-time 120` 下完并**比对
+  sha256**，不能只看文件非空或 grep 结果。
+- **缓存响应头会误导**。`age`、`x-cache` 只能辅助看缓存，不能当结论：
+  曾见 `last-modified` 对得上部署时刻、`age=0`、`x-cache=MISS`，看起来
+  「不是缓存问题」，其实 wasm 早就更新了，是我下载截断造成的假警报。
+  只认三者齐：`last-modified` 对得上 pages 部署时刻、index 与 artifact
+  一致、wasm 哈希一致。
+
+## 6. 构建失败怎么办
 
 先分清是哪一种，处置完全相反：
 
@@ -175,7 +212,7 @@ release 的 `upload_url?name=<file>`（带 `Authorization: Bearer <token>`）；
 若仍报权限错，说明该 release 归 bot 所有——配 `RELEASE_PAT` 后重跑末段，
 或由仓库管理员手工上传。
 
-## 6. 不做的
+## 7. 不做的
 
 - 不在 PR CI 里访问政府网站（D6）；发布构建只用冻结产物。
 - 不把 key、token 或 `out-full/` 打进资产包。

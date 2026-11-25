@@ -275,3 +275,25 @@ select id from run where platform_id = $1 order by captured_at desc limit 1
 当前 Rust 1.100 只是警告，不影响编译与门禁；未来某版会变硬错误，需等上游更新。
 **赛前冻结期不要为此 `[patch]` fork 或升 leptos**——为消除一个「未来的」警告去动前端宏链，
 风险远大于收益。等上游出修复版本再说。
+
+### trait 签名里的 `&'static str` 会逼运行时适配器 leak——该 borrow `&self` 就 borrow
+
+**现象：** `CatalogSource::platform()` 原本返回 `&'static str`。内置浙江 Client 返回编译期
+字符串字面量，天然满足；但第二个适配器（`fixture_source`）的平台名来自运行时 JSON 文件，
+为了对齐 `'static` 只能 `Box::leak(f.platform.into_boxed_str())`——每构造一份 source
+就永久泄漏一份字符串。单次 CLI 运行只泄漏一份，看不出问题；赛后服务化（每租户/每请求
+一份 source）就会累积。
+
+**判据：** 一个"展示用"方法不该逼实现者做内存管理。先查它的实际调用面：
+`grep -rn '\.platform()' crates/` 显示生产代码**零调用**（只有测试断言），冻结产物里
+也没有 platform 字段——说明这是死接口，为它 leak 完全不值。
+
+**做法：** 把签名放宽成 `fn platform(&self) -> &str`。约束从 `'static` 放宽到 `&self`，
+方法集合不变，所有返回字面量的既有实现照旧兼容；运行时适配器改成按值存 `String`、
+返回 `&self.platform`，随 source 一起释放。**放宽生命周期约束是向后兼容的重构**，
+收紧则不是——改之前先确认没有调用方把返回值存进需要 `'static` 的地方。
+
+**回归测试：** 加一条"多 source 共存、平台名互不覆盖、一份释放后另一份仍可读"的测试，
+锁定服务化契约（旧的 leak 方案功能上也通过，但新方案若写错会直接编译失败/串味）。
+
+**结论：本轮只改 trait 签名 + 4 处实现 + 1 处字段类型，未改任何产物与检查逻辑。**

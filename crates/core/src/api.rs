@@ -45,8 +45,11 @@ pub struct DatasetMeta {
 /// 约定：`detail_raw` / `preview_raw` 返回**原始响应字节**，
 /// 证据包要对它算哈希，不能经过二次序列化。
 pub trait CatalogSource: Send + Sync {
-    /// 展示用平台名（写进产物与页面）
-    fn platform(&self) -> &'static str;
+    /// 展示用平台名（写进产物与页面）。
+    ///
+    /// 借用 `&self` 而不是 `'static`：平台名可能来自运行时（配置文件 / fixture），
+    /// 适配器按值持有即可，不必为对齐签名而永久泄漏内存。
+    fn platform(&self) -> &str;
     fn catalog_page(&self, current: usize) -> Result<(usize, usize, Vec<CatalogRecord>)>;
     fn catalog_all(&self, threads: usize) -> Result<Vec<CatalogRecord>>;
     /// 声明的字段、是否有样例、说明字数。
@@ -207,7 +210,7 @@ fn parse_catalog_page(v: &Value) -> (usize, usize, Vec<CatalogRecord>) {
 }
 
 impl CatalogSource for Client {
-    fn platform(&self) -> &'static str {
+    fn platform(&self) -> &str {
         "浙江省公共数据开放平台"
     }
     fn catalog_page(&self, current: usize) -> Result<(usize, usize, Vec<CatalogRecord>)> {

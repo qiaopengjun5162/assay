@@ -20,7 +20,7 @@ struct FixtureSource {
 }
 
 impl CatalogSource for FixtureSource {
-    fn platform(&self) -> &'static str {
+    fn platform(&self) -> &str {
         "测试平台"
     }
     fn catalog_page(

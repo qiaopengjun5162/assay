@@ -3,6 +3,23 @@
 本项目所有值得记录的变更。格式参考 [Keep a Changelog](https://keepachangelog.com/)，
 版本号遵循 [SemVer](https://semver.org/)。
 
+## [0.2.5](https://github.com/qiaopengjun5162/assay/compare/v0.2.4...v0.2.5) (2026-11-25)
+
+
+### Features
+
+* **web:** 补全导航入口与首屏验证 CTA，降低术语负荷 ([#70](https://github.com/qiaopengjun5162/assay/issues/70)) ([bf622dc](https://github.com/qiaopengjun5162/assay/commit/bf622dcdc618c9d964e0887a3eabded417469214))
+
+
+### Bug Fixes
+
+* **release:** 终检下载防静默截断 + 路演补可复用问答 ([#64](https://github.com/qiaopengjun5162/assay/issues/64)) ([4a796db](https://github.com/qiaopengjun5162/assay/commit/4a796db484959145e0efd5469d760d1227b36aab))
+
+
+### Refactoring
+
+* **core:** platform() 改为借用 &self，消除运行时适配器 leak ([#68](https://github.com/qiaopengjun5162/assay/issues/68)) ([9a18d6b](https://github.com/qiaopengjun5162/assay/commit/9a18d6be467ea64964531d5abae20ea0c2f911c7))
+
 ## [0.2.4](https://github.com/qiaopengjun5162/assay/compare/v0.2.3...v0.2.4) (2026-11-23)
 
 

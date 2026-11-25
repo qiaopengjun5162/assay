@@ -246,3 +246,32 @@ select id from run where platform_id = $1 order by captured_at desc limit 1
 
 **证据：** `crates/api/src/lib.rs` 的 `latest_run_id`；本次实测插入 `id=4, captured_at='2026-11-01'`
 后，接口仍正确返回 `run 3 / 2026-11-25`。
+
+### 库里 155 处 unwrap 不等于 155 个 bug——先分「自产自销」还是「吃外部输入」
+
+**现象：** 扫 `crates/core/src` + `crates/api/src`，非测试代码里有 155 处 `.unwrap()`/`.expect()`，
+集中在 `export.rs`(41) / `proof.rs`(20) / `pack.rs`(20) / `evidence.rs`(17)。
+看到这个数字容易下结论「库代码到处 unwrap，遇到坏数据就 panic」，于是发起一轮大规模改写。
+
+**判据（先看再改）：** unwrap 的风险取决于它吃的是谁的数据：
+
+- **自产自销**（写自己刚生成的产物、读自己刚落盘的快照）：数据是本程序上一步写的，格式可控。
+  `export`/`pack`/`proof`/`evidence` 多数属于这类，unwrap 失败等于「自己写坏了」，该炸。
+- **吃平台抓来的原始响应**：这类才危险。逐个核对后，本项目里落在这一类的 unwrap **全在
+  `#[cfg(test)]` 块里**（`api.rs:162/167` 的并发锁、`drift.rs:502+`、`ingest.rs:281+`），
+  生产路径没有一处裸 unwrap 直接吃外部输入。
+- **有前置不变量保证的**：`aggregate.rs:242` 的 `dept_map.get(k).unwrap()` 看着吓人，但
+  `dept_order` 只在 `dept_map` 不含该 key 时 push（206~220 行），两者严格同源，get 不可能失败。
+  这种 unwrap 是「把不变量写进代码」，比默默 `if let` 跳过更好——跳过反而会静默丢部门。
+
+**结论：不用改。** 为凑「零 unwrap」去改写这 155 处，会把「自己写坏了就大声炸」变成
+「静默跳过坏数据」，对一个卖点是「结论可复核」的项目是倒退。
+遇到 unwrap 先问一句：它读的是谁写的数据、写失败了要不要炸。
+
+**另附（本轮只读体检发现，不动）：** `just clippy-wasm` 通过；`cargo tree -d` 的重复版本
+都是 leptos / sqlx 各自传递依赖的分层，没有 semver 冲突。但 wasm 构建报一条
+`proc-macro-error2 v2.0.1` 的 future-incompat（E0365：re-export 私有 `proc_macro` crate），
+来源是 leptos 0.7 宏链（`leptos_macro` / `rstml` / `reactive_stores_macro`）。
+当前 Rust 1.100 只是警告，不影响编译与门禁；未来某版会变硬错误，需等上游更新。
+**赛前冻结期不要为此 `[patch]` fork 或升 leptos**——为消除一个「未来的」警告去动前端宏链，
+风险远大于收益。等上游出修复版本再说。

@@ -115,7 +115,19 @@ main:focus { outline: none; }
 .vs-arrow {
   display: flex; align-items: center; color: var(--muted); font-size: 20px;
 }
-.exhibit-link { display: inline-block; margin-top: 14px; font-size: 14px; font-weight: 600; }
+.exhibit-actions {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 16px;
+}
+.exhibit-link { display: inline-block; font-size: 14px; font-weight: 600; }
+
+/* 主行动按钮：全站唯一的实心按钮，留给「现在就去验证」这一个动作。
+   别的地方都用 .btn 描边款——主按钮多了就等于没有主按钮。 */
+.btn-primary {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+  font-size: 15px; padding: 11px 18px;
+}
+.btn-primary:hover { background: #173ba8; border-color: #173ba8; color: #fff; text-decoration: none; }
+.btn-primary:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 .scroll-hint { color: var(--muted); font-size: 13px; margin: 18px 0 0; }
 
@@ -278,7 +290,8 @@ h2.section { font-size: 17px; margin: 26px 0 12px; }
 .dims { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
 .dim { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
 .dim h3 { margin: 0 0 8px; font-size: 15px; display: flex; align-items: baseline; gap: 8px; }
-.dim h3 .std { margin-left: auto; font-weight: 500; color: var(--muted); font-size: 11px; font-family: var(--mono); }
+/* 国标条款号已收进 h3 的 title 悬停，卡面不再印编号——普通读者看中文维度名就够 */
+.dim h3[title] { cursor: help; text-decoration: underline dotted var(--line-strong); text-underline-offset: 4px; }
 .dim .verdict-inline { font-family: var(--mono); font-size: 16px; font-weight: 700; margin: 0 0 4px; }
 .dim.na { background: #fafafa; border-style: dashed; }
 .dim.na .verdict-inline { color: var(--muted); }
@@ -392,6 +405,32 @@ footer.site {
 }
 footer.site p { margin: 4px 0; }
 footer.site .foot-links a { font-weight: 600; }
+
+/* ---------- 加载骨架 ---------- */
+/* 首屏要拉 1.1MB 的 data.json，旧的「加载中…」四个字看着像坏了。
+   骨架用与真页面相同的形状，读者知道「正在铺内容」而不是空白卡死。 */
+.skeleton { padding: 38px 0; }
+.sk-line, .sk-card, .sk-stat {
+  background: linear-gradient(90deg, #eceef2 25%, #f5f6f8 50%, #eceef2 75%);
+  background-size: 200% 100%;
+  animation: sk-pulse 1.2s ease-in-out infinite;
+  border-radius: 8px;
+}
+@keyframes sk-pulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.sk-title { height: 34px; width: 55%; margin-bottom: 14px; }
+.sk-lede { height: 18px; width: 78%; margin-bottom: 24px; }
+.sk-card { height: 150px; margin-bottom: 16px; }
+.sk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.sk-stat { height: 76px; }
+.skeleton .hint { margin-top: 8px; }
+@media (prefers-reduced-motion: reduce) {
+  .sk-line, .sk-card, .sk-stat { animation: none; background: #eceef2; }
+}
+@media (max-width: 640px) {
+  .sk-grid { grid-template-columns: repeat(2, 1fr); }
+  .sk-title { width: 85%; }
+  .sk-lede { width: 100%; }
+}
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 900px) {

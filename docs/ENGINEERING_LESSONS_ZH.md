@@ -297,3 +297,24 @@ select id from run where platform_id = $1 order by captured_at desc limit 1
 锁定服务化契约（旧的 leak 方案功能上也通过，但新方案若写错会直接编译失败/串味）。
 
 **结论：本轮只改 trait 签名 + 4 处实现 + 1 处字段类型，未改任何产物与检查逻辑。**
+
+### CLI 的「数据源选择点」必须有单元测试——shell 演示脚本不在 CI 里
+
+**现象：** `--source` 是换数据源的唯一入口，但 CLI 层原本零测试；唯一能端到端验证它的
+`reuse-demo.sh` 只是 Justfile 里的手动 recipe，**不在 CI 的 nextest 里**。
+于是「有人改坏 make_source 的分支 / 路径传错」时，core 单测照样全绿、CI 八关照样过，
+直到赛前路演手动跑演示才会发现——这正是「实测变传说」的反面。
+
+**判据：** 问一句「这条路径坏了，哪一道自动门禁会红？」答不出来就是缺口。
+`reuse-demo.sh` 是给人看的演示，不是门禁；关键分支要有进 CI 的单元测试兜底。
+
+**做法：** 在 CLI 的 `#[cfg(test)]` 里直接测 `make_source`：
+
+- `None` → 内置适配器（断言 platform 名，不触网）
+- `Some(合法 fixture)` → 离线适配器（断言 platform 名，证明分支真的切了）
+- 坏路径 / 坏 JSON → 断言错误消息包含具体上下文，别用裸 `is_err()`
+
+**踩坑：** `unwrap_err()` 要求 Ok 类型实现 `Debug`，而 `Box<dyn CatalogSource>` 没有，
+会报 E0277。改用 `.err().expect("...")`，不用给 trait 加 `Debug` 约束。
+
+**结论：** 新增 2 条 CLI 测试（4/4 通过），162 个测试全过、clippy 零告警。未改生产逻辑。

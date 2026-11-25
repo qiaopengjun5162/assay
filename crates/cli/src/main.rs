@@ -1035,4 +1035,60 @@ mod tests {
         // 超宽不截断：少一列比少一个字好查
         assert_eq!(pad("abc", 2), "abc");
     }
+
+    fn temp_fixture(tag: &str, body: &str) -> std::path::PathBuf {
+        let p = std::env::temp_dir().join(format!(
+            "assay-cli-source-{tag}-{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::write(&p, body).unwrap();
+        p
+    }
+
+    /// --source 是赛后接真实业务的唯一入口，但 CLI 层此前零测试：
+    /// core 单测全绿也发现不了这里漏接 fixture 分支（reuse-demo 不在 CI 里）。
+    #[test]
+    fn make_source_switches_between_builtin_and_fixture() {
+        let builtin = make_source(None).expect("默认数据源应能构造");
+        assert_eq!(builtin.platform(), "浙江省公共数据开放平台");
+
+        let p = temp_fixture(
+            "ok",
+            r#"{"platform":"测试源","declaredColumns":["a"],"items":[{"id":"x","a":"v"}]}"#,
+        );
+        let fixture = make_source(Some(p.to_str().unwrap())).expect("合法 fixture 应能加载");
+        assert_eq!(
+            fixture.platform(),
+            "测试源",
+            "--source 必须切到 fixture 适配器"
+        );
+        std::fs::remove_file(&p).unwrap();
+    }
+
+    /// 坏 fixture 的错误要说清是哪一类问题，别让用户对着 "IO 失败" 猜。
+    #[test]
+    fn make_source_reports_bad_fixture_with_context() {
+        // 用 err().expect() 而非 unwrap_err()：后者要求 Ok 类型（Box<dyn CatalogSource>）
+        // 实现 Debug，而 trait 对象没有——这是测试里最常见的假编译错误。
+        let missing = make_source(Some("/nonexistent/assay-fixture.json"))
+            .err()
+            .expect("不存在的文件必须报错");
+        assert!(
+            missing.to_string().contains("读取 fixture"),
+            "缺文件应提示是读取 fixture 失败: {missing}"
+        );
+
+        let p = temp_fixture("bad", r#"{"platform": 不是合法 JSON"#);
+        let broken = make_source(Some(p.to_str().unwrap()))
+            .err()
+            .expect("坏 JSON 必须报错");
+        assert!(
+            broken.to_string().contains("不是合法 JSON"),
+            "坏 JSON 应提示解析失败: {broken}"
+        );
+        std::fs::remove_file(&p).unwrap();
+    }
 }

@@ -21,6 +21,7 @@ pub mod history;
 pub mod lean;
 pub mod matrix;
 pub mod model;
+pub mod news_source;
 pub mod pack;
 pub mod proof;
 pub mod scoring;

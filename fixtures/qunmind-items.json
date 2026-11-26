@@ -1,0 +1,50 @@
+[
+  {
+    "source": "36氪",
+    "title": "某模型发布新版本，推理成本下降 40%",
+    "url": "https://example.com/qunmind/001",
+    "summary": "厂商称新版本在标准基准上持平，但单次推理成本显著下降。",
+    "author": "记者甲",
+    "published_at": "2026-11-25T08:00:00+00:00",
+    "score": 128,
+    "comments": 12,
+    "ai_score": 8.6,
+    "category": "模型"
+  },
+  {
+    "source": "机器之心",
+    "title": "开源社区发布 Agent 评测框架",
+    "url": "https://example.com/qunmind/002",
+    "summary": "框架覆盖工具调用与长程任务两类基准。",
+    "author": null,
+    "published_at": "2026-11-24T21:30:00+00:00",
+    "score": 96,
+    "comments": 5,
+    "ai_score": 7.9,
+    "category": "工具"
+  },
+  {
+    "source": "数据观察",
+    "title": "某地开放数据集更新频率调查",
+    "url": "https://example.com/qunmind/003",
+    "summary": null,
+    "author": null,
+    "published_at": "2025-04-10T10:00:00+00:00",
+    "score": 40,
+    "comments": 0,
+    "ai_score": 4.2,
+    "category": "数据"
+  },
+  {
+    "source": "某某公众号",
+    "title": "行业报告：可信数据基础设施成热点",
+    "url": "",
+    "summary": "短",
+    "author": null,
+    "published_at": "2026-11-20T00:00:00+00:00",
+    "score": 12,
+    "comments": 1,
+    "ai_score": 3.1,
+    "category": null
+  }
+]

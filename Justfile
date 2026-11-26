@@ -108,6 +108,11 @@ verify-live-negative:
 reuse-demo:
     bash scripts/reuse-demo.sh
 
+# 复用演示（新闻源）：直接吃 qunmind 的 PublicNewsItem 形状（snake_case / 无 id），
+# id 由 assay 派生，上游不用改结构。不进 check：能力演示，产物写临时目录。
+reuse-news:
+    bash scripts/reuse-news.sh
+
 # 本地完整检查（提交前跑这个）
 check: fmt-check clippy typos test deny verify-evidence verify-reports proofs gate-negative
     echo "全部通过"

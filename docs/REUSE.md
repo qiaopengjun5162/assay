@@ -54,16 +54,44 @@ just reuse-demo
 选定的第一个落地场景：每天 08:00 公众号日报推送**之前**，先验当天抓的数据有没有货不对板，
 有问题先拦下来，别把缺字段、超期的内容发出去。
 
-要接的东西（按工作量排序）：
+### 已完成：数据源适配器（2026-11-26）
 
-1. **写一个新的 `CatalogSource` 实现**（约 100 行，仿 `fixture_source.rs`）。
-   把 qunmind 的 `PublicNewsItem`（`src/source/mod.rs`：`source/title/url/summary/author/published_at/category`）
-   映射成 `CatalogRecord` + `DatasetMeta` + 样例表。**这是唯一要新写的核心代码。**
-2. **加宽 CLI 的 `--source`**：现在是本地文件路径；加一个值如 `--source qunmind:<配置路径>`
-   走新适配器（`make_source()` 在 `crates/cli/src/main.rs`，是唯一知道「有几种数据源」的地方）。
-3. **接调度**：用现成的 Hermes cron，把 `audit → report` 挂在日报推送前；
+`--source news:<path>` 直接读 qunmind 的 `PublicNewsItem` 数组（snake_case、无 id、
+Option 字段），**上游不用改数据结构**：
+
+```bash
+assay --out /tmp/x --source news:fixtures/qunmind-items.json audit --threads 2
+assay --out /tmp/x report
+assay checks --items /tmp/x/items.jsonl --catalog /tmp/x/catalog_snapshot.json
+
+# 或者一键跑完三步并逐条列出缺哪个字段
+just reuse-news
+```
+
+实现：`crates/core/src/news_source.rs`（`NewsSource`），CLI 分支在 `make_source()`。
+
+三条口径决策，改动前先读：
+
+- **声明列只取 7 个**（title / source / url / summary / author / published_at / category）。
+  上游的 `score` / `comments` / `ai_score` 是排序用的内部量，不是对读者的承诺；把它们
+  算进声明列，会把「内部字段为空」误判成「日报缺字段」——那是口径错误，不是数据问题。
+- **id 由 assay 派生**：url 的 sha256 前 16 个 hex；没有 url 时退化到 `title|published_at`。
+  不用 `safe_id(url)`——长链接会被截断到 64 字符而撞车，中文标题更会被替换成一串下划线。
+- **RFC3339 时间直接可用**：`parse_update_time` 按固定位置读日期与时分秒，
+  `2026-11-25T08:00:00+00:00` 能正常算 `lagDays`。有单测钉住这条——若改成「只认空格
+  分隔」，超期检查会静默失效，而且不报错。
+
+实测（`fixtures/qunmind-items.json`，4 条）：3 条字段对不上、2 条说明过短、
+1 条超 90 天未更新。用的是和 24,322 个政府数据集同一套检查项。
+
+### 还差什么（按顺序）
+
+1. **qunmind 导出条目**：`PublicNewsItem` 目前只 derive 了 `Debug/Clone/PartialEq`，
+   没有 `Serialize`。加一行 `Serialize`，再给 CLI 一个 `export-items --output items.json`
+   （内部调 `CompositePublicNewsSource::fetch_top_items()` 后写数组）。**上游改动就这两处。**
+2. **接调度**：用现成的 Hermes cron，把 `audit → report` 挂在日报推送前；
    退出码或命中数超阈值就不发报、报警。
-4. **接触达**：结果推到 WeCom（小满/二花已有通道），或写进 Obsidian 知识库存档。
+3. **接触达**：结果推到 WeCom（小满/二花已有通道），或写进 Obsidian 知识库存档。
 
 内核（audit / evidence / proof / checks / 门禁）**一行不用改**。
 

@@ -32,19 +32,22 @@ echo "── ② 聚合 ──────────────────�
 echo "── ③ 检查项命中 ──────────────────────────────────────"
 "$BIN" checks --items "$OUT/items.jsonl" --catalog "$OUT/catalog_snapshot.json"
 
-echo "── ④ 逐条看缺了什么字段 ──────────────────────────────"
-# missingFields 是 audit 阶段就有的；不用在这里另算，口径必须与检查项同源。
+echo "── ④ 逐条看哪里不合格 ────────────────────────────────"
+# 这里**不再**列 missingFields：qunmind 的条目没有「独立声明方」，声明列就是
+# 实际给出的列，missingFields 恒为空（第一版把 Option 当承诺，59 条真实数据 100% 命中，
+# 那种全中是没有信息量的）。这个源真正能查的是「说明太短」和「过期」。
 python3 - "$OUT/items.jsonl" <<'PY'
 import json, sys
 rows = [json.loads(l) for l in open(sys.argv[1], encoding="utf-8") if l.strip()]
-bad = [r for r in rows if r.get("missingFields")]
-if not bad:
-    print("  没有字段对不上的条目（演示数据没造出问题，检查失败）")
+short = [r for r in rows if (r.get("descLen") or 0) < 10]
+for r in short:
+    print(f"  说明不足：{r['name'][:36]}（{r.get('descLen', 0)} 字）")
+if not short:
+    print("  没有说明不足的条目（演示数据没造出问题，检查失败）")
     raise SystemExit(1)
-for r in bad:
-    print(f"  {r['name']}: 声明有但实际缺 {r['missingFields']}")
-print(f"  共 {len(rows)} 条，{len(bad)} 条字段对不上")
+print(f"  共 {len(rows)} 条，{len(short)} 条说明不足")
 PY
 
 echo "──────────────────────────────────────────────────────"
-echo "  上游一行没改，同一套内核照样查出问题——接真实源只剩一个导出命令。"
+echo "  上游一行没改，同一套内核照样查出问题。"
+echo "  接真实源：qunmind export-items --output items.json，再 --source news:items.json"

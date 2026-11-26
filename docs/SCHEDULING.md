@@ -134,6 +134,36 @@ git revert <本 PR 的 squash commit>
 - 不生成日报正文：门禁只回答「发不发」，写稿仍由 qunmind 日报链路负责。
 - 不改生产配置、不读密钥：本会话只交付脚本与操作单。
 
+## 七、真实数据实测（2026-11-26 19:08，本机）
+
+不是 fixture，是用 qunmind 现有配置文件读真实公共源，跑完整条链：
+
+```bash
+# 在 assay 根目录；qunmind 二进制来自已合并 export-items 的 origin/main
+QUNMIND_BIN=/path/to/qunmind/target/release/qunmind \
+QUNMIND_CONFIG=/path/to/qunmind/config.toml \
+bash scripts/news-check.sh --export --gate -o out-news-real
+```
+
+| 指标 | 实测 | 门禁怎么读 |
+|---|---|---|
+| 条目 / 来源 | 61 条 / 9 个（ArXiv AI 15、Hacker News 11、GitHub Trending 10、ethresear.ch 10、HN Daily 5…） | 远超 10 条下限 |
+| 抓取成功率 | 61/61 = 100% | 不触发「不可信」 |
+| 一致性错位 | 0 | 不拦截 |
+| 超 90 天 | 1/61 = 1.6% | 低于 20%，放行 |
+| 说明不足 | 51/61 = 84% | **提醒但不拦**（见第二节） |
+| 门禁结论 | `GATE=PASS`，exit 0 | 可发报 |
+
+**反向验证**：同一批产物不改数据，只把时效阈值收紧到 1%
+（`GATE_MAX_LAG_RATIO=0.01`），门禁立刻变成 `GATE=BLOCK`、exit 1，
+并指出「超 90 天 1/61 = 1.6%（上限 1%）」。这说明它真的在判数据，
+不是对真实批次一律放行。
+
+这次导出用到的 `config.toml` 含凭据，只传路径、未读取或打印内容；
+产物落在 `out-news-real/`（被 `.gitignore` 的 `out-*/` 覆盖）。
+qunmind 二进制在隔离 worktree 里基于 `origin/main` 构建——主工作区有未提交改动，
+不能切分支。
+
 ## 相关
 
 - `docs/REUSE.md` — 从参赛作品到能干活的 Agent，口径与真实数据实测

@@ -7,7 +7,8 @@
 #
 # 用法：bash scripts/verify-release.sh [tag]    省略 tag 则取 latest
 # 需要 gh CLI 已登录；国内网络若下载失败，先 export HTTPS_PROXY=http://127.0.0.1:7890
-# 退出码：0 = 10 资产全对；非 0 = 有缺失/哈希不符/二进制跑不动。
+# 退出码：0 = 10 资产全对且包内二进制跑得过门禁；非 0 = 有缺失/哈希不符/二进制跑不动。
+# 自 0.2.6 起多一道 ⑤：用包内二进制跑 --source news:，验「这一版新增的功能」没坏。
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -192,6 +193,74 @@ else
     echo "  $gate: $(printf '%s' "$out" | tail -1)"
     printf '%s' "$out" | grep -q "500 / 500 份一致" || { echo "  门禁没过"; fail=$((fail + 1)); }
   done
+fi
+
+echo "── ⑤ 新功能实跑：--source news: ──────────"
+# ④ 只验旧路径（浙江 500 份证据 / 报告），对「这一版新增了什么」是瞎的：#75 的
+# news: 适配器自 0.2.6 才进包，用户下完最想跑的正是它。拿仓库里的
+# fixtures/qunmind-items.json（上游原样数组：snake_case、无 id、Option 字段，4 条）
+# 跑一遍 audit + checks，验三件事：
+#   1. 认出来源 —— run.json.platform 含 qunmind（不强绑全串，见 #75 的教训）
+#   2. 派生 id 没丢条 —— catalogTotal 与 items.jsonl 行数一致
+#   3. 尺子没歪 —— 一致性三项 0 命中（#77 之前这里会 4/4 全中，是拿 Option 当承诺）
+if [[ -n "$local_platform" ]]; then
+  ver_ok="$(python3 - "${expected_ver:-}" <<'PY'
+import sys
+def parts(v):
+    return tuple(int(x) for x in v.split("-")[0].split("."))
+try:
+    ok = parts(sys.argv[1]) >= (0, 2, 6)
+except (ValueError, IndexError):
+    ok = False
+print("yes" if ok else "no")
+PY
+)"
+  if [[ "$ver_ok" != "yes" ]]; then
+    printf '  跳过（%s < 0.2.6，news: 适配器尚未入包）\n' "${expected_ver:-版本未知}"
+  else
+    NEWS_OUT="$TMP/news-smoke"
+    mkdir -p "$NEWS_OUT"
+    if "$BIN" --out "$NEWS_OUT" --source "news:$ROOT/fixtures/qunmind-items.json" \
+        audit --threads 2 >"$NEWS_OUT/audit.log" 2>&1; then
+      "$BIN" checks --items "$NEWS_OUT/items.jsonl" \
+        --catalog "$NEWS_OUT/catalog_snapshot.json" >"$NEWS_OUT/checks.txt" 2>&1 || true
+      if python3 - "$NEWS_OUT" <<'PY'
+import json, os, sys
+out = sys.argv[1]
+run = json.load(open(os.path.join(out, "run.json"), encoding="utf-8"))
+items = [l for l in open(os.path.join(out, "items.jsonl"), encoding="utf-8") if l.strip()]
+ok = True
+def check(cond, msg):
+    global ok
+    print(("  OK   " if cond else "  FAIL ") + msg)
+    ok = ok and bool(cond)
+plat = run.get("platform") or ""
+check("qunmind" in plat, f"来源识别：platform={plat!r}")
+check(run.get("catalogTotal") == 4 and len(items) == 4,
+      f"条数：catalogTotal={run.get('catalogTotal')} items.jsonl={len(items)}")
+hits = {}
+for line in open(os.path.join(out, "checks.txt"), encoding="utf-8"):
+    f = line.split()
+    if len(f) >= 3 and "/" in f[2]:
+        hits[f[0]] = f[2]
+want = f"0/{len(items)}"
+bad = {k: hits.get(k) for k in ("schema-count", "schema-field-set", "schema-naming-only")
+       if hits.get(k) != want}
+check(not bad, "一致性三项 0 命中" if not bad else f"一致性三项有命中：{bad}")
+sys.exit(0 if ok else 1)
+PY
+      then
+        :
+      else
+        echo "  新功能实跑没过（--source news:）"
+        fail=$((fail + 1))
+      fi
+    else
+      printf '  FAIL %-16s 跑不起来（--source news:）\n' "news:"
+      sed -n '1,5p' "$NEWS_OUT/audit.log" | sed 's/^/       /'
+      fail=$((fail + 1))
+    fi
+  fi
 fi
 
 echo "──────────────────────────────────────────"

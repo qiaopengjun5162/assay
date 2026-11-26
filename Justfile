@@ -118,6 +118,11 @@ reuse-news:
 news-check *ARGS:
     bash scripts/news-check.sh {{ARGS}}
 
+# 发报门禁：0 可发 / 1 拦截（要人确认）/ 2 跑批不可信。
+# 生产里用 `just news-check --export --gate` 一条龙；单独跑用于排查历史产物。
+news-gate *ARGS:
+    bash scripts/news-gate.sh {{ARGS}}
+
 # 本地完整检查（提交前跑这个）
 check: fmt-check clippy typos test deny verify-evidence verify-reports proofs gate-negative
     echo "全部通过"

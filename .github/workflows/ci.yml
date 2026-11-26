@@ -80,6 +80,48 @@ jobs:
           test -s out-ci/summary.json
           echo "冒烟通过：$(grep -c . /tmp/news-check.log) 行输出，产物齐全"
 
+      # 门禁三档是 cron 唯一读的东西，判错一档就是「该拦没拦」或「天天误拦」。
+      # 合成数据只写 summary.json + run.json（门禁只读这两个文件），不锁具体数字。
+      - name: 发报门禁三档冒烟
+        run: |
+          set -e
+          # fixture 4 条里 1 条超 90 天 = 25%，超过 20% 上限，必须拦（1）。
+          # 条目下限临时降到 4，否则会先撞「条目太少」判成不可信，测不到拦截档。
+          set +e
+          GATE_MIN_ITEMS=4 bash scripts/news-gate.sh out-ci/summary.json > /tmp/gate-1.log 2>&1
+          rc=$?
+          set -e
+          test "$rc" -eq 1
+          grep -q "GATE=BLOCK" /tmp/gate-1.log
+          echo "拦截档 OK：$(grep '超 90 天条目' /tmp/gate-1.log)"
+
+          python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          now = datetime.now(timezone.utc).isoformat()
+          for name, s in {
+              "ok":   {"audited": 100, "withPreview": 100, "schemaMismatch": 0, "lagOver90Days": 1, "noDescription": 41},
+              "bad":  {"audited": 0, "withPreview": 0, "schemaMismatch": 0, "lagOver90Days": 0},
+              "stale":{"audited": 100, "withPreview": 100, "schemaMismatch": 0, "lagOver90Days": 0},
+          }.items():
+              d = f"out-gate-{name}"
+              os.makedirs(d, exist_ok=True)
+              json.dump(s, open(f"{d}/summary.json", "w"))
+              when = "2026-11-20T00:00:00+00:00" if name == "stale" else now
+              json.dump({"capturedAt": when}, open(f"{d}/run.json", "w"))
+          PY
+
+          for pair in "ok:0:PASS" "bad:2:UNTRUSTED" "stale:2:UNTRUSTED"; do
+            IFS=: read -r name want marker <<< "$pair"
+            set +e
+            bash scripts/news-gate.sh "out-gate-$name/summary.json" > "/tmp/gate-$name.log" 2>&1
+            rc=$?
+            set -e
+            test "$rc" -eq "$want"
+            grep -q "GATE=$marker" "/tmp/gate-$name.log"
+            echo "$name 档 OK：GATE=$marker（exit $rc）"
+          done
+
   # README 曾写「Rust 1.85+」，但没人验证过。实测：1.86 直接过不了
   # （icu_* 2.4 要求 1.88），1.88.0 通过。`rust-version` 写进 Cargo.toml
   # 只表示「我声明」，不表示「CI 在测」——声明不测等于没声明。

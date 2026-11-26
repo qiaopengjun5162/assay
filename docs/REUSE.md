@@ -144,10 +144,12 @@ assay checks --items /tmp/x/items.jsonl --catalog /tmp/x/catalog_snapshot.json
 
 1. ~~qunmind 导出条目~~ **已完成**（2026-11-26）：`PublicNewsItem` 加 `Serialize`，
    CLI 加 `export-items`，复用日报聚合链。
-2. **接调度**：一条命令已经备好（`scripts/news-check.sh` / `just news-check`），
-   剩下的是用现成的 Hermes cron，把「导出 → 体检」挂在日报推送前；
-   退出码非 0 或命中数超阈值就不发报、报警。
-3. **接触达**：结果推到 WeCom（小满/二花已有通道），或写进 Obsidian 知识库存档。
+2. **接调度**：脚本侧**已完成**（2026-11-26）：`scripts/news-check.sh --export --gate`
+   一条命令跑完导出 → 体检 → 发报门禁；门禁三档、阈值依据和 cron 操作单见
+   `docs/SCHEDULING.md`。**生产 cron 未挂**——本会话无服务器权限，由能登录 Hermes
+   的同事按操作单先空跑一周、再接拦截。
+3. **接触达**：拦截时把摘要推到 WeCom（小满/二花已有通道），或写进 Obsidian 知识库存档。
+   通知这一步和 cron 是同一个上线动作：没有通知就先别真的拦发报。
 
 内核（audit / evidence / proof / checks / 门禁）**一行不用改**。
 
@@ -165,5 +167,6 @@ assay checks --items /tmp/x/items.jsonl --catalog /tmp/x/catalog_snapshot.json
 ## 相关
 
 - `docs/PITCH.md` — 比赛路演口径
+- `docs/SCHEDULING.md` — 发报门禁三档、阈值依据、cron 操作单（生产未挂）
 - `docs/ARCHITECTURE.md` — 内核分层与不变量
 - `docs/DECISIONS.md` — D20（证明针对快照）、D31（曲线只记原始计数）

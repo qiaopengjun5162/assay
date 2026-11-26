@@ -3,6 +3,18 @@
 本项目所有值得记录的变更。格式参考 [Keep a Changelog](https://keepachangelog.com/)，
 版本号遵循 [SemVer](https://semver.org/)。
 
+## [0.2.6](https://github.com/qiaopengjun5162/assay/compare/v0.2.5...v0.2.6) (2026-11-26)
+
+
+### Features
+
+* **core:** 支持 --source news: 直接读 qunmind 新闻条目 ([#75](https://github.com/qiaopengjun5162/assay/issues/75)) ([d9a22c1](https://github.com/qiaopengjun5162/assay/commit/d9a22c11420b95a5a5e88b56ab6b20795d9f7d96))
+
+
+### Bug Fixes
+
+* **core:** 新闻源声明列改为实际列，榜单标题不再写死浙江 ([#77](https://github.com/qiaopengjun5162/assay/issues/77)) ([b76bf16](https://github.com/qiaopengjun5162/assay/commit/b76bf16e4df709a77bbdf483ca4ec51930f2c6db))
+
 ## [0.2.5](https://github.com/qiaopengjun5162/assay/compare/v0.2.4...v0.2.5) (2026-11-25)
 
 

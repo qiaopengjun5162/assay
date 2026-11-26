@@ -66,6 +66,20 @@ jobs:
       - name: Build release
         run: cargo build --release --locked -p assay
 
+      # scripts/news-check.sh 是「公众号日报体检」的生产入口，但它不在 cargo test
+      # 的覆盖里：audit → report → checks → 摘要 这条链断了，Rust 测试照样全绿。
+      # 用固定 fixture 跑一遍，只断言「跑通 + 摘要出来了 + checks.txt 落盘」，
+      # 不锁具体数字——口径调整（比如 DESC_MIN）不该让 CI 红。
+      - name: 日报体检脚本冒烟（生产路径）
+        run: |
+          bash scripts/news-check.sh -o out-ci fixtures/qunmind-items.json > /tmp/news-check.log 2>&1 || {
+            echo "news-check.sh 跑不通："; cat /tmp/news-check.log; exit 1
+          }
+          grep -q "公众号日报体检" /tmp/news-check.log
+          test -s out-ci/checks.txt
+          test -s out-ci/summary.json
+          echo "冒烟通过：$(grep -c . /tmp/news-check.log) 行输出，产物齐全"
+
   # README 曾写「Rust 1.85+」，但没人验证过。实测：1.86 直接过不了
   # （icu_* 2.4 要求 1.88），1.88.0 通过。`rust-version` 写进 Cargo.toml
   # 只表示「我声明」，不表示「CI 在测」——声明不测等于没声明。

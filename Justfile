@@ -113,6 +113,11 @@ reuse-demo:
 reuse-news:
     bash scripts/reuse-news.sh
 
+# 公众号日报体检（生产路径）：读真实导出、出人话摘要，查不出问题也算成功。
+# items 省略时读 out-news/items.json；`just news-check --export` 会先调 qunmind 导出。
+news-check *ARGS:
+    bash scripts/news-check.sh {{ARGS}}
+
 # 本地完整检查（提交前跑这个）
 check: fmt-check clippy typos test deny verify-evidence verify-reports proofs gate-negative
     echo "全部通过"

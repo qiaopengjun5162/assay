@@ -88,6 +88,10 @@ if age_hours > max_age:
 if audited < min_items:
     report(2, "UNTRUSTED",
            f"条目只有 {audited} 条（下限 {min_items}）。多半是上游没启用、抓取失败或导出空数组。")
+# 即便把 GATE_MIN_ITEMS 覆盖成 0，也不能拿 0 做分母——否则抛 ZeroDivisionError，
+# 退出码 1 且没有 GATE= 标记，cron 会误判成 BLOCK（拦截），其实是脚本崩了。
+if audited <= 0:
+    report(2, "UNTRUSTED", "条目数为 0，无法计算抓取成功率——导出可能是空数组。")
 rate = preview / audited
 if rate < min_rate:
     report(2, "UNTRUSTED",

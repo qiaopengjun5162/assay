@@ -107,6 +107,29 @@ gh run watch <保留的 id> --exit-status
 若给仓库配了 `RELEASE_PAT` secret，release-please 用 PAT 建 tag，就会自动触发；
 此时上面的手工点火可省。PAT 的代价是权限更大，别为了省两条命令盲目开。
 
+### 点火前必须看一眼 main 的 ci
+
+草稿一旦发布，`latest` 立刻指向它——`releases/latest/download/...` 从此给用户
+推这一版。如果这个 tag 提交本身是坏的（比如发版 PR 漏改 `Cargo.lock`，
+构建用 `--locked` 直接失败），状态会是「已发布的 release + 0 资产」，
+比不发更糟。所以点火前先确认：
+
+```bash
+gh run list --branch main --limit 4 \
+  --json workflowName,headSha,conclusion --jq '.[] | "\(.workflowName) \(.headSha[0:7]) \(.conclusion)"'
+# 期望看到 headline 是发版提交、workflow=ci、conclusion=success
+```
+
+**别拿发版 PR 上的 ci 当门禁**。release-please 用 `GITHUB_TOKEN` 建 PR，
+GitHub 对这类 PR 的 workflow 默认要求人工批准，状态是 `action_required`；
+没批准就合并，run 会在分支被删时取消，显示成 `failure`（且没有任何 job）。
+看着吓人，其实什么都没跑。2026-11-26 的 #76 就是这样：排队 1 小时 7 分后
+被执行「取消」，`gh run view` 只给一句「workflow file issue」。
+
+真正的门禁有三道，顺序是：main push 的 `ci` → 点火后 `release.yml` 的
+`verify · 发版提交必须过门禁`（fmt / clippy / nextest / 两份产物门禁）→
+`scripts/verify-release.sh` 拿发布出去的字节重跑一遍。
+
 ## 4. 终检（必须是 10 个资产）
 
 5 平台 ×（二进制包 + `.sha256`）：`linux-amd64`、`linux-arm64`、`macos-amd64`、

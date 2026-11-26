@@ -122,6 +122,17 @@ jobs:
             echo "$name 档 OK：GATE=$marker（exit $rc）"
           done
 
+          # 除零边角：把条目下限覆盖成 0 时，0 条也不能让 python 崩。
+          # 崩了会退出 1 且没有 GATE= 行，cron 误判成 BLOCK（该拦）而不是 UNTRUSTED（跑批坏了）。
+          set +e
+          GATE_MIN_ITEMS=0 bash scripts/news-gate.sh out-gate-bad/summary.json > /tmp/gate-zero.log 2>&1
+          rc=$?
+          set -e
+          test "$rc" -eq 2
+          grep -q "GATE=UNTRUSTED" /tmp/gate-zero.log
+          ! grep -q "Traceback" /tmp/gate-zero.log
+          echo "除零边角 OK：GATE=UNTRUSTED（exit $rc），无 traceback"
+
   # README 曾写「Rust 1.85+」，但没人验证过。实测：1.86 直接过不了
   # （icu_* 2.4 要求 1.88），1.88.0 通过。`rust-version` 写进 Cargo.toml
   # 只表示「我声明」，不表示「CI 在测」——声明不测等于没声明。

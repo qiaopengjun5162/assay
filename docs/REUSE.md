@@ -104,11 +104,28 @@ just reuse-news
 
 ### 真实数据实测（2026-11-26，59 条 / 9 个来源）
 
+一条命令跑完（推荐，末尾给人话摘要）：
+
 ```bash
 # 上游导出（需要 config 里至少启用一个 public_sources）
-qunmind export-items --output /tmp/qunmind-items.json
+qunmind export-items --output out-news/items.json
 
-# 体检
+# 体检 + 摘要，产物落在 out-news/
+just news-check out-news/items.json
+
+# 也可以一步到位：先调 qunmind 导出再体检
+just news-check --export
+```
+
+脚本是 `scripts/news-check.sh`，它只做三件事：`audit` → `report` → `checks`，
+再用 `summary.json` / `items.jsonl` 拼一段中文摘要（条数、来源分布、说明缺口、
+超 90 天、一致性错位、最该补说明的 5 条）。**退出码只看跑没跑通**：
+查出一堆问题也算成功——这点和 `scripts/reuse-news.sh` 正好相反，那个是演示，
+查不出问题反而算失败。
+
+拆开是这三步（想自己接管产物时用）：
+
+```bash
 assay --out /tmp/x --source news:/tmp/qunmind-items.json audit --threads 2
 assay --out /tmp/x report
 assay checks --items /tmp/x/items.jsonl --catalog /tmp/x/catalog_snapshot.json
@@ -127,8 +144,9 @@ assay checks --items /tmp/x/items.jsonl --catalog /tmp/x/catalog_snapshot.json
 
 1. ~~qunmind 导出条目~~ **已完成**（2026-11-26）：`PublicNewsItem` 加 `Serialize`，
    CLI 加 `export-items`，复用日报聚合链。
-2. **接调度**：用现成的 Hermes cron，把 `audit → report` 挂在日报推送前；
-   退出码或命中数超阈值就不发报、报警。
+2. **接调度**：一条命令已经备好（`scripts/news-check.sh` / `just news-check`），
+   剩下的是用现成的 Hermes cron，把「导出 → 体检」挂在日报推送前；
+   退出码非 0 或命中数超阈值就不发报、报警。
 3. **接触达**：结果推到 WeCom（小满/二花已有通道），或写进 Obsidian 知识库存档。
 
 内核（audit / evidence / proof / checks / 门禁）**一行不用改**。

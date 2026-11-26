@@ -9,13 +9,16 @@
 #   bash scripts/news-check.sh                 # 读 out-news/items.json
 #   bash scripts/news-check.sh path/items.json # 读指定导出
 #   bash scripts/news-check.sh --export        # 先调 qunmind export-items 再体检
+#   bash scripts/news-check.sh --gate          # 体检完顺手判「今天能不能发报」
 #   bash scripts/news-check.sh -o out-news2    # 换产物目录
 #
 # 环境变量：
-#   ASSAY_BIN   指定 assay 可执行文件（默认 target/release/assay，缺了先 cargo build）
-#   QUNMIND_BIN 指定 qunmind 可执行文件（--export 时用，默认查 PATH）
+#   ASSAY_BIN     指定 assay 可执行文件（默认 target/release/assay，缺了先 cargo build）
+#   QUNMIND_BIN   指定 qunmind 可执行文件（--export 时用，默认查 PATH）
+#   QUNMIND_CONFIG 指定 qunmind 配置文件（--export 时用；不设则按 qunmind 默认读 CWD）
 #
-# 退出码：0 = 跑通（有问题也只是报告里的事）；1 = 跑不通；2 = 用法/环境不对。
+# 退出码：不带 --gate 时 0 = 跑通 / 1 = 跑不通 / 2 = 用法或环境不对；
+#         带 --gate 时透传 news-gate.sh 的三档：0 可发 / 1 拦截 / 2 跑批不可信。
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -23,13 +26,18 @@ cd "$ROOT"
 
 OUT="out-news"
 EXPORT=0
+GATE=0
 ITEMS=""
-usage() { sed -n '2,20p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+# 用法从文件头的注释里抠出来，避免改了说明忘了改行号。
+usage() {
+  awk 'NR>1 && /^#/ {sub(/^# ?/, ""); print; next} NR>1 {exit}' "${BASH_SOURCE[0]}"
+}
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -o|--out)    OUT="${2:-}"; shift 2 ;;
     -e|--export) EXPORT=1; shift ;;
+    -g|--gate)   GATE=1; shift ;;
     -h|--help)   usage; exit 0 ;;
     -*)          echo "不认识的参数：$1" >&2; usage >&2; exit 2 ;;
     *)           ITEMS="$1"; shift ;;
@@ -54,10 +62,19 @@ if [[ "$EXPORT" -eq 1 ]]; then
     exit 2
   fi
   ITEMS="$OUT/items.json"
-  echo "导出条目：$QM export-items --output $ITEMS"
+  QM_ARGS=(export-items --output "$ITEMS")
+  if [[ -n "${QUNMIND_CONFIG:-}" ]]; then
+    QM_ARGS+=(--config "$QUNMIND_CONFIG")
+  elif [[ ! -f config.toml ]]; then
+    # qunmind 的 --config 默认是 CWD/config.toml。本脚本开头 cd 到 assay 根目录，
+    # 不显式传路径就会去读 assay/config.toml（不存在），报出来的错还很像「没启用来源」。
+    echo "提示：当前目录没有 config.toml，qunmind 会按默认路径读 CWD/config.toml。" >&2
+    echo "设 QUNMIND_CONFIG=/path/to/qunmind/config.toml 再跑 --export。" >&2
+  fi
+  echo "导出条目：$QM ${QM_ARGS[*]}"
   # qunmind 在没有启用任何公共来源时报错——这是刻意的，空数组会被读成「今天没新闻」。
-  if ! "$QM" export-items --output "$ITEMS"; then
-    echo "qunmind 导出失败（常见原因：没有启用任何公共来源）" >&2
+  if ! "$QM" "${QM_ARGS[@]}"; then
+    echo "qunmind 导出失败（常见原因：配置路径不对，或没有启用任何 public_sources）" >&2
     exit 1
   fi
 fi
@@ -139,4 +156,11 @@ line("口径：描述缺口按每条条目的 summary/摘要长度算；本脚�
 PY
 
 echo
+
+if [[ "$GATE" -eq 1 ]]; then
+  echo "── 发报门禁 ──────────────────────────────────────────"
+  bash "$ROOT/scripts/news-gate.sh" "$OUT/summary.json"
+  exit $?
+fi
+
 echo "退出码 0：体检跑完了。有问题的条目看上面的摘要与 $OUT/checks.txt。"

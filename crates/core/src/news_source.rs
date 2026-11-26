@@ -8,11 +8,27 @@
 //! 这样上游（qunmind）不需要为了兼容 assay 改数据结构，assay 也不用依赖它的 crate——
 //! 两边只共享一个 JSON 形状，是最松的耦合。
 //!
-//! ## 声明列只取 7 个
+//! ## 声明列 = 这条实际给出的列
 //!
-//! 日报模板承诺的是「标题 / 来源 / 链接 / 摘要 / 作者 / 时间 / 分类」。上游的
-//! `score` / `comments` / `ai_score` 是排序用的内部量，不是对读者的承诺；把它们算进
-//! 声明列，会把「内部字段为空」误判成「日报缺字段」——那是口径错误，不是数据问题。
+//! 第一版按「日报模板会展示哪几列」把 7 个字段当声明列，拿 qunmind 真实导出的
+//! 59 条跑一遍，`schemaMismatch` 是 **59/59**——100% 命中不是发现，是尺子错了。
+//! 改成只留 `String` 字段（3 个）后仍然命中 **35/59**，因为样例表头是按条目内容
+//! 动态生成的（3~7 列），固定声明列必然和它对不上。
+//!
+//! 根因是概念错配：`assay` 的一致性维度问的是「平台**声明**了某列，实际却没给」，
+//! 而这个场景**没有独立声明方**——列名是 assay 按条目实际内容生成的，
+//! `PublicNewsItem` 的 `Option` 字段表达的是「上游本来就可能没有」，不是承诺。
+//! 先虚构一个声明、再宣布它没兑现，结论必然全中，也就没有信息量。
+//!
+//! 现在 `meta.columns` 直接取该条目样例表头，二者逐字一致，`schema-*` 恒为 0。
+//! 这是**正确结果**，不是漏检：qunmind 的条目结构本来就自洽，它能出问题的地方是
+//! 内容与时间——
+//!
+//! - 说明过短 → `desc-too-short`（真实数据 49/59，日报里就是「只有标题的条目」）；
+//! - 超过 90 天 → `overdue-claim`（真实数据 1 条，一年前的旧闻混进今天的日报）。
+//!
+//! 一致性 / 完整性 / 可访问性维度的检查项需要「独立声明方」才成立，在新闻源上
+//! 恒为「无问题」。用这个源时别把「六维全绿」读成「内容很好」。
 //!
 //! ## 时间格式
 //!
@@ -31,18 +47,9 @@ use std::fs;
 use std::path::Path;
 
 /// 写进产物与页面的平台名，标明这批条目的来源形状。
-const PLATFORM: &str = "公众号日报·新闻条目（qunmind 形状）";
-
-/// 日报模板承诺的字段。顺序即表头顺序，也是 `missingFields` 的对齐基准。
-const DECLARED: [&str; 7] = [
-    "title",
-    "source",
-    "url",
-    "summary",
-    "author",
-    "published_at",
-    "category",
-];
+///
+/// 会拼进榜单标题，所以取短名；括号里点明上游结构，便于读者判断口径。
+const PLATFORM: &str = "公众号日报（qunmind 条目）";
 
 /// 上游一条新闻。字段名与 `qunmind::source::PublicNewsItem` 逐字对齐。
 ///
@@ -122,8 +129,8 @@ impl NewsSource {
 
     /// 一条条目 → 样例表格：第一行是「实际非空」的字段，第二行是值。
     ///
-    /// 表头**不是**声明全集，而是条目真正给了的字段——否则 audit 发现不了
-    /// 「模板说有、实际没给」。
+    /// 表头同时充当 `meta.columns`：这个场景没有独立声明方，声明列只能等于条目
+    /// 实际给出的列，否则 `schema-count` 会退化成「固定 3 列 vs 动态 7 列」的噪音。
     fn table(&self, item: &NewsItem) -> Vec<Vec<String>> {
         let pairs: [(&str, Option<&str>); 7] = [
             ("title", Some(item.title.as_str())),
@@ -214,8 +221,19 @@ impl CatalogSource for NewsSource {
 
     fn meta(&self, id: &str) -> Result<DatasetMeta> {
         let item = self.item(id)?;
+        // 声明列 == 这条实际给出的列。
+        //
+        // 这个场景**没有独立声明方**：列名是 assay 按条目实际内容生成的，不存在
+        // 「平台声明了某列却没给」。硬设一个固定声明列表，只会让 `schema-count`
+        // 退化成「3 != 7」这类纯噪音——真实 59 条里曾因此命中 35 条。
+        //
+        // 代价是 `schema-*` 三类检查恒为 0。这是**正确结果**：qunmind 的条目结构
+        // 本来就自洽，它能出问题的地方是内容（说明太短）和时间（过期），
+        // 那两条检查项都在正常工作。
+        let mut table = self.table(item);
+        let columns = table.remove(0);
         Ok(DatasetMeta {
-            columns: DECLARED.iter().map(|s| s.to_string()).collect(),
+            columns,
             has_preview: true,
             description_len: item.summary.as_deref().unwrap_or("").chars().count(),
         })
@@ -362,19 +380,44 @@ mod tests {
         std::fs::remove_file(&p).unwrap();
     }
 
+    /// 声明列必须与样例表头逐字一致。
+    ///
+    /// 这个场景没有独立声明方：列名由条目内容生成，不存在「声明了却没给」。
+    /// 第一版固定 7 列，真实数据 59/59 命中 `schemaMismatch`；第二版固定 3 列，
+    /// 仍有 35/59 因为「3 != 7」命中。这条测试钉住「不许再回去设固定声明列」。
     #[test]
-    fn declared_columns_exclude_internal_score_fields() {
+    fn declared_columns_match_the_sample_header_for_every_item() {
         let p = write_fixture("decl", SAMPLE);
         let src = NewsSource::open(&p).unwrap();
         let (_, _, page) = src.catalog_page(1).unwrap();
-        let m = src.meta(&page[0].id).unwrap();
-        assert_eq!(m.columns.len(), 7, "声明列只有日报承诺的 7 个");
-        for internal in ["score", "comments", "ai_score"] {
-            assert!(
-                !m.columns.contains(&internal.to_string()),
-                "内部排序字段 {internal} 不能算进声明列"
-            );
+        assert!(page.len() >= 2, "SAMPLE 需覆盖字段齐全与稀疏两种形状");
+        for record in &page {
+            let declared = src.meta(&record.id).unwrap().columns;
+            let table = src.rows(&record.id, 5).unwrap();
+            assert_eq!(declared, table[0], "声明列必须与表头一致: {}", record.id);
         }
+        std::fs::remove_file(&p).unwrap();
+    }
+
+    /// 回归：`Option` 字段全空的条目，声明列也必须全部对得上。
+    ///
+    /// 这是第一版翻车的最极端情形——只有标题和链接、其余全空。它当初等价于
+    /// 「一条合法的稀疏条目，被判定成货不对板」。
+    #[test]
+    fn sparse_item_still_satisfies_every_declared_column() {
+        let p = write_fixture(
+            "sparse",
+            r#"[{"source":"Hacker News","title":"只有标题和链接","url":"https://example.com/x"}]"#,
+        );
+        let src = NewsSource::open(&p).unwrap();
+        let (_, _, page) = src.catalog_page(1).unwrap();
+        let id = page[0].id.clone();
+        let declared = src.meta(&id).unwrap().columns;
+        let table = src.rows(&id, 5).unwrap();
+        let header = &table[0];
+        let missing: Vec<&String> = declared.iter().filter(|c| !header.contains(c)).collect();
+        assert!(missing.is_empty(), "声明列不该出现缺失: {missing:?}");
+        assert_eq!(table.len(), 2, "应当是表头 + 1 行样例");
         std::fs::remove_file(&p).unwrap();
     }
 

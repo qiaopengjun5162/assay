@@ -152,10 +152,43 @@ pub fn dept_object(v: &DeptStat) -> Result<Value> {
     Ok(obj)
 }
 
+/// 榜单标题。
+///
+/// 浙江是本项目的原生场景，标题沿用既有叫法（页面、文档、路演稿都对着它）。
+/// 其他数据源**不许顶这个地名**：用 qunmind 的新闻条目跑一遍，榜首却印着
+/// 「浙江开放数据健康榜」，读者第一眼就被误导。缺平台信息时用中性标题，不猜。
+fn board_title(platform: Option<&str>) -> String {
+    match platform {
+        Some(p) if p.contains("浙江") => "浙江开放数据健康榜（问题 Top 50）".to_string(),
+        Some(p) => format!("{p} · 数据体检榜（问题 Top 50）"),
+        None => "数据体检健康榜（问题 Top 50）".to_string(),
+    }
+}
+
+/// 榜单「说明」单元格：字数，不足阈值时加标记。
+///
+/// 只印字数不标「不足」，读者无法解释「这一行声明列、样例列、空值率、全空列全都正常，
+/// 凭什么排在问题榜第一」。阈值取自 `checks::DESC_MIN`，与检查项同源，不另写字面量。
+fn desc_cell(len: usize) -> String {
+    if len < crate::checks::DESC_MIN {
+        format!("{len}（不足）")
+    } else {
+        len.to_string()
+    }
+}
+
 pub fn aggregate(items_path: &str, catalog_path: &str, out_dir: &str) -> Result<Value> {
     let items = crate::audit::read_items(items_path)?;
     let catalog = load_catalog(catalog_path)?;
     let by_id: HashMap<&str, &CatalogRecord> = catalog.iter().map(|r| (r.id.as_str(), r)).collect();
+
+    // 榜单标题里的数据源名：`audit` 把它写进同目录的 `run.json`。
+    // 不能写死「浙江」——换个源（比如公众号日报条目）跑出来的榜会顶着浙江地名，
+    // 读者第一眼就被误导。缺这个字段的老批次退回中性标题，不猜。
+    let platform = fs::read_to_string(Path::new(out_dir).join("run.json"))
+        .ok()
+        .and_then(|s| serde_json::from_str::<Value>(&s).ok())
+        .and_then(|v| v["platform"].as_str().map(str::to_string));
 
     // 时效性
     let mut lags: Vec<i64> = Vec::new();
@@ -292,22 +325,27 @@ pub fn aggregate(items_path: &str, catalog_path: &str, out_dir: &str) -> Result<
             .unwrap_or(std::cmp::Ordering::Equal)
     });
     let mut md = vec![
-        "# 浙江开放数据健康榜（问题 Top 50）".to_string(),
+        format!("# {}", board_title(platform.as_deref())),
         String::new(),
         format!(
-            "体检范围：{n} 个数据集；有样例：{}；样例级平均空值率：{:.1}%；字段不一致：{}；停更标注：{}",
+            "体检范围：{n} 个数据集；有样例：{}；样例级平均空值率：{:.1}%；字段不一致：{}；停更标注：{}；超 90 天未更新：{}",
             with_preview.len(),
             summary["emptyRateMean"].as_f64().unwrap_or(0.0) * 100.0,
             mismatch.len(),
-            stopped.len()
+            stopped.len(),
+            // 时效性不进分数（`overdue-claim` 权重 0），但读者必须看得见——
+            // 新闻批次里「一年前的旧闻混进今天的日报」比「摘要太短」严重得多，
+            // 只把它留在 summary.json 里等于没报。
+            summary["lagOver90Days"].as_u64().unwrap_or(0)
         ),
         String::new(),
-        "| # | 数据集 | 部门 | 声明列 | 样例列 | 类型 | 空值率 | 全空列 | 停更 |".to_string(),
-        "|---|---|---|---|---|---|---|---|---|".to_string(),
+        "| # | 数据集 | 部门 | 声明列 | 样例列 | 类型 | 空值率 | 全空列 | 说明 | 停更 |"
+            .to_string(),
+        "|---|---|---|---|---|---|---|---|---|---|".to_string(),
     ];
     for (k, i) in ranked.iter().take(50).enumerate() {
         md.push(format!(
-            "| {} | {} | {} | {} | {} | {} | {:.1}% | {} | {} |",
+            "| {} | {} | {} | {} | {} | {} | {:.1}% | {} | {} | {} |",
             k + 1,
             truncate(&i.name, 28),
             i.dept
@@ -321,6 +359,7 @@ pub fn aggregate(items_path: &str, catalog_path: &str, out_dir: &str) -> Result<
             classify(i).as_str(),
             i.empty_rate * 100.0,
             i.all_empty_cols,
+            desc_cell(i.desc_len),
             if crate::scoring::STOPPED_CYCLES.contains(&i.cycle_str().as_str()) {
                 "是"
             } else {
@@ -375,6 +414,45 @@ fn json_object(entries: Vec<(String, usize)>) -> Value {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// 榜单标题不能把「浙江」硬编码到别的数据源头上。
+    ///
+    /// 用 qunmind 的新闻条目跑一遍，榜首印着「浙江开放数据健康榜」——数据是新闻，
+    /// 地名却是浙江。这是最容易被忽略的误导：标题没人当数据处理，也就没人校验。
+    #[test]
+    fn board_title_never_claims_zhejiang_for_other_platforms() {
+        assert_eq!(
+            board_title(Some("浙江省公共数据开放平台")),
+            "浙江开放数据健康榜（问题 Top 50）",
+            "浙江场景沿用既有叫法"
+        );
+        assert_eq!(
+            board_title(Some("公众号日报（qunmind 条目）")),
+            "公众号日报（qunmind 条目） · 数据体检榜（问题 Top 50）"
+        );
+        assert!(
+            !board_title(Some("公众号日报（qunmind 条目）")).contains("浙江"),
+            "非浙江数据源不许出现浙江地名"
+        );
+        assert_eq!(
+            board_title(None),
+            "数据体检健康榜（问题 Top 50）",
+            "缺少平台信息时用中性标题，不猜"
+        );
+    }
+
+    /// 「说明」列必须能让读者看出这一行为什么上榜。
+    ///
+    /// 新闻条目批次里 49/59 命中「说明不足」，但榜单其余列全是 0——没有这一列，
+    /// 读者只会看到一片「一致 / 0.0% / 0」挤在问题榜前面。
+    #[test]
+    fn desc_cell_marks_short_descriptions() {
+        let min = crate::checks::DESC_MIN;
+        assert_eq!(desc_cell(0), "0（不足）");
+        assert_eq!(desc_cell(min - 1), format!("{}（不足）", min - 1));
+        assert_eq!(desc_cell(min), min.to_string(), "恰好达到阈值不算不足");
+        assert_eq!(desc_cell(120), "120");
+    }
 
     /// 部门维度的 key 必须是前端认得的 camelCase。
     ///

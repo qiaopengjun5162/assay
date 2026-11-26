@@ -73,6 +73,8 @@ pub fn audit(opts: &AuditOptions, client: &dyn CatalogSource) -> Result<AuditOut
     if done_before == 0 || !run_path.exists() {
         let manifest = serde_json::json!({
             "capturedAt": crate::util::now_iso8601(),
+            // 数据源名：聚合阶段的榜单标题要用它，避免换源后标题还印着浙江。
+            "platform": client.platform(),
             "catalogTotal": catalog_total,
             "limit": opts.limit,
             "threads": opts.threads,

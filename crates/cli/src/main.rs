@@ -1108,8 +1108,10 @@ mod tests {
         );
         let spec = format!("news:{}", p.to_str().unwrap());
         let src = make_source(Some(&spec)).expect("news: 前缀应走新闻适配器");
+        // 断言「是本适配器的平台名」而不是绑死整串：后半句会随文案调整，
+        // 「qunmind 条目」是这条适配器的稳定特征，浙江源不会出现。
         assert!(
-            src.platform().contains("新闻条目"),
+            src.platform().contains("qunmind"),
             "应切到 NewsSource，实际 platform={}",
             src.platform()
         );

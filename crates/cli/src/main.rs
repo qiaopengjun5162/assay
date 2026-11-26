@@ -5,7 +5,7 @@
 use assay_core::api::{CatalogSource, Client};
 use assay_core::{
     aggregate, audit, checks, drift, evidence, explain, export, fixture_source::FixtureSource,
-    history, pack, proof,
+    history, news_source::NewsSource, pack, proof,
 };
 use clap::{Parser, Subcommand};
 use std::path::Path;
@@ -244,7 +244,14 @@ fn main() {
 /// 需要知道「有哪几种数据源」的地方——换平台时只动这一处。
 fn make_source(source: Option<&str>) -> assay_core::Result<Box<dyn CatalogSource>> {
     match source {
-        Some(p) => Ok(Box::new(FixtureSource::open(Path::new(p))?)),
+        // `news:` 前缀读上游原样导出的条目数组（qunmind 的 PublicNewsItem 形状：
+        // snake_case、无 id、Option 字段），id 由 assay 派生，上游不用改结构。
+        // 用显式前缀而不是自动嗅探：裸数组与 fixture 对象形状不同，显式声明
+        // 能给出更准确的报错，也不会改变现有 fixture 的行为。
+        Some(s) => match s.strip_prefix("news:") {
+            Some(path) => Ok(Box::new(NewsSource::open(Path::new(path))?)),
+            None => Ok(Box::new(FixtureSource::open(Path::new(s))?)),
+        },
         None => Ok(Box::new(Client::new())),
     }
 }
@@ -1089,6 +1096,35 @@ mod tests {
             broken.to_string().contains("不是合法 JSON"),
             "坏 JSON 应提示解析失败: {broken}"
         );
+        std::fs::remove_file(&p).unwrap();
+    }
+
+    /// `news:` 前缀必须切到新闻适配器，而不是被当成 fixture 路径。
+    #[test]
+    fn make_source_switches_to_news_prefix() {
+        let p = temp_fixture(
+            "news-ok",
+            r#"[{"source":"36氪","title":"一条新闻","url":"https://news/1","published_at":"2026-11-25T08:00:00+00:00"}]"#,
+        );
+        let spec = format!("news:{}", p.to_str().unwrap());
+        let src = make_source(Some(&spec)).expect("news: 前缀应走新闻适配器");
+        assert!(
+            src.platform().contains("新闻条目"),
+            "应切到 NewsSource，实际 platform={}",
+            src.platform()
+        );
+        std::fs::remove_file(&p).unwrap();
+    }
+
+    /// 裸数组不带 `news:` 前缀仍走 fixture，并明确报错——两种格式不能混，
+    /// 否则「路径写错」会被静默解释成另一种数据源。
+    #[test]
+    fn bare_array_without_news_prefix_is_rejected_as_fixture() {
+        let p = temp_fixture("bare", r#"[{"title":"x","url":"https://x"}]"#);
+        let err = make_source(Some(p.to_str().unwrap()))
+            .err()
+            .expect("裸数组走 fixture 应报错");
+        assert!(err.to_string().contains("fixture"), "{err}");
         std::fs::remove_file(&p).unwrap();
     }
 }

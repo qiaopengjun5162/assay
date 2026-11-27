@@ -50,9 +50,10 @@
   要验证配置先提交到分支、用 `--target-branch <分支>` 干跑，别在脏工作区上跑。
 - ⚠️ 默认 `GITHUB_TOKEN` 建的 tag **不会触发** `release.yml`。发版必须按
   `docs/RELEASE_CHECKLIST.md` 人工点火；可选 `RELEASE_PAT` secret 走全自动。
-  **已发版**：首个 `v0.2.1`、当前 `latest=v0.2.3`（10 资产全自动）。
-  发版后 release-please 常开「假发版 PR」（CHANGELOG 汇总历史、增量几十上百行），
-  关掉即可；小增量、只含真实 commit 的才是真发版 PR。理由见 D36。
+  **已发版**：首个 `v0.2.1`、当前 `latest=v0.2.7`（10 资产全自动）。
+  发版后 release-please 常开「假发版 PR」（CHANGELOG 汇总历史）。**判据是内容重复，
+  不是行数**：看新增条目的 commit / issue 是否已归属更早版本；bot 单轮也可能只带
+  1 条，按行数判断会误杀。关掉即可，理由见 D36 与 `docs/RELEASE_CHECKLIST.md` §2。
 - Windows 侧 `.sha256` 必须 LF：`Out-File` 写 CRLF 会让 `shasum -c` 报
   `FAILED open or read`（v0.2.1 踩过）；已改 `WriteAllText` + LF 根治。
 - 改 workflow 后必跑 `actionlint .github/workflows/*.yml`（本机已装）。

@@ -16,7 +16,7 @@
 榜单、证明、证据、报告、站点都已上线冻结在 2026-11-14 的快照上；
 `just check` 与 `just clippy-wasm` 全绿；CI 八关（rust / msrv / coverage / wasm /
 lean / secret-scan / commit-lint / docs）与 Pages 两段式部署都跑通；
-`latest=v0.2.3` 已发布（10 资产全自动）。
+`latest=v0.2.7` 已发布（10 资产全自动）。
 
 当前源码版本：0.2.7 <!-- x-release-please-version -->
 
@@ -90,13 +90,14 @@ lean / secret-scan / commit-lint / docs）与 Pages 两段式部署都跑通；
 `release-please` + `release` 双 workflow 已就位并跑通：前者开纯发版 PR，后者在 tag /
 手动触发时出 5 平台二进制与 `.sha256`（共 10 个资产），并从压缩包里解出来跑
 `--version/--help` + `verify-evidence` + `verify-reports` 的 smoke。
-首个正式 release 是 `v0.2.1`（手工补齐资产），当前 `latest=v0.2.3`（10 资产全自动构建
-上传，Windows CRLF 修复生效）；源码与 manifest 都是 `0.2.3`，早期写的 `v0.1.0` 已作废，
+首个正式 release 是 `v0.2.1`（手工补齐资产），当前 `latest=v0.2.7`（10 资产全自动构建
+上传，Windows CRLF 修复生效）；源码与 manifest 都是 `0.2.7`，早期写的 `v0.1.0` 已作废，
 理由见 D36。
 
 默认 GITHUB_TOKEN 建的 tag 不触发下游 workflow，发版要按 `docs/RELEASE_CHECKLIST.md`
 人工点火；可选 `RELEASE_PAT` 走全自动。首次发版踩过两个坑：假发版 PR（CHANGELOG 汇总
-历史，按增量行数辨别并关闭）与 Windows `.sha256` CRLF（已根治，见 D36 第 7 条）。
+历史，**按条目是否已归属历史版本辨别**，不看行数——见 `docs/RELEASE_CHECKLIST.md` §2）
+与 Windows `.sha256` CRLF（已根治，见 D36 第 7 条）。
 
 ## 明确不做
 

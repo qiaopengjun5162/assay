@@ -74,7 +74,12 @@ if [[ "$EXPORT" -eq 1 ]]; then
   echo "导出条目：$QM ${QM_ARGS[*]}"
   # qunmind 在没有启用任何公共来源时报错——这是刻意的，空数组会被读成「今天没新闻」。
   if ! "$QM" "${QM_ARGS[@]}"; then
-    echo "qunmind 导出失败（常见原因：配置路径不对，或没有启用任何 public_sources）" >&2
+    # 按实际踩过的顺序排：export-items 是 2026-11-26 才进 qunmind origin/main 的，
+    # 旧二进制（含 tag v0.1.0）报「未知子命令」，很容易被误读成配置问题。
+    echo "qunmind 导出失败。按可能性排序排查：" >&2
+    echo "  1) 二进制太旧：'$QM --help | grep export-items' 没输出 —— 从 qunmind origin/main 重新构建" >&2
+    echo "  2) 配置路径不对（见上面的 QUNMIND_CONFIG 提示）" >&2
+    echo "  3) 配置里没有启用任何 public_sources" >&2
     exit 1
   fi
 fi

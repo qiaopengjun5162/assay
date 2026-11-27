@@ -150,7 +150,7 @@ assay checks --items /tmp/x/items.jsonl --catalog /tmp/x/catalog_snapshot.json
    一条命令跑完导出 → 体检 → 发报门禁；门禁三档、阈值依据和 cron 操作单见
    `docs/SCHEDULING.md`。**生产 cron 未挂**——本会话无服务器权限，由能登录 Hermes
    的同事按操作单先空跑一周、再接拦截。
-3. **接触达**：脚本侧**无需新增**——拦截时把 `docs/SCHEDULING.md` 4.4 那条命令
+3. **接触达**：脚本侧**无需新增**——拦截时把 `docs/SCHEDULING.md` 4.5 那条命令
    从日志里拼出的文本贴到 WeCom（小满/二花已有通道）或 Obsidian 即可。
    通知这一步和 cron 是同一个上线动作：没有通知就先别真的拦发报。
 

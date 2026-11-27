@@ -11,6 +11,11 @@
 //! `scoring` / `aggregate` / `export` 全部从这里取；站点再把这张表原样印出来——
 //! 「我们查了什么、阈值多少」不该要求读者去翻 Rust 源码。
 //!
+//! 前端是唯一的例外：`crates/web` 刻意不依赖本 crate（core 带 ureq 等网络依赖，
+//! 拉进 wasm 会撑大产物），所以 `DESC_MIN` / `EMPTY_RATE_HIGH` / `STOPPED_CYCLES`
+//! 在 `crates/web/src/constants.rs` 有一份镜像。**改这里的常量必须同步那份镜像**，
+//! `scripts/check-thresholds.sh` 会在 CI 里逐项比对，漂移即红。
+//!
 //! 这里刻意不做「用配置文件写规则」：一个能解释表达式的小引擎会带来新的失败面
 //! （拼错字段名、未知算子、配置与代码版本错位），而它们全都在确定性路径上。
 //! 现在这张表是数据，执行它的 `fires()` 只有一处实现，不存在两条执行路径。

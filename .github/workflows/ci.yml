@@ -321,3 +321,8 @@ jobs:
       # 就等于没有门禁，只是给读 Justfile 的人一个错误的印象。
       - name: 拼写检查（typos）
         uses: crate-ci/typos@v1
+
+      # core 与前端各有自己的阈值常量（web 不依赖 core，避免把 ureq 拉进 wasm）。
+      # 数值漂移不会编译失败，只会让页面和报告给出互相打脸的数字，所以要单独比。
+      - name: 阈值一致性（core ↔ 前端）
+        run: bash scripts/check-thresholds.sh

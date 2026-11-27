@@ -50,6 +50,10 @@ lint-docs:
 lint-docs-changed:
     ./scripts/lint-docs.sh --changed
 
+# core 与前端的判定阈值一致性（改任一边必跑）
+check-thresholds:
+    ./scripts/check-thresholds.sh
+
 # 安装仓库 git 钩子（Conventional Commits）
 hooks:
     ./scripts/install-git-hooks.sh
@@ -124,7 +128,7 @@ news-gate *ARGS:
     bash scripts/news-gate.sh {{ARGS}}
 
 # 本地完整检查（提交前跑这个）
-check: fmt-check clippy typos test deny verify-evidence verify-reports proofs gate-negative
+check: fmt-check clippy typos check-thresholds test deny verify-evidence verify-reports proofs gate-negative
     echo "全部通过"
 
 # 无障碍复查（axe-core + WCAG 2.1 A/AA，五个视图）

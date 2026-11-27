@@ -412,7 +412,7 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             })
             .filter(|r| dd.is_empty() || r.dept == dd)
             .filter(|r| !only_stopped.get() || r.stopped())
-            .filter(|r| !only_empty.get() || r.empty_rate > 0.3)
+            .filter(|r| !only_empty.get() || r.empty_rate > crate::constants::EMPTY_RATE_HIGH)
             .filter(|r| !only_mismatch.get() || r.schema_kind.contains("不一致"))
             .collect();
         crate::sort::sort_rows(&mut v, sort.get().as_str());
@@ -956,7 +956,7 @@ fn detail_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
         (
             "规范性",
             "GB/T 36344 0101",
-            if r.desc_len >= 10 {
+            if r.desc_len >= crate::constants::DESC_MIN {
                 "有说明"
             } else {
                 "说明过短"

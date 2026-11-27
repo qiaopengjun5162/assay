@@ -225,7 +225,12 @@ impl Row {
     }
 
     pub fn stopped(&self) -> bool {
-        matches!(self.cycle_label().as_str(), "停更")
+        let s = match &self.update_cycle {
+            serde_json::Value::String(s) => s.clone(),
+            serde_json::Value::Number(n) => n.to_string(),
+            _ => return false,
+        };
+        crate::constants::STOPPED_CYCLES.contains(&s.as_str())
     }
 
     pub fn empty_pct(&self) -> f64 {

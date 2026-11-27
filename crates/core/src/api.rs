@@ -145,7 +145,7 @@ impl Client {
         Ok(parse_catalog_page(&v))
     }
 
-    /// 全量目录，按原顺序返回。
+    /// 全量目录，按原顺序返回。任何一页没抓到就整批报错，不返回「看着完整」的缺页目录。
     pub fn catalog_all(&self, threads: usize) -> Result<Vec<CatalogRecord>> {
         let (total, pages, first) = self.catalog_page(1)?;
         let mut slots: Vec<Option<Vec<CatalogRecord>>> = vec![None; pages];
@@ -161,18 +161,17 @@ impl Client {
                     if p > pages {
                         break;
                     }
+                    // 抓失败就让槽位空着，由 assemble_catalog_pages 统一判缺页。
+                    // 不要在这里 if let Ok 吞掉：产物里 catalog_total 取的是实抓条数，
+                    // 少一整页也不会和首页声明的 total 对不上，verify-evidence /
+                    // verify-reports 验的是已落盘的东西自洽，发现不了这种缺口。
                     if let Ok((_, _, recs)) = self.catalog_page(p) {
                         slots.lock().unwrap()[p - 1] = Some(recs);
                     }
                 });
             }
         });
-        let slots = slots.into_inner().unwrap();
-        let mut out = Vec::with_capacity(total);
-        for recs in slots.into_iter().flatten() {
-            out.extend(recs);
-        }
-        Ok(out)
+        assemble_catalog_pages(slots.into_inner().unwrap(), total)
     }
 
     pub fn detail(&self, id: &str) -> Result<Value> {
@@ -207,6 +206,38 @@ fn parse_catalog_page(v: &Value) -> (usize, usize, Vec<CatalogRecord>) {
         })
         .unwrap_or_default();
     (total, pages, recs)
+}
+
+/// 把并发抓回来的页拼成完整目录；缺任何一页就报错，绝不静默 `flatten` 掉。
+///
+/// `declared_total` 只用来预分配容量，不参与完整性判断——总条数可能带脏数据，
+/// 页码缺口才是可判定的事实。抽成独立函数是因为真网络失败不可复现，
+/// 单测要能直接构造「第 2 页没抓到」这种槽位。
+fn assemble_catalog_pages(
+    slots: Vec<Option<Vec<CatalogRecord>>>,
+    declared_total: usize,
+) -> Result<Vec<CatalogRecord>> {
+    let missing: Vec<usize> = slots
+        .iter()
+        .enumerate()
+        .filter_map(|(i, slot)| slot.is_none().then_some(i + 1))
+        .collect();
+    if !missing.is_empty() {
+        return Err(Error::Other(format!(
+            "目录缺 {} 页（第 {} 页）：整批作废，别拿这份目录跑体检",
+            missing.len(),
+            missing
+                .iter()
+                .map(usize::to_string)
+                .collect::<Vec<_>>()
+                .join("、")
+        )));
+    }
+    let mut out = Vec::with_capacity(declared_total);
+    for recs in slots.into_iter().flatten() {
+        out.extend(recs);
+    }
+    Ok(out)
 }
 
 impl CatalogSource for Client {
@@ -332,6 +363,32 @@ mod tests {
         assert!(m.columns.is_empty());
         assert!(!m.has_preview);
         assert_eq!(m.description_len, 0);
+    }
+
+    #[test]
+    fn catalog_pages_missing_page_is_an_error() {
+        // 3 页里第 2 页没抓到——不能静默返回另外两页的 200 条。
+        let slots = vec![Some(vec![CatalogRecord::default()]), None, Some(vec![])];
+        let err = assemble_catalog_pages(slots, 300).unwrap_err();
+        let msg = err.to_string();
+        assert!(msg.contains("缺 1 页"), "{msg}");
+        assert!(msg.contains("第 2 页"), "{msg}");
+        assert!(msg.contains("整批作废"), "{msg}");
+    }
+
+    #[test]
+    fn catalog_pages_all_present_keeps_order() {
+        let a = CatalogRecord::default();
+        let b = CatalogRecord::default();
+        let slots = vec![Some(vec![a]), Some(vec![b])];
+        let out = assemble_catalog_pages(slots, 999).unwrap();
+        // declared_total 只预分配容量；对不上不该报错，也不该凭空补条目。
+        assert_eq!(out.len(), 2);
+    }
+
+    #[test]
+    fn catalog_pages_empty_catalog_is_ok() {
+        assert!(assemble_catalog_pages(vec![], 0).unwrap().is_empty());
     }
 
     #[test]

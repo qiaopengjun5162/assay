@@ -63,7 +63,7 @@
 |---|---|---|
 | `Rust/rust-template` | `deny.toml`、`.pre-commit-config.yaml`、`.rustfmt.toml`、`Makefile` 思路、`cliff.toml` | 直接复制，改成 Justfile 驱动 |
 | `Rust/moonpub` | CI 六件事：fmt / clippy -D warnings / nextest / cargo-audit / **gitleaks 密钥扫描** / MSRV；`Justfile`；`scripts/coverage.sh` 覆盖率地板 | 抄成 `.github/workflows/ci.yml`；密钥扫描必留（我们脚本读 API key） |
-| `Rust/moonpub` | release-please + tag 触发 release 的双 workflow 结构（含 GITHUB_TOKEN 不触发下游的坑注释） | 已落成 `.github/workflows/release-please.yml` + `release.yml` 并跑通；当前 latest=v0.2.3，步骤见 `docs/RELEASE_CHECKLIST.md` |
+| `Rust/moonpub` | release-please + tag 触发 release 的双 workflow 结构（含 GITHUB_TOKEN 不触发下游的坑注释） | 已落成 `.github/workflows/release-please.yml` + `release.yml` 并跑通；当前 latest=v0.2.7，步骤见 `docs/RELEASE_CHECKLIST.md` |
 | `Web3/kite-rust-axum-template` | axum 分层（router/service/config） | 只在需要 HTTP 时启用；当前静态站不需要 |
 | `Lean/ZkProof` | Lean 项目骨架、`lakefile` 组织方式 | 证明模块的目录约定 |
 | `Rust/taiyin-guqin` | Rust 核心 + Next.js 前端的构建顺序（先 wasm/lib 后前端） | 前端构建顺序 |
@@ -144,13 +144,13 @@ assay/
 退出码三档（0 正常 / 1 漂移 / 2 跑批不可信），口径见 `docs/audit/README.md` 与 D19。
 小样本手动试跑（`limit > 0`）会跳过漂移判定，只验证链路。
 
-### `release.yml`（打 tag 时）—— 已配置并跑通，latest=v0.2.3
+### `release.yml`（打 tag 时）—— 已配置并跑通，latest=v0.2.7
 
 已抄 moonpub 的双 workflow 结构，注释里保留那个坑：**release-please 用
 GITHUB_TOKEN 创建的 release 不会触发下游 workflow**，需要手动点火或用 PAT。
 五平台矩阵 + 打包 smoke + 10 个资产自检；完整发版步骤与失败处置见
 `docs/RELEASE_CHECKLIST.md`。首个正式 release `v0.2.1`（手工补齐资产），
-当前 `latest=v0.2.3`（10 资产全自动构建上传，Windows CRLF 修复生效）。
+当前 `latest=v0.2.7`（10 资产全自动构建上传，Windows CRLF 修复生效）。
 
 ---
 

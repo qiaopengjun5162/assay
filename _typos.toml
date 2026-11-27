@@ -4,6 +4,9 @@ extend-words = { flate = "flate" }
 extend-ignore-re = [
   # 证据哈希、SHA-256 摘要
   "[0-9a-f]{16,}",
+  # 7~15 位 commit 短 hash：`ba73cae` 的 `ba` 会被当成 by/be 的错拼。
+  # 16 位以上的规则只覆盖完整摘要，短 hash 得单列；终检报告里大量引用。
+  "`[0-9a-f]{7,15}`",
   # Lean 定理里的坐标
   "empty_\\d+_\\d+",
   # 文档里引用「那个被改名掉的变量」时写的 `ba`

@@ -3,6 +3,21 @@
 本项目所有值得记录的变更。格式参考 [Keep a Changelog](https://keepachangelog.com/)，
 版本号遵循 [SemVer](https://semver.org/)。
 
+## [0.2.7](https://github.com/qiaopengjun5162/assay/compare/v0.2.6...v0.2.7) (2026-11-27)
+
+
+### Features
+
+* **scripts:** news-check.sh，一条命令跑完公众号日报体检 ([#80](https://github.com/qiaopengjun5162/assay/issues/80)) ([783b7c8](https://github.com/qiaopengjun5162/assay/commit/783b7c8e4abff5d7316eb54e4f96e9c31bb33b0e))
+* **scripts:** 加发报门禁三档，体检脚本支持 --export --gate 一条龙 ([#82](https://github.com/qiaopengjun5162/assay/issues/82)) ([9fb2f19](https://github.com/qiaopengjun5162/assay/commit/9fb2f1940b9ef1085b08fdebce13716b5edb575c))
+
+
+### Bug Fixes
+
+* **core:** 目录缺页必须报错，不再静默返回残缺目录 ([#87](https://github.com/qiaopengjun5162/assay/issues/87)) ([c4f6a2d](https://github.com/qiaopengjun5162/assay/commit/c4f6a2dd4efd6e3155e765df442feefc4ce711d9))
+* **scripts:** 导出失败先提示二进制版本，操作单补前置检查 ([#85](https://github.com/qiaopengjun5162/assay/issues/85)) ([2edf9af](https://github.com/qiaopengjun5162/assay/commit/2edf9afde1e7edc9825cb89873bb55a2db7fa3c2))
+* **scripts:** 门禁除零不再崩成 BLOCK，补通知拼接命令 ([#84](https://github.com/qiaopengjun5162/assay/issues/84)) ([ae13da3](https://github.com/qiaopengjun5162/assay/commit/ae13da32a2e7a32fd69454f58d13ece5d0c0e28c))
+
 ## [0.2.6](https://github.com/qiaopengjun5162/assay/compare/v0.2.5...v0.2.6) (2026-11-26)
 
 

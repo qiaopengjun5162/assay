@@ -97,6 +97,11 @@ gate-negative:
 verify-release tag="":
     ./scripts/verify-release.sh {{tag}}
 
+# 发版 PR 核对：文件白名单 / 版本号四处一致 / 是否假发版（只动人眼判据，不碰网络数据）
+# 发版 PR 的 ci 天然是红的（GITHUB_TOKEN 建 PR 要人工批准），所以合并前跑这条。
+release-check pr:
+    ./scripts/check-release-pr.sh {{pr}}
+
 # 线上终检：验 github.io 活站是不是仓库最新版、抽一条证据重算哈希、资源是否可达
 # 不进 check：依赖外网访问 github.io，交给交付前手动跑（可传自定义域名验镜像）
 verify-live base="":

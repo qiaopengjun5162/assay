@@ -3,6 +3,13 @@
 本项目所有值得记录的变更。格式参考 [Keep a Changelog](https://keepachangelog.com/)，
 版本号遵循 [SemVer](https://semver.org/)。
 
+## [0.2.10](https://github.com/qiaopengjun5162/assay/compare/v0.2.9...v0.2.10) (2026-11-28)
+
+
+### Bug Fixes
+
+* **web:** 首屏导语改为从 exhibit 真实字段渲染 ([#99](https://github.com/qiaopengjun5162/assay/issues/99)) ([6caa45c](https://github.com/qiaopengjun5162/assay/commit/6caa45ce5234297a89913b7e5a91320ca8e9507d))
+
 ## [0.2.9](https://github.com/qiaopengjun5162/assay/compare/v0.2.8...v0.2.9) (2026-11-28)
 
 

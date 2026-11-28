@@ -11,7 +11,6 @@ use crate::{Error, Result};
 use sha2::{Digest, Sha256};
 use std::fs;
 use std::path::Path;
-use std::process::Command;
 
 pub struct ProofOutcome {
     pub theorems: usize,
@@ -32,7 +31,7 @@ pub fn prove_top(
 /// 执行 Lean 内核。抽成函数是让「生成」与「验证」在测试里能分开：
 /// 生成逻辑要能离线校验，不该因为机器上没装 lean 就一行都测不了。
 fn run_lean(path: &Path) -> (bool, String) {
-    match Command::new("lean").arg(path).output() {
+    match lean::lean_command().arg(path).output() {
         Ok(o) => (
             o.status.success(),
             String::from_utf8_lossy(&o.stdout).to_string() + &String::from_utf8_lossy(&o.stderr),
@@ -200,7 +199,7 @@ fn sha_rows(rows: &[Vec<String>]) -> String {
 
 /// 供 CLI 使用：`lean` 不在 PATH 时给出可操作的错误。
 pub fn require_lean() -> Result<()> {
-    Command::new("lean")
+    lean::lean_command()
         .arg("--version")
         .output()
         .map(|_| ())

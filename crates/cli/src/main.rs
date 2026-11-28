@@ -869,7 +869,7 @@ fn check_proofs(files: &[String]) -> i32 {
             fail = 1;
             continue;
         }
-        match std::process::Command::new("lean").arg(f).output() {
+        match assay_core::lean::lean_command().arg(f).output() {
             Ok(o) if o.status.success() => println!("   PASS 内核校验通过"),
             Ok(o) => {
                 println!("   FAIL 内核拒绝:");
@@ -932,7 +932,7 @@ fn tamper(path: &str) -> assay_core::Result<()> {
         "篡改: 空值数 {old} → {new}（临时副本 {}，原文件未动）",
         tmp.file_name().unwrap_or_default().to_string_lossy()
     );
-    let res = std::process::Command::new("lean").arg(&tmp).output()?;
+    let res = assay_core::lean::lean_command().arg(&tmp).output()?;
     let stdout = String::from_utf8_lossy(&res.stdout);
     let stderr = String::from_utf8_lossy(&res.stderr);
     for l in stdout.lines().chain(stderr.lines()).take(12) {

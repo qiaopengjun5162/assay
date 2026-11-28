@@ -109,19 +109,24 @@ bash scripts/demo-onstage.sh
 
 `checks` 会逐条列出检查项和命中数，分母是**全量条数**，不是榜上前 500。
 
-如果想把你的数据也变成网页那样的榜单和证据包（进阶），再加这两步：
+如果想把你的数据也变成网页那样的榜单和证据包（进阶），再加这三步：
 
 ```bash
 ./assay --out out-mine evidence
 ./assay --out out-mine prove
-./assay export --items out-mine/items.jsonl --catalog out-mine/catalog_snapshot.json --evidence out-mine/evidence out-mine/data.json
+./assay export --out out-mine --dest out-mine/data.json
 ```
+
+> `export` 的两个参数别弄混：`--out` 是**产物目录**（刚才 audit 的 `out-mine`），`--dest` 是**导出的 `data.json` 写到哪**。
+> 早期教程里的 `--items / --catalog / --evidence` 加位置参数是旧版写法，现在的 `assay export` 已经不认了——照旧抄会报 `unexpected argument '--items'`。
 
 ## 四、历史/趋势：它是怎么攒出来的
 
 网站首屏那块"指标在变好还是变坏"，现在只有一条真实跑批记录——**项目刚开始按周跑，这周才第一条**。它不会补假数据凑曲线（补了就等于画一条假趋势骗人）。
 
-机制已经接好：每周的定时巡检会自动把这一周的七个原始计数追加到 `history/summary.json`（同一天重跑是替换、不重复画点），攒到第二条时网站会自动长出趋势线。想立刻看效果不用等——拿两周的数据各跑一次 `just audit` 即可，怎么挂定时任务见 [SCHEDULING.md](SCHEDULING.md)。
+机制已经接好：每周的定时巡检在 `just audit` 之后会再跑一次 `just history`，把这一轮的七个原始计数追加到 `history/summary.json`（同一天重跑是替换、不重复画点），攒到不同日期的第二条时网站会自动长出趋势线。
+
+想手动记一轮要注意两点：光跑 `just audit` **不会**写历史，得再显式跑 `just history`；而且项目的基准日是固定常量，拿**同一份数据**重跑不会让计数变化，画出来只是一条平线——真趋势只能靠数据本身随周变化累积，不能靠反复跑同一批数据凑点。挂定时任务见 [SCHEDULING.md](SCHEDULING.md)。
 
 曲线只画**原始计数**（滞后数、错位数、整列全空数等），不画"问题分"：分数会随权重变，两把尺子画一张图上就没法比了。
 

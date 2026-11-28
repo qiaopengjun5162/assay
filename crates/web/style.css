@@ -182,6 +182,50 @@ main:focus { outline: none; }
   .sparkgrid { grid-template-columns: 1fr; }
 }
 
+/* ---------- 概览图表 ----------
+ * 四张图共用一套卡片壳。条形图用 div 高度而不是 SVG rect：
+ * 同一套 bar-fill 能复用在环形图旁边的条形里，窄屏也不用重算坐标。 */
+.dash { margin: 26px 0 8px; }
+.dash-head h2 { font-size: 17px; margin: 0 0 6px; }
+.dash-head .hint { margin: 0 0 14px; }
+.dashgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.dcard {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 16px 16px; min-width: 0;
+}
+.dcard h3 { font-size: 14px; margin: 0 0 4px; font-weight: 600; }
+.dsub { color: var(--muted); font-size: 12px; margin: 0 0 12px; line-height: 1.45; }
+.donut-row { display: flex; align-items: center; gap: 14px; }
+.donut { width: 120px; height: 120px; flex: 0 0 120px; }
+.donut-num { font: 700 18px var(--mono); fill: var(--ink); }
+.donut-cap { font-size: 10px; fill: var(--muted); }
+.legend { list-style: none; margin: 0; padding: 0; font-size: 12px; flex: 1; min-width: 0; }
+.legend li { display: flex; align-items: center; gap: 6px; margin: 3px 0; color: var(--ink-2); }
+.legend .sw { width: 10px; height: 10px; border-radius: 2px; flex: 0 0 10px; }
+.bars { display: flex; flex-direction: column; gap: 6px; }
+.bar-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) 88px 52px;
+  align-items: center; gap: 8px; min-height: 22px; font-size: 12px;
+}
+.bar-label {
+  color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.bar-track { height: 9px; background: var(--bg); border-radius: 5px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--accent); border-radius: 5px; }
+.bar-fill.bad { background: var(--bad); }
+.bar-num { text-align: right; font-family: var(--mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+.bar-link {
+  width: 100%; background: none; border: 0; padding: 2px 0; cursor: pointer;
+  text-align: left; font: inherit;
+}
+.bar-link:hover .bar-label { color: var(--accent); text-decoration: underline; }
+.bar-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.hist .bar-row { grid-template-columns: 74px 1fr 40px; }
+@media (max-width: 720px) {
+  .dashgrid { grid-template-columns: 1fr; }
+  .bar-row { grid-template-columns: minmax(0, 1fr) 64px 44px; }
+}
+
 /* ---------- 部门榜 ---------- */
 .deptboard { margin: 30px 0 10px; }
 .deptboard h2 { font-size: 17px; margin: 0 0 6px; }

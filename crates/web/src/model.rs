@@ -92,6 +92,13 @@ pub struct Summary {
     pub evidence_count: usize,
     #[serde(default)]
     pub explain_count: usize,
+    /// 更新周期分布：key 是平台原始码值（`-1`/`999`/`6` 等），值是个数。
+    /// 码值翻人话只发生在前端展示层，这里保持与数据文件同形。
+    #[serde(default)]
+    pub update_cycle: std::collections::BTreeMap<String, u64>,
+    /// 一致性错位类型分布：key 是 `SchemaKind` 文案，值是个数。
+    #[serde(default)]
+    pub mismatch_kinds: std::collections::BTreeMap<String, u64>,
     /// 部门维度统计，key 是部门全名
     #[serde(default)]
     pub by_dept: std::collections::BTreeMap<String, DeptRow>,

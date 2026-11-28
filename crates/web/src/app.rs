@@ -3,6 +3,7 @@
 //! 路由走 hash（`#/detail/<id>`），刷新可直达；不引第三方路由库，
 //! 因为只有三个视图、两条跳转。
 
+use crate::charts::{self, Bar};
 use crate::model::{CheckRow, Data, Row};
 use crate::spark;
 use crate::verify::verify_command;
@@ -317,7 +318,7 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
                         <h2>"指标在变好还是变坏"</h2>
                         <p class="hint">
                             {format!(
-                                "只有 {} 这一次跑批：滞后 > 90 天 {} 个、字段对不上 {} 个、整列全空 {} 个。周度巡检每周记一条，两点以上才画得出曲线——单点连不成趋势，画出来会被当成「稳定」。",
+                                "本周（{}）已记下第一条：滞后 > 90 天 {} 个、字段对不上 {} 个、整列全空 {} 个。周度巡检每周自动追加一条，攒够两条这里就会长出趋势线——每一条都是真实跑批，不会补点凑数。",
                                 p.date,
                                 fmt_num(p.lag_over90),
                                 fmt_num(p.mismatch),
@@ -450,6 +451,8 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             <span class="hint">"（剩下那些是平台只给了表头、没有数据行，没有可证的命题）"</span>
         </p>
 
+        <Dashboard data=data.clone() route=route />
+
         <ol class="howto">
             <li><b>"① 看榜"</b>"按问题分排序，左边带红条的是停更或字段对不上的。"</li>
             <li><b>"② 点开一条"</b>"六维体检、具体哪几列对不上、AI 解读，都在同一页。"</li>
@@ -560,6 +563,187 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             {move || filtered().into_iter().enumerate().map(|(i, r)| row_view(i, r, route)).collect_view()}
         </section>
         {checks_view}
+    }
+}
+
+/// 把更新周期的原始码值翻成人话。data.json 里 key 是 `-1` / `999` / `6` 这类码，
+/// 直接印在图上没人看得懂；映射只在这里做一次，不回写数据。
+///
+/// 注意：数字码与文字 key 在平台数据里是**不同的来源**（如 `365` 7321 条、
+/// `每年` 1280 条），不能翻译成同一个名字——那会在图例里出现两个「每年」，
+/// 读者以为重复渲染了。所以数字码翻人话后保留码值（`每年（365）`），
+/// 和纯文字 key（`每年`）分得开，也让人看得懂这个码是什么意思。
+fn cycle_label(key: &str) -> String {
+    let human = match key {
+        "-1" => Some("不更新"),
+        "999" => Some("长期停更"),
+        "1" => Some("每日"),
+        "6" => Some("每周"),
+        "30" => Some("每月"),
+        "365" => Some("每年"),
+        _ => None,
+    };
+    match human {
+        Some(h) => format!("{h}（{key}）"),
+        None => key.to_string(),
+    }
+}
+
+/// 环形图配色：语义色沿用 CSS 变量对应的 hex，图例与扇区一一对应。
+/// 只用了 6 色，多于 6 个来源时后面的归到「其他」，避免屏幕上出现彩虹。
+const SLICE_COLORS: [&str; 6] = [
+    "#b3261e", "#8a5300", "#1f4ed8", "#0b6b3a", "#7a5ab8", "#5f6b7a",
+];
+
+/// 四张概览图：更新周期环形、错位类型条形、部门停更横向条（可点筛选）、滞后分布直方图。
+/// 所有数据来自 `data.json`，前端不自己造数；图只是把已有聚合画出来。
+#[component]
+fn Dashboard(data: Data, route: RwSignal<Route>) -> impl IntoView {
+    // 环形图：更新周期分布。按计数降序取前 6，其余合并成「其他」。
+    let mut cycles: Vec<(String, u64)> = data
+        .summary
+        .update_cycle
+        .iter()
+        .map(|(k, v)| (cycle_label(k), *v))
+        .collect();
+    cycles.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(&b.0)));
+    if cycles.len() > SLICE_COLORS.len() {
+        let rest: u64 = cycles[SLICE_COLORS.len()..].iter().map(|(_, v)| *v).sum();
+        cycles.truncate(SLICE_COLORS.len());
+        cycles.push(("其他".to_string(), rest));
+    }
+    let cycle_slices = charts::slices(&cycles);
+    let cycle_bounds = charts::arc_bounds(&cycle_slices);
+    let cycle_arcs: Vec<String> = cycle_slices
+        .iter()
+        .zip(cycle_bounds.iter())
+        .filter_map(|(_, (a, b))| {
+            let d = charts::donut_arc(60.0, 60.0, 52.0, 32.0, *a, *b);
+            (!d.is_empty()).then_some(d)
+        })
+        .collect();
+    let cycle_legend: Vec<(String, String, String)> = cycle_slices
+        .iter()
+        .enumerate()
+        .map(|(i, s)| {
+            (
+                SLICE_COLORS[i % SLICE_COLORS.len()].to_string(),
+                s.label.clone(),
+                format!("{:.1}%", s.pct),
+            )
+        })
+        .collect();
+
+    // 错位类型条形图：只展示有命中的种类，「一致」占绝大多数会压扁其它条，
+    // 所以按值降序取前 5，并在文案里说明分母。
+    let mismatch: Vec<(String, u64)> = data
+        .summary
+        .mismatch_kinds
+        .iter()
+        .map(|(k, v)| (k.clone(), *v))
+        .collect();
+    let mism_bars = charts::top_bars(&mismatch, 5);
+    let mism_max = mism_bars.first().map(|b| b.value).unwrap_or(0);
+
+    // 部门横向条：按停更数排前 10，每条可点，直接把 route 切到部门页。
+    let mut depts: Vec<(String, u64)> = data
+        .summary
+        .by_dept
+        .iter()
+        .map(|(k, v)| (k.clone(), v.stopped))
+        .filter(|(_, n)| *n > 0)
+        .collect();
+    depts.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(&b.0)));
+    depts.truncate(10);
+    let dept_bars = charts::top_bars(&depts, 10);
+    let dept_max = dept_bars.first().map(|b| b.value).unwrap_or(0);
+
+    // 滞后直方图：用榜单前 500 条明细（summary 里只有聚合数，画不了分布）。
+    // 分母必须写清是「榜上 500 条」，不能让人误以为是全量 24,322。
+    let lags: Vec<Option<i64>> = data.datasets.iter().map(|r| r.lag_days).collect();
+    let lag_bars = charts::histogram(&lags, 30, 8);
+    let lag_max = lag_bars.iter().map(|b| b.value).max().unwrap_or(0);
+
+    view! {
+        <section class="dash" aria-label="体检结果概览图">
+            <div class="dash-head">
+                <h2>"一眼看懂这批数据"</h2>
+                <p class="hint">"下面四张图只读本页数据，不重新抓、不重新算；点部门条可直接筛到该部门。"</p>
+            </div>
+            <div class="dashgrid">
+                <div class="dcard">
+                    <h3>"更新周期分布"</h3>
+                    <div class="donut-row">
+                        <svg class="donut" viewBox="0 0 120 120" role="img" aria-label="更新周期分布环形图">
+                            {cycle_arcs.into_iter().enumerate().map(|(i, d)| view! {
+                                <path d=d fill=SLICE_COLORS[i % SLICE_COLORS.len()] />
+                            }).collect_view()}
+                            <text x="60" y="56" text-anchor="middle" class="donut-num">{fmt_num(data.summary.audited)}</text>
+                            <text x="60" y="70" text-anchor="middle" class="donut-cap">"个数据集"</text>
+                        </svg>
+                        <ul class="legend">
+                            {cycle_legend.into_iter().map(|(color, label, pct)| view! {
+                                <li><span class="sw" style=format!("background:{color}")></span>{label}" "{pct}</li>
+                            }).collect_view()}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="dcard">
+                    <h3>"字段与声明对不对得上"</h3>
+                    <p class="dsub">"分母是全部 "{fmt_num(data.summary.audited)}" 条，不是榜上前 "{data.datasets.len()}" 条"</p>
+                    <div class="bars">
+                        {mism_bars.into_iter().map(|b: Bar| {
+                            let h = charts::bar_height(b.value, mism_max, 100.0);
+                            view! {
+                                <div class="bar-row">
+                                    <span class="bar-label">{b.label}</span>
+                                    <div class="bar-track"><div class="bar-fill" style=format!("height:{h:.1}%")></div></div>
+                                    <span class="bar-num">{fmt_num(b.value)}</span>
+                                </div>
+                            }
+                        }).collect_view()}
+                    </div>
+                </div>
+
+                <div class="dcard">
+                    <h3>"停更最多的部门"</h3>
+                    <p class="dsub">"点部门名即可筛到该部门，看它的具体条目"</p>
+                    <div class="bars">
+                        {dept_bars.into_iter().map(|b: Bar| {
+                            let h = charts::bar_height(b.value, dept_max, 100.0);
+                            let picked = b.label.clone();
+                            let title = b.label.clone();
+                            let shown = b.label.clone();
+                            view! {
+                                <button class="bar-row bar-link" on:click=move |_| route.set(Route::Dept(picked.clone()))>
+                                    <span class="bar-label" title=title>{shown}</span>
+                                    <div class="bar-track"><div class="bar-fill bad" style=format!("height:{h:.1}%")></div></div>
+                                    <span class="bar-num">{fmt_num(b.value)}</span>
+                                </button>
+                            }
+                        }).collect_view()}
+                    </div>
+                </div>
+
+                <div class="dcard">
+                    <h3>"更新滞后分布"</h3>
+                    <p class="dsub">"只统计榜上 "{data.datasets.len()}" 条有日期的明细；无日期单列，不当成 0 天"</p>
+                    <div class="bars hist">
+                        {lag_bars.into_iter().map(|b: Bar| {
+                            let h = charts::bar_height(b.value, lag_max, 100.0);
+                            view! {
+                                <div class="bar-row">
+                                    <span class="bar-label">{b.label}</span>
+                                    <div class="bar-track"><div class="bar-fill" style=format!("height:{h:.1}%")></div></div>
+                                    <span class="bar-num">{fmt_num(b.value)}</span>
+                                </div>
+                            }
+                        }).collect_view()}
+                    </div>
+                </div>
+            </div>
+        </section>
     }
 }
 

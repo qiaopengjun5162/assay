@@ -11,6 +11,8 @@
 **打开榜单 → https://qiaopengjun5162.github.io/assay/**　不用注册、不用装东西。
 本地跑：`just serve` → http://127.0.0.1:8080
 
+📖 **第一次来？** 看 [使用指南](docs/USER_GUIDE_ZH.md)——网站怎么看、怎么用自己的数据跑同一套检查、结果怎么读。
+
 想离线复核？[下载现成二进制（免装 Rust）→ releases/latest](https://github.com/qiaopengjun5162/assay/releases/latest)
 （Linux / macOS / Windows 五平台，每个带 `.sha256`）。复核用的是**本仓库入库的产物**
 （`web/data.json`、`web/evidence/`、`web/reports/`），所以先 clone 仓库；下载目录和仓库

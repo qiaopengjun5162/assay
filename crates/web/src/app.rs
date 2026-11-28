@@ -247,6 +247,10 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
         .filter(|r| r.declared_cols > 0 && r.sample_cols > r.declared_cols)
         .max_by_key(|r| r.sample_cols - r.declared_cols)
         .cloned();
+
+    // 首屏那句话必须和下面的卡片同源；纯函数实现见 hero_claim_text，可被单测锁住。
+    let hero_claim: String = hero_claim_text(exhibit.as_ref());
+
     let exhibit_view = exhibit.map(|e| {
         let id = e.id.clone();
         let cta_id = e.id.clone();
@@ -428,7 +432,7 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             </p>
             <h1>"政府开放数据「货不对板」榜"</h1>
             <p class="lede">
-                "页面写着 7 个字段，实际给你 92 列；标着「每年更新」，两年没动。"
+                {hero_claim}
                 "有问题的排成榜，每条结论你都能自己验——不用信我。"
             </p>
         </section>
@@ -563,6 +567,38 @@ fn list_view(data: Data, route: RwSignal<Route>) -> impl IntoView {
             {move || filtered().into_iter().enumerate().map(|(i, r)| row_view(i, r, route)).collect_view()}
         </section>
         {checks_view}
+    }
+}
+
+/// 首屏导语：只讲这条 exhibit 真实支撑的字段，和下方卡片同源。
+///
+/// 早期这里写死「每年更新、两年没动」，但快照里 exhibit 这条的
+/// `update_cycle` 是 `999`（平台语义=停更，被误译成"每年"）、`lag_days` 只有 35。
+/// 现在停更走 `stopped()` 判定、滞后取真实 lag，缺 lag 就不提时效，绝不补假数
+/// （不变量 9 + 不造假）。
+fn hero_claim_text(exhibit: Option<&crate::model::Row>) -> String {
+    match exhibit {
+        Some(e) => {
+            let mut parts = vec![format!(
+                "页面上写着 {} 个字段，实际给你 {} 列",
+                e.declared_cols, e.sample_cols
+            )];
+            if e.all_empty_cols > 0 {
+                parts.push(format!("其中 {} 列整列是空的", e.all_empty_cols));
+            }
+            // '999'/'不更新' 这类码在平台语义里是停更，前端统一由 stopped() 判定；
+            // 早期写死成「每年更新」是把 999 误译了，这里走同一处判定不重造口径。
+            if e.stopped() {
+                parts.push("平台标了停更".to_string());
+            }
+            if let Some(lag) = e.lag_days {
+                if lag > 0 {
+                    parts.push(format!("距上次更新 {lag} 天"));
+                }
+            }
+            format!("{}。", parts.join("，"))
+        }
+        None => "有问题的开放数据集，我们排成了榜。".to_string(),
     }
 }
 
@@ -1554,6 +1590,60 @@ fn proof_view(data: Data, id: &str, route: RwSignal<Route>) -> impl IntoView {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // 首屏导语必须和 exhibit 同源：无 lag 时绝不冒出「两年没动」这种编造的时效话。
+    #[test]
+    fn hero_claim_never_invents_staleness_without_lag() {
+        let e = crate::model::Row {
+            declared_cols: 7,
+            sample_cols: 92,
+            all_empty_cols: 46,
+            lag_days: None,
+            ..Default::default()
+        };
+        let text = hero_claim_text(Some(&e));
+        assert!(text.contains("7 个字段"), "{text}");
+        assert!(text.contains("92 列"), "{text}");
+        assert!(text.contains("46 列整列是空的"), "{text}");
+        assert!(!text.contains("更新"), "没有 lag 就不该提时效，{text}");
+        assert!(!text.contains("两年"), "绝不补假时效，{text}");
+    }
+
+    // 真实 exhibit 的 update_cycle='999' 是平台停更码，绝不能误译成「每年更新」。
+    #[test]
+    fn hero_claim_reads_stopped_from_real_cycle_code() {
+        let e = crate::model::Row {
+            declared_cols: 7,
+            sample_cols: 92,
+            update_cycle: serde_json::json!("999"),
+            lag_days: Some(35),
+            ..Default::default()
+        };
+        let text = hero_claim_text(Some(&e));
+        assert!(text.contains("平台标了停更"), "999 必须判停更，{text}");
+        assert!(text.contains("距上次更新 35 天"), "{text}");
+        assert!(!text.contains("每年更新"), "999 被误译，{text}");
+        assert!(!text.contains("两年"), "lag 只有 35 天，{text}");
+    }
+
+    #[test]
+    fn hero_claim_uses_real_lag_when_present() {
+        let e = crate::model::Row {
+            declared_cols: 3,
+            sample_cols: 10,
+            all_empty_cols: 0,
+            lag_days: Some(123),
+            ..Default::default()
+        };
+        let text = hero_claim_text(Some(&e));
+        assert!(text.contains("距上次更新 123 天"), "{text}");
+        assert!(!text.contains("整列是空的"), "0 列全空不该印，{text}");
+    }
+
+    #[test]
+    fn hero_claim_handles_no_exhibit() {
+        assert_eq!(hero_claim_text(None), "有问题的开放数据集，我们排成了榜。");
+    }
 
     // 部门名里有中文和空格，链接是 encodeURIComponent 过的。
     // 这条路径一旦解析错，页面上会显示一串 %E5%AE%81…，而且不报错。

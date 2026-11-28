@@ -3,6 +3,13 @@
 本项目所有值得记录的变更。格式参考 [Keep a Changelog](https://keepachangelog.com/)，
 版本号遵循 [SemVer](https://semver.org/)。
 
+## [0.2.11](https://github.com/qiaopengjun5162/assay/compare/v0.2.10...v0.2.11) (2026-11-28)
+
+
+### Bug Fixes
+
+* **lean:** CLI 自动锁定项目验证过的 Lean 版本 ([#103](https://github.com/qiaopengjun5162/assay/issues/103)) ([09c05ec](https://github.com/qiaopengjun5162/assay/commit/09c05ec5b72c89f900f1433737e5540d2ba8d8a3))
+
 ## [0.2.10](https://github.com/qiaopengjun5162/assay/compare/v0.2.9...v0.2.10) (2026-11-28)
 
 

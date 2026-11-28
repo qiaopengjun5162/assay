@@ -3,6 +3,13 @@
 本项目所有值得记录的变更。格式参考 [Keep a Changelog](https://keepachangelog.com/)，
 版本号遵循 [SemVer](https://semver.org/)。
 
+## [0.2.8](https://github.com/qiaopengjun5162/assay/compare/v0.2.7...v0.2.8) (2026-11-27)
+
+
+### Bug Fixes
+
+* **web:** 前端阈值集中到 constants.rs，加 CI 门禁防跨语言漂移 ([#90](https://github.com/qiaopengjun5162/assay/issues/90)) ([1a46eb5](https://github.com/qiaopengjun5162/assay/commit/1a46eb5bd272c0de0ce0a588ba89c366145a304b))
+
 ## [0.2.7](https://github.com/qiaopengjun5162/assay/compare/v0.2.6...v0.2.7) (2026-11-27)
 
 

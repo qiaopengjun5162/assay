@@ -111,6 +111,14 @@ bash scripts/demo-onstage.sh
 
 如果想把你的数据也变成网页那样的榜单和证据包（进阶），再加这三步：
 
+> **先过 Lean 这一关**：第二步 `prove` 会调本机 Lean 4，但下载的压缩包里只有 `assay` 二进制、
+> 不带版本锁文件。如果直接在下载目录里跑，elan 会去装它自己的默认版本，实测只打印一行
+> `waiting for previous installation request to finish` 就卡住好几分钟。两条解法选一条：
+> ① 从仓库根目录把 `lean-toolchain` 文件（锁定
+> `leanprover/lean4:v4.27.0`）复制到当前目录；② 给这条命令加环境变量：
+> `ELAN_TOOLCHAIN=leanprover/lean4:v4.27.0 ./assay --out out-mine prove`。装不了 Lean 就跳过
+> `prove`、直接跑第三步 `export`，榜单和证据包照样出，只是没有证明产物。
+
 ```bash
 ./assay --out out-mine evidence
 ./assay --out out-mine prove

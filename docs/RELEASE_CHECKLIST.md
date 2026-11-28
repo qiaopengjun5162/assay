@@ -54,33 +54,52 @@ just lint-docs
 ## 2. 发版 PR
 
 release-please 在每次推 `main` 后自动开/更新 `chore(main): release x.y.z` PR。
-合并前先看它改了什么：
+**合并前先跑这一条**，把下面所有人眼判据变成断言：
+
+```bash
+just release-check <num>        # 等价于 ./scripts/check-release-pr.sh <num>
+```
+
+退出码 0 才合并；1 表示有阻塞问题（会逐条打出证据）；2 表示网络/参数问题（不是发版的问题）。
+
+它查六件事：
+
+1. 标题里能读出 `x.y.z`；
+2. 改动文件只落在 `.release-please-manifest.json` / `.release-please-version` /
+   `CHANGELOG.md` / `Cargo.toml` / `Cargo.lock` / `ROADMAP.md` 六个之内——出现 `src/`
+   或 `crates/` 就说明这不是纯发版 PR；
+3. `Cargo.toml` 增删各不超过 1 行，且改的确实是 `version` 行（整文件替换 = `version-file`
+   配错，曾差点清空 workspace 清单，见 PR #37）；
+4. 版本号在 `.release-please-version`、manifest、`Cargo.toml`、`ROADMAP.md`、
+   `Cargo.lock` 四个包共 8 处完全一致（漏 `Cargo.lock` 会让 CI 的 `--locked` 立刻红）；
+5. 版本号必须高于 `latest`（版本号不可重用，这是假发版最硬的判据）；
+6. 新增 CHANGELOG 条目引用的 PR 号，逐个查它在 `origin/main` 的 CHANGELOG 里是否已归属
+   更早的版本——命中即内容重复。
+
+想看细节时仍然可以直接看 diff：
 
 ```bash
 gh pr diff <num> --name-only
+gh pr diff <num> -- CHANGELOG.md | grep '^+'
 ```
 
-期望只有 `.release-please-manifest.json`、`.release-please-version`、`CHANGELOG.md`、
-`Cargo.toml`、`Cargo.lock`、`ROADMAP.md`。**`Cargo.toml` 只能改一行**：出现
-`@@ -1,32 +1 @@` 这种整文件替换就是配错了 `version-file`，立刻关 PR。
-出现 `src/` 也停下——这不是纯发版 PR。`Cargo.lock` 必须跟着改：漏了它，CI 的
-`--locked` 立刻红。
+`Cargo.toml` 出现 `@@ -1,32 +1 @@` 这种整文件替换、或出现 `src/`，立刻关 PR，不要合并。
 
 **假发版 PR**：合并发版 PR 之后、把草稿发布出去之前，release-please 找不到锚点，
 有时会开出一个内容重复的 PR。判据是**新增的 CHANGELOG 条目是否已经在历史版本里出现过**，
-而不是行数——行数只是表象：
+而不是行数——行数只是表象。上面第 5、6 条就是这两层：版本号推进是硬判据，内容重复是本质判据。
 
-```bash
-gh pr diff <num> -- CHANGELOG.md | grep '^+'   # 看新增条目
-# 逐条拿 PR 号或 commit 到已有 CHANGELOG 里 grep，命中即重复
-grep -n '#<号>\|<commit前7位>' CHANGELOG.md
-```
+2026-11-25 的 #71 是典型案例：`release 0.2.6`，新增条目里 `#56` 已在 v0.2.4 发布过。
+注意那个 PR 刚创建时只增了 1 行，两小时后被 release-please 更新成 82 行——**「行数少=真」
+这个旧判据在任何一个时刻都可能骗人**，所以现在只认内容重复。关掉即可，**不要合并**；
+关之前确认 `gh release view` 的 latest 正确、CHANGELOG 里该条目已有归属版本。
 
-2026-11-25 实测：#71 是 v0.2.5 发布后 2 分钟开的 `release 0.2.6`，
-CHANGELOG 唯一新增条目 `#56` 其实已在 v0.2.4 发布过（重复计入）。它只增了 1 行，
-用「个位数行数是真」的旧判据会误判为真——**本质判据是内容重复，不是行数**。
-关掉即可，**不要合并**；关之前确认 `gh release view` 的 latest 正确、CHANGELOG
-里该条目已有归属版本。
+脚本本身拿历史 PR 回归过，不是写完就交：
+
+| PR | 状态 | 期望 | 实际 |
+|---|---|---|---|
+| #104 / #100 / #95 / #91 | MERGED | 通过 | 全部 `exit=0` |
+| #97 / #92 / #88 / #71 | CLOSED（假发版） | 拦住 | 全部 `exit=1` |
 
 ## 3. 点火（关键，容易漏）
 
@@ -125,6 +144,9 @@ GitHub 对这类 PR 的 workflow 默认要求人工批准，状态是 `action_re
 没批准就合并，run 会在分支被删时取消，显示成 `failure`（且没有任何 job）。
 看着吓人，其实什么都没跑。2026-11-26 的 #76 就是这样：排队 1 小时 7 分后
 被执行「取消」，`gh run view` 只给一句「workflow file issue」。
+
+发版 PR 真正该跑的门禁只有一条：`just release-check <num>`（第 2 节）。它不需要
+workflow 被触发，因此不受上面这个限制；它查的也正是发版 PR 唯一会改坏的东西。
 
 真正的门禁有三道，顺序是：main push 的 `ci` → 点火后 `release.yml` 的
 `verify · 发版提交必须过门禁`（fmt / clippy / nextest / 两份产物门禁）→
